@@ -6,6 +6,11 @@ package view;
 import Controller.Fpasswordcontroller;
 import java.awt.Color;
 import javax.swing.JOptionPane;
+<<<<<<< HEAD
+=======
+import utils.EmailSender;
+import java.awt.event.ActionListener;
+>>>>>>> signup
 
 /**
  *
@@ -26,7 +31,11 @@ public class FPassword extends javax.swing.JFrame {
  emailerrorLabel.setForeground(Color.RED);
  emailerrorLabel.setText(""); // Empty at first
 
+<<<<<<< HEAD
         emailaddress.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+=======
+        email.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+>>>>>>> signup
     public void insertUpdate(javax.swing.event.DocumentEvent e) {
         validateEmail();
     }
@@ -41,6 +50,7 @@ public class FPassword extends javax.swing.JFrame {
      
     //for validate email
     private void validateEmail() {
+<<<<<<< HEAD
     String input = emailaddress.getText().trim();
     boolean isValid = input.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
 
@@ -49,6 +59,16 @@ public class FPassword extends javax.swing.JFrame {
          emailerrorLabel.setText("Invalid email format");
     } else {
         emailaddress.setForeground(Color.BLACK);
+=======
+    String input = email.getText().trim();
+    boolean isValid = input.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
+
+    if (!isValid) {
+        email.setForeground(Color.RED);
+         emailerrorLabel.setText("Invalid email format");
+    } else {
+        email.setForeground(Color.BLACK);
+>>>>>>> signup
          emailerrorLabel.setText("");
     }
 }
@@ -65,7 +85,11 @@ public class FPassword extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+<<<<<<< HEAD
         emailaddress = new javax.swing.JTextField();
+=======
+        email = new javax.swing.JTextField();
+>>>>>>> signup
         GET_OTP = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
@@ -84,6 +108,7 @@ public class FPassword extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(29, 61, 130));
         jLabel3.setText("No worries, we are here !");
 
+<<<<<<< HEAD
         emailaddress.setBackground(new java.awt.Color(252, 251, 244));
         emailaddress.setText("Enter your Email address");
         emailaddress.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -97,6 +122,21 @@ public class FPassword extends javax.swing.JFrame {
         emailaddress.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 emailaddressActionPerformed(evt);
+=======
+        email.setBackground(new java.awt.Color(252, 251, 244));
+        email.setText("Enter your Email address");
+        email.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                emailFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                emailFocusLost(evt);
+            }
+        });
+        email.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                emailActionPerformed(evt);
+>>>>>>> signup
             }
         });
 
@@ -114,9 +154,20 @@ public class FPassword extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(29, 61, 130));
         jLabel4.setText("Able to reacall ?");
 
+<<<<<<< HEAD
         jLabel5.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(29, 61, 130));
         jLabel5.setText("Sign In");
+=======
+        jLabel5.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(29, 61, 130));
+        jLabel5.setText("<html><u>Sign in</html></u>");
+        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel5MouseClicked(evt);
+            }
+        });
+>>>>>>> signup
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -129,13 +180,21 @@ public class FPassword extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
+<<<<<<< HEAD
                             .addComponent(emailaddress, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+=======
+                            .addComponent(email, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+>>>>>>> signup
                             .addComponent(GET_OTP, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(126, 126, 126)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+<<<<<<< HEAD
                         .addComponent(jLabel5)))
+=======
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+>>>>>>> signup
                 .addContainerGap(67, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -146,14 +205,23 @@ public class FPassword extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addGap(23, 23, 23)
+<<<<<<< HEAD
                 .addComponent(emailaddress, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+=======
+                .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+>>>>>>> signup
                 .addGap(18, 18, 18)
                 .addComponent(GET_OTP, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
+<<<<<<< HEAD
                     .addComponent(jLabel5))
                 .addContainerGap(202, Short.MAX_VALUE))
+=======
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(201, Short.MAX_VALUE))
+>>>>>>> signup
         );
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/fpass_1.png"))); // NOI18N
@@ -190,6 +258,7 @@ public class FPassword extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+<<<<<<< HEAD
     private void emailaddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailaddressActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_emailaddressActionPerformed
@@ -218,6 +287,65 @@ if (emailaddress.getText().trim().equals("")) {
     JOptionPane.showMessageDialog(this, result);        // TODO add your handling code here:
     }//GEN-LAST:event_GET_OTPActionPerformed
 
+=======
+    private void emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailActionPerformed
+
+    }//GEN-LAST:event_emailActionPerformed
+
+    private void emailFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_emailFocusGained
+if (email.getText().trim().equals("Enter your Email address")) {
+        email.setText("");
+        email.setForeground(Color.BLACK);
+       }         // TODO add your handling code here:
+        
+    }//GEN-LAST:event_emailFocusGained
+
+    private void emailFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_emailFocusLost
+if (email.getText().trim().equals("")) {
+        email.setText("Enter your Email address");
+        email.setForeground(Color.GRAY);
+    }         // TODO add your handling code here:
+      
+    }//GEN-LAST:event_emailFocusLost
+
+    private void GET_OTPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GET_OTPActionPerformed
+    String email_address = email.getText().trim();
+    String purpose = "forgotpassword";
+    Boolean isverified = false;
+
+    Fpasswordcontroller controller = new Fpasswordcontroller();
+    String result = controller.register(email_address);
+    
+    if (result == null) {
+        String temp_result = EmailSender.Emailsend(email_address, purpose, isverified);
+        JOptionPane.showMessageDialog(this, temp_result);
+    
+    // Create an instance of the other JFrame window
+    OTPs otpWindow = new OTPs("forgetpassword");
+
+    // Show the other window
+    otpWindow.setVisible(true);
+
+    // Optionally, close the current window
+    this.dispose();}// TODO add your handling code here:
+    else{
+    JOptionPane.showMessageDialog(this, result);
+    
+    }
+    }//GEN-LAST:event_GET_OTPActionPerformed
+
+    private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
+    Signin signinwindow = new Signin();
+
+    // Show the other window
+    signinwindow.setVisible(true);
+
+    // Optionally, close the current window
+    this.dispose();    // TODO add your handling code here:
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel5MouseClicked
+
+>>>>>>> signup
     /**
      * @param args the command line arguments
      */
@@ -258,7 +386,11 @@ if (emailaddress.getText().trim().equals("")) {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton GET_OTP;
+<<<<<<< HEAD
     private javax.swing.JTextField emailaddress;
+=======
+    private javax.swing.JTextField email;
+>>>>>>> signup
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -267,4 +399,14 @@ if (emailaddress.getText().trim().equals("")) {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
+<<<<<<< HEAD
 }
+=======
+
+//    public AddUserListener(ActionListener listener){
+//        GET_OTP.addActionListener(listener);
+//    }
+}
+
+
+>>>>>>> signup

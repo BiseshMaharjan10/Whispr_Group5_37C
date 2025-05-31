@@ -1,10 +1,15 @@
-package Dao;
+
+ package Dao;
+
 
 import Database.MySqlConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import Model.UserModel;
+
+import Model.SigninModel;
+
 
 
 public class UserDAO {
@@ -28,6 +33,8 @@ public class UserDAO {
     }
 
 
+//for registring new users
+
     public boolean registerUser(UserModel user) {
         Connection conn = db.openConnection();
         try {
@@ -36,8 +43,9 @@ public class UserDAO {
             ps.setString(1, user.getFirstname());
             ps.setString(2, user.getLastname());
             ps.setString(3, user.getPassword());
-            ps.setString(5, user.getEmail());
             ps.setBoolean(4, user.isVerified());
+            ps.setString(5, user.getEmail());
+
             
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
@@ -48,5 +56,48 @@ public class UserDAO {
             db.closeConnection(conn);
         }
     }
+
+    
+    
+    
+    //for updating password
+    public boolean UpdatePassword(String email, String newPassword) {
+        Connection conn = db.openConnection();
+        try {
+            String sql = "UPDATE users SET password = ? WHERE email = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, newPassword); // New password
+            ps.setString(2, email);       // Email of the user
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            System.out.println("Password update error: " + e);
+            return false;
+        } finally {
+            db.closeConnection(conn);
+        }
+    }
+    
+    
+        // For login purposes
+        public boolean Logincredentials(String email, String password) {
+            Connection conn = db.openConnection();
+            try {
+                String sql = "SELECT * FROM users WHERE email = ? AND password = ?";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setString(1, email);
+                ps.setString(2, password);
+
+                ResultSet rs = ps.executeQuery();
+                return rs.next(); // returns true if a record is found
+            } catch (Exception e) {
+                System.out.println("Sign in error: " + e);
+                return false;
+            } finally {
+                db.closeConnection(conn);
+            }
+        }
+
 }
     

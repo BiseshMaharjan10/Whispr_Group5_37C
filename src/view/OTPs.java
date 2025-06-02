@@ -1,9 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package view;
 
+import Controller.Backend;
 import Controller.SignUPController;
 import Controller.Fpasswordcontroller;
 import java.awt.Color;
@@ -11,6 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import utils.EmailSender;
 import Dao.otpDAO;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -21,7 +21,12 @@ public class OTPs extends javax.swing.JFrame {
 
     public OTPs(String purpose) {
         initComponents();
+        
+         startCountdownAsync();
+
         this.purpose = purpose;
+        
+       
     }
 
     /**
@@ -30,10 +35,16 @@ public class OTPs extends javax.swing.JFrame {
     public OTPs() {
         initComponents();
         
-    }public interface OTPAction {
+       
+        
+    }
+
+
+    
+    public interface OTPAction {
     void onValidOTP(JFrame currentFrame);
 }
-    
+     
     
     //to redirect to sigin
     public class SignupOTPAction implements OTPAction {
@@ -55,6 +66,54 @@ public class OTPs extends javax.swing.JFrame {
         currentFrame.dispose();
     }
 }
+    
+
+    
+    
+        // Method to start the countdown
+            public void startCountdownAsync() {
+        new Thread(() -> {
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                System.out.println("Initial delay interrupted.");
+                return;
+            }
+
+            for (int i = 120; i >= 0; i--) {
+                int minutes = i / 60;
+                int seconds = i % 60;
+
+                SwingUtilities.invokeLater(() -> {
+                    System.out.println("Countdown reached.");
+                    timer.setText(String.format("%02d:%02d", minutes, seconds));
+                    otpwillexpire.setText(String.format("OTP will Expire  in "));
+                });
+
+                try {
+                    Thread.sleep(1000); 
+                } catch (InterruptedException e) {
+                    System.out.println("Countdown interrupted.");
+                    break;
+                }
+
+                if (i == 0 ) {
+                    otpDAO deletedotp = new otpDAO();
+                    boolean success = deletedotp.deleteUnverifiedOtps();
+                    SwingUtilities.invokeLater(() -> {
+                            otpexpire.setText(String.format("OTP Expired"));
+                            timer.setText(String.format(""));
+                            otpwillexpire.setText(String.format(""));
+                    });
+                }
+            }
+        }).start();
+    }
+        
+                    
+            
+
+
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -65,6 +124,9 @@ public class OTPs extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         enterotp = new javax.swing.JTextField();
         confirm = new javax.swing.JButton();
+        otpwillexpire = new javax.swing.JLabel();
+        timer = new javax.swing.JLabel();
+        otpexpire = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
 
@@ -106,10 +168,19 @@ public class OTPs extends javax.swing.JFrame {
             }
         });
 
+        otpwillexpire.setFont(new java.awt.Font("Al Bayan", 0, 12)); // NOI18N
+        otpwillexpire.setForeground(new java.awt.Color(29, 61, 130));
+
+        timer.setFont(new java.awt.Font("Al Bayan", 1, 12)); // NOI18N
+        timer.setForeground(new java.awt.Color(142, 142, 142));
+
+        otpexpire.setFont(new java.awt.Font("Bangla Sangam MN", 1, 12)); // NOI18N
+        otpexpire.setForeground(new java.awt.Color(255, 0, 0));
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap(64, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -121,6 +192,17 @@ public class OTPs extends javax.swing.JFrame {
                             .addComponent(confirm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(otpwillexpire)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(timer, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(105, 105, 105))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(otpexpire, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(135, 135, 135))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -133,7 +215,13 @@ public class OTPs extends javax.swing.JFrame {
                 .addComponent(enterotp, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(23, 23, 23)
                 .addComponent(confirm, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(5, 5, 5)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(otpwillexpire, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(timer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addComponent(otpexpire, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(127, 127, 127))
         );
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -154,7 +242,7 @@ public class OTPs extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(38, 38, 38)
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 477, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE)
                 .addGap(36, 36, 36))
         );
 
@@ -181,8 +269,7 @@ public class OTPs extends javax.swing.JFrame {
     }//GEN-LAST:event_enterotpActionPerformed
 
     private void confirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmActionPerformed
- 
-        Boolean verified = false;
+            Boolean verified = false;
         
         
         
@@ -219,8 +306,9 @@ public class OTPs extends javax.swing.JFrame {
         action = new OTPAction() {
             @Override
             public void onValidOTP(JFrame currentFrame) {
-                Signin signinFrame = new Signin();
-                signinFrame.setVisible(true);
+                
+                Signup signup = new Signup();
+                signup.setVisible(true);
                 currentFrame.dispose();
             }
         }; 
@@ -240,6 +328,9 @@ public class OTPs extends javax.swing.JFrame {
     action.onValidOTP(this); 
  } 
     }
+    
+    
+    
 // TODO add your handling code here:
     }//GEN-LAST:event_confirmActionPerformed
 
@@ -286,9 +377,11 @@ public class OTPs extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                
                 new OTPs().setVisible(true);
             }
         });
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -299,5 +392,8 @@ public class OTPs extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel otpexpire;
+    private javax.swing.JLabel otpwillexpire;
+    private javax.swing.JLabel timer;
     // End of variables declaration//GEN-END:variables
 }

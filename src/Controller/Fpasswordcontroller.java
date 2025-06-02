@@ -110,6 +110,9 @@ public class Fpasswordcontroller {
         return status ? "Rest password Successful" : "Can't reset the password";
     }
    }
+    
+    
+    
 }
 
 

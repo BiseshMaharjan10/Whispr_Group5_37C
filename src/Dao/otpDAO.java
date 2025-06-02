@@ -78,6 +78,23 @@ public class otpDAO {
         db.closeConnection(conn);
     }
 }
+    
+    
+    public boolean deleteUnverifiedOtps() {
+    Connection conn = db.openConnection();
+    try {
+        String sql = "DELETE FROM otps WHERE is_verified = FALSE";
+        PreparedStatement ps = conn.prepareStatement(sql);
+
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected > 0; // returns true if any rows were deleted
+    } catch (Exception e) {
+        System.out.println("Deletion error: " + e);
+        return false;
+    } finally {
+        db.closeConnection(conn);
+    }
+}
 
 
 }

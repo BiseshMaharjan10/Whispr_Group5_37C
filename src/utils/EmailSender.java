@@ -15,6 +15,8 @@ import java.util.concurrent.*;
 import Model.OTPModel;
 import java.time.LocalDateTime;
 import Controller.Fpasswordcontroller;
+import javax.swing.JLabel;
+import view.OTPs;
 
 
 public class EmailSender {
@@ -105,7 +107,7 @@ public static String Emailsend(String email, String purpose, boolean verified) {
     String subject = "Verify Your Account";
     if(purpose.equals("signup")){
     body = "<h3>Your OTP is: " + otp + "</h3>"
-                + "<p>This message was sent to verify your account while signing you up.</p>";
+                + "<p>This message was sent to verify your account while signing you up</p>";
     }else{
     body = "<h3>Your OTP is: " + otp + "</h3>"
                 + "<p>This message was sent to verify your account coz you dumba** forgot your fcking password.</p>";
@@ -113,8 +115,6 @@ public static String Emailsend(String email, String purpose, boolean verified) {
     // Send the email
     sendEmail(email, subject, body);
 
-    // Start countdown
-    startCountdownAsync(120);
 
     return "OTP sent to: " + email;
 }

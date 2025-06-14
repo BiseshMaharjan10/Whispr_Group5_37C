@@ -1,11 +1,13 @@
  package Dao;
 
 import Database.MySqlConnection;
+import Model.Message;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import Model.UserModel;
 import Model.SigninModel;
+import java.util.List;
 
 
 
@@ -92,5 +94,9 @@ public class UserDAO {
                 db.closeConnection(conn);
             }
         }
+
+    public List<Message> getAllUsers() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
     

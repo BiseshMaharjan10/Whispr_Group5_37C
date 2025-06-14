@@ -307,8 +307,8 @@ public class OTPs extends javax.swing.JFrame {
             @Override
             public void onValidOTP(JFrame currentFrame) {
                 
-                Signup signup = new Signup();
-                signup.setVisible(true);
+                Signin signin = new Signin();
+                signin.setVisible(true);
                 currentFrame.dispose();
             }
         }; 

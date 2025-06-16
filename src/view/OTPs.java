@@ -1,7 +1,6 @@
 
 package view;
 
-import Controller.Backend;
 import Controller.SignUPController;
 import Controller.Fpasswordcontroller;
 import java.awt.Color;

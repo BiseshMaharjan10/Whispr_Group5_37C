@@ -17,14 +17,12 @@ public class MySqlConnection implements Database {
 
         try {
             // Replace these with your actual FreeSQLDatabase credentials
-            String username = "sql12782163"; 
-            String password = "Ksjf21FHMk"; 
-            String database = "sql12782163"; 
-            String host = "sql12.freesqldatabase.com"; 
-            String port = "3306";
+            String username = "root"; 
+            String password = "new_password"; 
+            String database = "whispr"; 
 
             Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://" + host + ":" + port + "/" + database, username, password
+                "jdbc:mysql://127.0.0.1:3306/" + database, username, password
             );
 
             if (connection == null) {

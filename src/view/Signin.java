@@ -342,9 +342,12 @@ setpassword.setEchoChar((char) 0);  // show as plain text initially
         String email = emailaddress.getText().trim();
         String password = String.valueOf(setpassword.getPassword());
 
-        SigninController controller = new SigninController();
+        SigninController controller = new SigninController(this);
         String result = controller.loginUser(email, password);
+        
+        if(result != null){
         JOptionPane.showMessageDialog(this, result);
+        }
 
     }//GEN-LAST:event_signinActionPerformed
 

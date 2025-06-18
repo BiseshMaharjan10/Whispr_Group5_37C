@@ -3,6 +3,7 @@ package Controller;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import Model.Message;
 
 public class ClientHandler implements Runnable {
 
@@ -20,7 +21,11 @@ public class ClientHandler implements Runnable {
 
             this.clientUsername = (String) in.readObject(); // receive username
             clientHandlers.add(this);
-            broadcastMessage("SERVER: " + clientUsername + " has entered the chat!");
+            Message joinMsg = new Message();
+            joinMsg.setSender("SERVER");
+            joinMsg.setMessage(clientUsername + " has entered the chat!");
+            broadcastMessage(joinMsg);
+            sendOnlineUsers();
         } catch (IOException | ClassNotFoundException e) {
             closeEverything(socket, in, out);
         }
@@ -31,18 +36,15 @@ public class ClientHandler implements Runnable {
     public void run() {
         while (socket.isConnected()) {
             try {
-                String messageFromClient = (String) in.readObject();
+                Object obj = in.readObject();
 
-                if (messageFromClient.startsWith("TO::")) {
-                    String[] parts = messageFromClient.split("::", 3);
-                    if (parts.length == 3) {
-                        String recipient = parts[1];
-                        String message = parts[2];
-                        sendPrivateMessage(recipient, message);
-                    }
-                } else {
-                    broadcastMessage(clientUsername + ": " + messageFromClient);
+                if (obj instanceof Message) {
+                    Message msg = (Message) obj;
+
+                    // Broadcast to others or handle private messaging if needed
+                    broadcastMessage(msg);
                 }
+
             } catch (IOException | ClassNotFoundException e) {
                 closeEverything(socket, in, out);
                 break;
@@ -51,7 +53,7 @@ public class ClientHandler implements Runnable {
     }
     
 
-    public void broadcastMessage(String messageToSend) {
+    public void broadcastMessage(Message messageToSend) {
         for (ClientHandler clientHandler : clientHandlers) {
             try {
                 if (!clientHandler.clientUsername.equals(clientUsername)) {
@@ -69,12 +71,20 @@ public class ClientHandler implements Runnable {
             if (in != null) in.close();
             if (out != null) out.close();
             if (socket != null) socket.close();
+          
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         clientHandlers.remove(this);
-        broadcastMessage("SERVER: " + clientUsername + " has left the chat.");
+        Message joinMsg = new Message();
+        joinMsg.setSender("SERVER");
+        joinMsg.setMessage(clientUsername + " left the chat!");
+        broadcastMessage(joinMsg);
+        
+        
+        
+          sendOnlineUsers();
     }
     
     
@@ -92,4 +102,23 @@ public class ClientHandler implements Runnable {
         }
     }
 }
+    
+    public void sendOnlineUsers() {
+        ArrayList<String> onlineUsernames = new ArrayList<>();
+        for (ClientHandler handler : clientHandlers) {
+            onlineUsernames.add(handler.clientUsername);
+        }
+
+        for (ClientHandler handler : clientHandlers) {
+            try {
+                Message userListMsg = new Message();
+                userListMsg.setSender("SERVER");
+                userListMsg.setMessage("" + String.join(",", onlineUsernames));
+                handler.out.writeObject(userListMsg);
+                handler.out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

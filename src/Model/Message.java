@@ -1,16 +1,38 @@
 package Model;
 
-public class Message {
+import java.io.Serializable;
+
+public class Message implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private int id;
     private String firstName;
     private String lastName;
+    private String sender;
+    private String message;
 
     public Message() {}
 
-    public Message(int id, String firstName, String lastName) {
+    public Message(int id, String firstName, String lastName, String sender, String message) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.sender = sender;
+        this.message = message;
+    }
+        // New constructor for sender, recipient(full name), and message text
+    public Message(String sender, String recipient, String message) {
+        this.sender = sender;
+        String[] names = recipient.split(" ", 2);
+        if (names.length == 2) {
+            this.firstName = names[0];
+            this.lastName = names[1];
+        } else {
+            this.firstName = recipient;
+            this.lastName = "";
+        }
+        this.message = message;
     }
 
     // Getters
@@ -26,6 +48,14 @@ public class Message {
         return lastName;
     }
 
+    public String getSender() {
+        return sender;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
     // Setters
     public void setId(int id) {
         this.id = id;
@@ -39,13 +69,24 @@ public class Message {
         this.lastName = lastName;
     }
 
-    // Optional: Full name
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    // Convenience method for full name
     public String getFullName() {
         return firstName + " " + lastName;
     }
 
     @Override
     public String toString() {
-        return getFullName(); // for displaying in JList
+        // For example: "John Doe: Hello!"
+        return getFullName() + ": " + message;
     }
+
+
 }

@@ -73,8 +73,6 @@ public class Fpasswordcontroller {
                 Boolean after_otp_update = temp_verification.updateIsVerified(temp_vv,isVerified);
                 
                 return "Here we go";
-                
-
 
             } else {
                 return "Invalid OTP";

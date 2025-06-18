@@ -98,6 +98,74 @@ public class UserDAO {
                 db.closeConnection(conn);
             }
         }
+        
+        public String Checknames(String email) {
+            Connection conn = db.openConnection();
+            String fullName = null;
+
+            try {
+                String sql = "SELECT first_name, last_name FROM users WHERE email = ?";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setString(1, email);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+                    String firstName = rs.getString("first_name");
+                    String lastName = rs.getString("last_name");
+                    fullName = firstName + " " + lastName;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                db.closeConnection(conn);
+            }
+
+            return fullName != null ? fullName : email; // return full name or email if not found
+        }
+        
+        
+        
+        //updating the value of verified users 
+        public boolean verifyAndCleanupUsers() {
+            Connection conn = db.openConnection();
+            boolean success = false;
+
+            try {
+                conn.setAutoCommit(false); // Begin transaction
+
+                // Step 1: Update verified users
+                String updateSql = "UPDATE users u "
+                        + "JOIN otps o ON u.email = o.email "
+                        + "SET u.is_verified = 1";
+                try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+                    updateStmt.executeUpdate();
+                }
+
+                // Step 2: Delete unverified users
+                String deleteSql = "DELETE FROM users WHERE is_verified = 0";
+                try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
+                    deleteStmt.executeUpdate();
+                }
+
+                conn.commit(); // Commit if both succeed
+                success = true;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                try {
+                    if (conn != null) {
+                        conn.rollback();
+                    }
+                } catch (Exception rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            } finally {
+                db.closeConnection(conn);
+            }
+
+            return success;
+        }
+
 
 }
     

@@ -1,4 +1,3 @@
-
 package view;
 
 import Controller.SignUPController;
@@ -10,6 +9,7 @@ import utils.EmailSender;
 import Dao.otpDAO;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+import Dao.UserDAO;
 
 /**
  *
@@ -79,12 +79,12 @@ public class OTPs extends javax.swing.JFrame {
                 return;
             }
 
-            for (int i = 120; i >= 0; i--) {
+            for (int i = 180; i >= 0; i--) {
                 int minutes = i / 60;
                 int seconds = i % 60;
 
                 SwingUtilities.invokeLater(() -> {
-                    System.out.println("Countdown reached.");
+                    System.out.println("Counting every second");
                     timer.setText(String.format("%02d:%02d", minutes, seconds));
                     otpwillexpire.setText(String.format("OTP will Expire  in "));
                 });
@@ -99,6 +99,7 @@ public class OTPs extends javax.swing.JFrame {
                 if (i == 0 ) {
                     otpDAO deletedotp = new otpDAO();
                     boolean success = deletedotp.deleteUnverifiedOtps();
+                    
                     SwingUtilities.invokeLater(() -> {
                             otpexpire.setText(String.format("OTP Expired"));
                             timer.setText(String.format(""));
@@ -300,9 +301,16 @@ public class OTPs extends javax.swing.JFrame {
     //if otp fetched succesfully
     if (result2.equals("Here we go")) {
     OTPAction action;
+    JOptionPane.showMessageDialog(this,"OTP verified");
    
     if (purpose.equals("signup")) {
         action = new OTPAction() {
+            
+            //for updating the user otp
+        UserDAO verify_n_delete = new UserDAO();
+        boolean final_result = verify_n_delete.verifyAndCleanupUsers();
+        
+        
             @Override
             public void onValidOTP(JFrame currentFrame) {
                 

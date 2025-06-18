@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import Database.MySqlConnection;
 
-public class ChatClient {
+public class ChatClientDAO {
     private final MySqlConnection db = new MySqlConnection();
 
     public List<Message> getAllUsers() {

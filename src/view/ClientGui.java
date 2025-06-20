@@ -6,6 +6,8 @@ import java.util.List;
 import Controller.ChatController;
 import Dao.ChatClientDAO;
 import java.io.IOException;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 
 
@@ -18,6 +20,10 @@ public class ClientGui extends JFrame {
     private JPanel messagePanel;
     private JScrollPane messageScroll;
     private ChatController controller;
+    private JTextField searchField;
+    private JPanel searchPanel;
+    
+
 
     public ClientGui(String currentUserName) {
         setTitle("Whispr");
@@ -26,9 +32,33 @@ public class ClientGui extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         getContentPane().setBackground(Color.decode("#FCFBF4"));
+        
+        
+        // 🔍 Top Panel with Search
+        searchField = new JTextField(20);
+        searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.setVisible(false);
+        searchPanel.add(searchField);
+
+        JButton searchButton = new JButton("🔍");
+        searchButton.addActionListener(e -> {
+        boolean currentlyVisible = searchPanel.isVisible();
+        searchPanel.setVisible(!currentlyVisible);
+
+        // Optional: clear search field and reset messages when hiding
+        if (currentlyVisible) {
+            searchField.setText("");
+            controller.highlightMessages();
+            }
+        });
+        
 
         messageInput = new JTextField();
         contactList = new JList<>();
+        
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        topPanel.add(searchPanel);
+        topPanel.add(searchButton);
         
         //for bottom part
         messagePanel = new JPanel();
@@ -36,7 +66,26 @@ public class ClientGui extends JFrame {
         messagePanel.setBackground(Color.WHITE);
         messageScroll = new JScrollPane(messagePanel);
         messageScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        add(messageScroll, BorderLayout.CENTER);
+        JPanel messageArea = new JPanel(new BorderLayout());
+        messageArea.add(topPanel, BorderLayout.NORTH);
+        messageArea.add(messageScroll, BorderLayout.CENTER);
+
+        
+         //  Real-time search listener
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) {
+                controller.highlightMessages();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                controller.highlightMessages();
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+                controller.highlightMessages();
+            }
+        });
+
         
         
         
@@ -52,6 +101,7 @@ public class ClientGui extends JFrame {
         sendButton = new JButton("Send");
         sendButton.setFont(new Font("Arial", Font.PLAIN, 18));
         sendButton.setPreferredSize(new Dimension(100, 40));
+        
 
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.add(messageInput, BorderLayout.CENTER);
@@ -69,7 +119,7 @@ public class ClientGui extends JFrame {
 
         // Contacts
         ChatClientDAO dao = new ChatClientDAO();
-        controller = new ChatController(dao, contactList, messageInput, messagePanel, messageScroll,currentUserName);
+        controller = new ChatController(dao, contactList, messageInput, messagePanel, messageScroll,currentUserName, searchField, bottompanel);
 
         List<String> contactNames = controller.getAllUserFullNames();
         contactList.setListData(contactNames.toArray(new String[0]));
@@ -78,8 +128,11 @@ public class ClientGui extends JFrame {
 
         JScrollPane contactScroll = new JScrollPane(contactList);
         contactScroll.setPreferredSize(new Dimension(150, 0));
-        add(contactScroll, BorderLayout.WEST);
-
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, contactScroll, messageArea);
+        splitPane.setDividerLocation(150); // Width of left panel
+        splitPane.setDividerSize(1);       // Thin dividing line
+        splitPane.setEnabled(false);       // Make it non-draggable
+        add(splitPane, BorderLayout.CENTER);
         // Disable arrow navigation
         InputMap im = contactList.getInputMap(JComponent.WHEN_FOCUSED);
         im.put(KeyStroke.getKeyStroke("DOWN"), "none");

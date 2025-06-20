@@ -4,6 +4,9 @@ import Dao.ChatClientDAO;
 import Model.Message;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Rectangle;
+import java.awt.Component;
+
 
 
 import javax.swing.*;
@@ -22,14 +25,16 @@ public class ChatController implements ActionListener {
     private final JPanel messagePanel;
     private final JScrollPane messageScroll;
     private final Map<String, List<JLabel>> chatHistory;
-
+    private JTextField searchField; 
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private String currentUserName;
+    private JPanel bottompanel = new JPanel();
 
     public ChatController(ChatClientDAO userDAO, JList<String> contactList, JTextField messageInput,
-                          JPanel messagePanel, JScrollPane messageScroll, String currentUserName) {
+                          JPanel messagePanel, JScrollPane messageScroll, String currentUserName, JTextField searchField,
+                      JPanel bottompanel) {
         this.userDAO = userDAO;
         this.contactList = contactList;
         this.messageInput = messageInput;
@@ -37,6 +42,8 @@ public class ChatController implements ActionListener {
         this.messageScroll = messageScroll;
         this.chatHistory = new HashMap<>();
         this.currentUserName = currentUserName;
+        this.searchField = searchField;
+        this.bottompanel = bottompanel;
 
         initializeConnection();
     }
@@ -163,7 +170,60 @@ public class ChatController implements ActionListener {
             vertical.setValue(vertical.getMaximum());
         });
     }
+    
+    
 
+    public void highlightMessages() {
+        String keyword = searchField.getText();
+        String selectedContact = contactList.getSelectedValue();
+
+        if (selectedContact == null || keyword.isEmpty()) {
+            showMessages(selectedContact, messagePanel);  // Show normal messages
+            return;
+        }
+
+        java.util.List<JLabel> originalMessages = chatHistory.getOrDefault(selectedContact, new java.util.ArrayList<>());
+        messagePanel.removeAll();
+
+        boolean scrolled = false;
+
+        for (int i = originalMessages.size() - 1; i >= 0; i--) {
+            JLabel original = originalMessages.get(i);
+            String text = original.getText();
+            String plainText = text.replaceAll("<[^>]*>", ""); // remove HTML tags
+
+            JLabel label;
+            if (plainText.contains(keyword)) {
+                // Highlight keyword
+                String highlighted = plainText.replace(keyword, "<span style='background: yellow;'>" + keyword + "</span>");
+                label = new JLabel("<html><div style='padding: 8px; background: #DCF8C6; border-radius: 10px; max-width: 300px; text-align: right;'>"
+                        + highlighted + "</div></html>");
+
+                if (!scrolled) {
+                    final JLabel scrollTarget = original;
+                    SwingUtilities.invokeLater(() -> scrollTarget.scrollRectToVisible(new Rectangle(scrollTarget.getBounds())));
+                    scrolled = true;
+                }
+            } else {
+                label = new JLabel(text); // unmodified
+            }
+
+            label.setAlignmentX(Component.RIGHT_ALIGNMENT);
+            JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            wrapper.setOpaque(false);
+            wrapper.add(label);
+            messagePanel.add(wrapper);
+            messagePanel.add(Box.createVerticalStrut(5));
+        }
+        messagePanel.revalidate();
+        messagePanel.repaint();
+    }
+
+
+    
+    
+    
+    
     public void sendMessage(String from, String to, String messageText) {
         if (out != null) {
             try {

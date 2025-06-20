@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import Model.Message;
+import Dao.ChatClientDAO;
 
 public class ClientHandler implements Runnable {
 
@@ -71,8 +72,14 @@ public class ClientHandler implements Runnable {
     
     
     public void sendPrivateMessage(Message msg) {
+        
+        //fetch the first and last name from email
+        ChatClientDAO temp_obj = new ChatClientDAO();
+        String first_n_lastName = temp_obj.getFirstnLastName(msg.getReceiver());
+        
+        
         for (ClientHandler clientHandler : clientHandlers) {
-            if (clientHandler.clientUsername.equals(msg.getReceiver())) {
+            if (clientHandler.clientUsername.equals(first_n_lastName)) {
                 try {
                     clientHandler.out.writeObject(msg);
                     clientHandler.out.flush();
@@ -118,6 +125,7 @@ public class ClientHandler implements Runnable {
 
                 if (obj instanceof Message) {
                     Message msg = (Message) obj;
+                    
                     
                     System.out.println("\nDEBUG: Received message from: " + msg.getSender() + 
                    ", to: " + msg.getReceiver() + 

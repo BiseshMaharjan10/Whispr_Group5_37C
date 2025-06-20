@@ -21,7 +21,7 @@ public class Message implements Serializable {
         this.lastName = lastName;
         this.sender = sender;
         this.message = message;
-        this.receiver = firstName + " " + lastName;
+
     }
         // New constructor for sender, recipient(full name), and message text
     public Message(String sender, String receiver, String message) {
@@ -31,15 +31,15 @@ public class Message implements Serializable {
         
 
         
-        String[] names = receiver.split(" ", 2);
-        
-        if (names.length == 2) {
-            this.firstName = names[0];
-            this.lastName = names[1];
-        } else {
-            this.firstName = receiver;
-            this.lastName = "";
-        }
+//        String[] names = receiver.split(" ", 2);
+//        
+//        if (names.length == 2) {
+//            this.firstName = names[0];
+//            this.lastName = names[1];
+//        } else {
+//            this.firstName = receiver;
+//            this.lastName = "";
+//        }
 
     }
 

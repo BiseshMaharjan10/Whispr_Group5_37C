@@ -18,6 +18,7 @@ import java.time.LocalTime;
 import java.util.*;
 
 
+
 public class ChatController implements ActionListener {
     private final ChatClientDAO userDAO;
     private final JList<String> contactList;
@@ -137,8 +138,16 @@ public class ChatController implements ActionListener {
                 JScrollBar vertical = messageScroll.getVerticalScrollBar();
                 vertical.setValue(vertical.getMaximum());
             });
-
-            sendMessage(currentUserName, selectedContact, text);
+            
+            
+                String[] names = selectedContact.split(" ", 2);
+                String firstName = names[0];
+                String lastName = (names.length > 1) ? names[1] : "";
+                
+            ChatClientDAO temp_object = new ChatClientDAO();
+            String corresponding_email = temp_object.getEmail(firstName, lastName);
+            
+            sendMessage(currentUserName, corresponding_email, text);
         } else {
             JOptionPane.showMessageDialog(null, "Please select a contact and enter a message.", "Error", JOptionPane.WARNING_MESSAGE);
         }
@@ -222,14 +231,11 @@ public class ChatController implements ActionListener {
     public void sendMessage(String from, String to, String messageText) {
         if (out != null) {
             try {
-                String[] names = to.split(" ", 2);
-                String firstName = names[0];
-                String lastName = (names.length > 1) ? names[1] : "";
                 
-                Message message = new Message(0, firstName, lastName, from, messageText);
+                Message message = new Message(from, to, messageText);
                 out.writeObject(message);
                 out.flush();
-                System.out.println("Send na from " + from +" to " + to + ":" + messageText);
+                System.out.println("Sent " + from +" to " + to + ":" + messageText);
 
             } catch (IOException e) {
                 e.printStackTrace();

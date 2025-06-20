@@ -34,5 +34,52 @@ public class ChatClientDAO {
     
     
     
+    public String getEmail(String firstName, String lastName) {
+        Connection conn = db.openConnection();
+        try {
+            String sql = "SELECT email FROM users WHERE first_name=? and last_name = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, firstName);
+            ps.setString(2, lastName);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("email"); // return the found OTP code
+            } else {
+                return null; // OTP not found
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        } finally {
+            db.closeConnection(conn);
+        }
+    }
+    
+    
+    public String getFirstnLastName(String email) {
+        Connection conn = db.openConnection();
+        try {
+            String sql = "SELECT first_name, last_name FROM users WHERE email=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String firstName = rs.getString("first_name");
+                String lastName = rs.getString("last_name");
+                return firstName + " " + lastName;// return the found OTP code
+            } else {
+                return null; // OTP not found
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        } finally {
+            db.closeConnection(conn);
+        }
+    }
+    
+    
     
 }

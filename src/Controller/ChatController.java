@@ -219,18 +219,18 @@ public class ChatController implements ActionListener {
         messagePanel.repaint();
     }
 
-
-    
-    
-    
-    
     public void sendMessage(String from, String to, String messageText) {
         if (out != null) {
             try {
-                Message message = new Message(0, "", "", from, messageText);
+                String[] names = to.split(" ", 2);
+                String firstName = names[0];
+                String lastName = (names.length > 1) ? names[1] : "";
+                
+                Message message = new Message(0, firstName, lastName, from, messageText);
                 out.writeObject(message);
                 out.flush();
-                System.out.println("Sent from " + from + " to " + to + ": " + messageText);
+                System.out.println("Send na from " + from +" to " + to + ":" + messageText);
+
             } catch (IOException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Failed to send the message.", "Error", JOptionPane.ERROR_MESSAGE);

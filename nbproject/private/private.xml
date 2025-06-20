@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="2">
         <file>
-            <url>src/Controller/ChatController.java</url>
+            <url>src/utils/EmailSender.java</url>
             <bookmark id="1">
                 <name/>
-                <line>286</line>
+                <line>101</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/Model/Message.java</url>
+            <bookmark id="2">
+                <name/>
+                <line>0</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/Users/bibek/NetBeansProjects/Whispr_Group5_37C/src/Controller/ClientHandler.java</file>
+            <file>file:/Users/bibek/NetBeansProjects/Whispr_Group5_37C/src/Model/Message.java</file>
+            <file>file:/Users/bibek/NetBeansProjects/Whispr_Group5_37C/src/Controller/ChatController.java</file>
+            <file>file:/Users/bibek/NetBeansProjects/Whispr_Group5_37C/src/view/ClientGui.java</file>
+        </group>
     </open-files>
 </project-private>

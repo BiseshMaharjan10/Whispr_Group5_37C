@@ -32,25 +32,7 @@ public class ClientHandler implements Runnable {
     }
 
     
-    @Override
-    public void run() {
-        while (socket.isConnected()) {
-            try {
-                Object obj = in.readObject();
 
-                if (obj instanceof Message) {
-                    Message msg = (Message) obj;
-
-                    // Broadcast to others or handle private messaging if needed
-                    broadcastMessage(msg);
-                }
-
-            } catch (IOException | ClassNotFoundException e) {
-                closeEverything(socket, in, out);
-                break;
-            }
-        }
-    }
     
 
     public void broadcastMessage(Message messageToSend) {
@@ -88,20 +70,20 @@ public class ClientHandler implements Runnable {
     }
     
     
-    
-    public void sendPrivateMessage(String recipientUsername, String message) {
-    for (ClientHandler clientHandler : clientHandlers) {
-        if (clientHandler.clientUsername.equals(recipientUsername)) {
-            try {
-                clientHandler.out.writeObject(clientUsername + ": " + message);
-                clientHandler.out.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
+    public void sendPrivateMessage(Message msg) {
+        for (ClientHandler clientHandler : clientHandlers) {
+            if (clientHandler.clientUsername.equals(msg.getReceiver())) {
+                try {
+                    clientHandler.out.writeObject(msg);
+                    clientHandler.out.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             }
-            break;
         }
     }
-}
+    
     
     public void sendOnlineUsers() {
         ArrayList<String> onlineUsernames = new ArrayList<>();
@@ -121,4 +103,43 @@ public class ClientHandler implements Runnable {
             }
         }
     }
+    
+    
+    
+    
+    
+        @Override
+    public void run() {
+        while (socket.isConnected()) {
+            try {
+                Object obj = in.readObject();
+                
+
+
+                if (obj instanceof Message) {
+                    Message msg = (Message) obj;
+                    
+                    System.out.println("\nDEBUG: Received message from: " + msg.getSender() + 
+                   ", to: " + msg.getReceiver() + 
+                   ", message: " + msg.getMessage());
+
+                    if (msg.getReceiver() != null && !msg.getReceiver().trim().isEmpty()) {
+                        String a = msg.getReceiver();
+                         System.out.println("user found online : \"" + a + "\"");
+                        sendPrivateMessage(msg);
+                        
+                    } else {
+                        System.out.println("user not found sending message in group");
+                        broadcastMessage(msg); // Optional, for group message
+                    }
+                }
+
+            } catch (IOException | ClassNotFoundException e) {
+                closeEverything(socket, in, out);
+                break;
+            }
+        }
+    }
+    
+    
 }

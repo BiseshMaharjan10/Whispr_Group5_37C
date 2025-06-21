@@ -18,7 +18,7 @@ public class MySqlConnection implements Database {
         try {
             // Replace these with your actual FreeSQLDatabase credentials
             String username = "root"; 
-            String password = "1234"; 
+            String password = "Puni18rollno!"; 
             String database = "whispr"; 
 
             Connection connection = DriverManager.getConnection(

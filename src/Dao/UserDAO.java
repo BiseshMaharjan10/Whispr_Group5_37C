@@ -6,8 +6,10 @@ import Database.MySqlConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+ import java.sql.SQLException;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
 import Model.UserModel;
-
 import Model.SigninModel;
 
 
@@ -16,12 +18,13 @@ public class UserDAO {
     private final MySqlConnection db = new MySqlConnection();
     
 
-    public boolean isEmailExists(String email) {
+    public boolean isEmailExists(String email, String password) {
         Connection conn = db.openConnection();
-        try {
-            String sql = "SELECT * FROM users WHERE email=?";
+        String sql = "SELECT * FROM users WHERE email=? AND password=?";
+          try {   
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, email);
+            ps.setString(2,password);
             ResultSet rs = ps.executeQuery();
             return rs.next(); // email found
         } catch (Exception e) {
@@ -38,13 +41,14 @@ public class UserDAO {
     public boolean registerUser(UserModel user) {
         Connection conn = db.openConnection();
         try {
-            String sql = "INSERT INTO users (first_name, last_name, password, is_verified, email) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO users (first_name, last_name, password,confirmpassword ,is_verified, email) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, user.getFirstname());
             ps.setString(2, user.getLastname());
             ps.setString(3, user.getPassword());
-            ps.setBoolean(4, user.isVerified());
-            ps.setString(5, user.getEmail());
+            ps.setString(4, user.getConfirmpPassword());
+            ps.setBoolean(5, user.isVerified());
+            ps.setString(6, user.getEmail());
 
             
             int rowsAffected = ps.executeUpdate();

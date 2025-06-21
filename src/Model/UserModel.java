@@ -43,7 +43,10 @@ public class UserModel {
     public void setPassword(String password){
         this.password=password;
     }
-    public void confirmPassword(String confirmpassword){
+    public String getConfirmpPassword(){
+        return confirmpassword;
+    }
+    public void setConfirmPassword(String confirmpassword){
         this.confirmpassword=confirmpassword;
     }
     public Boolean isVerified(){

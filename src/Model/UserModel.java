@@ -11,13 +11,12 @@ public class UserModel {
     private String confirmpassword;
     private Boolean isverified;
    
-    public UserModel(String firstname,String lastname,String email,String password,String confirmpassword, Boolean isverified){
+    public UserModel(String firstname,String lastname,String email,String password,String confirmpassword){
      this.firstname = firstname;
     this.lastname = lastname;
     this.email = email;
     this.password = password;
     this.confirmpassword = confirmpassword;
-    this.isverified = isverified;
     }
      public String getFirstname(){
         return firstname;
@@ -48,12 +47,6 @@ public class UserModel {
     }
     public void setConfirmPassword(String confirmpassword){
         this.confirmpassword=confirmpassword;
-    }
-    public Boolean isVerified(){
-        return isverified;
-    }
-    public void setisVerified(Boolean isverified){
-        this.isverified=isverified;
     }
     public int getId(){
         return id;

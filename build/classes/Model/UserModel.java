@@ -1,6 +1,10 @@
 
 package Model;
 
+/**
+ *
+ * @author bibek
+ */
 public class UserModel {
     private int id;
    

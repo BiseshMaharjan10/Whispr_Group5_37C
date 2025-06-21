@@ -2,43 +2,9 @@ package Controller;
 
 import Dao.UserDAO;
 import Model.UserModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import view.Signup;
 
 public class SignUPController {
-    private final UserDAO userDAO = new UserDAO();
-    private final Signup userView;
-    
-    public SignUPController(Signup userView){
-        this.userView=userView;
-//        userView.addAddUserListener(new AddUserListener());
-//        userView.addLoginListener(new LoginListener());
-    }
-    public void open(){
-        this.userView.setVisible(true);
-    }
-    public void close(){
-        this.userView.dispose();
-    }
-//    class AddUserListener implements ActionListener {
-//
-//        @Override
-//        public void actionPerformed(ActionEvent e) {
-//            try{
-//                String firstname=userView.getFirstName().getText();
-//                String lastname=userView.getLastName().getText();
-//                String email=userView.getEmailField().getText();
-//                String password=userView.getPasswordField().getText();
-//                String isverified=userView.getConfrimPassword().getText();
-//                
-//                UserDAO user=new UserDAO(firstname,lastname,email,password,isverified);
-//            }catch(Exception ex){
-//        }
-//        
-//    }
-  
-//    }
+    private UserDAO userDAO = new UserDAO();
 
     public String registerUser(String firstname,String lastname,String email,String password, String confirmPassword) {
  

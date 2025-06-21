@@ -8,7 +8,9 @@ public class Whispr_project {
 
   
     public static void main(String[] args) {
-       
+       Signup signupForm = new Signup();
+       SignUPController signupController = new SignUPController(signupForm);
+       signupController.open();
     }
     
 }

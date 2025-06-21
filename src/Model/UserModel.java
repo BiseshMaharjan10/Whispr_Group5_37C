@@ -8,13 +8,15 @@ public class UserModel {
     private String lastname;
      private String email;
     private String password;
+    private String confirmpassword;
     private Boolean isverified;
    
-    public UserModel(String firstname,String lastname,String email,String password, Boolean isverified){
+    public UserModel(String firstname,String lastname,String email,String password,String confirmpassword, Boolean isverified){
      this.firstname = firstname;
     this.lastname = lastname;
     this.email = email;
     this.password = password;
+    this.confirmpassword = confirmpassword;
     this.isverified = isverified;
     }
      public String getFirstname(){
@@ -32,25 +34,28 @@ public class UserModel {
     public String getEmail(){
         return email;
     }
-        public void setEmail(String email){
+    public void setEmail(String email){
         this.email=email;
     }
-            public String getPassword(){
+    public String getPassword(){
         return password;
     }
-        public void setPassword(String password){
+    public void setPassword(String password){
         this.password=password;
     }
-        public Boolean isVerified(){
+    public void confirmPassword(String confirmpassword){
+        this.confirmpassword=confirmpassword;
+    }
+    public Boolean isVerified(){
         return isverified;
     }
-        public void setisVerified(Boolean isverified){
+    public void setisVerified(Boolean isverified){
         this.isverified=isverified;
     }
-        public int getId(){
+    public int getId(){
         return id;
     }
-        public void setId(Integer id){
+    public void setId(Integer id){
         this.id= id;
         }
 }

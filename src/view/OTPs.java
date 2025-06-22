@@ -11,6 +11,7 @@ import Dao.otpDAO;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import Dao.UserDAO;
+import java.awt.event.ActionListener;
 
 /**
  *
@@ -31,6 +32,7 @@ public class OTPs extends javax.swing.JFrame {
         
        
     }
+    
 
     /**
      * Creates new form OTPs
@@ -252,25 +254,10 @@ public class OTPs extends javax.swing.JFrame {
     }//GEN-LAST:event_enterotpActionPerformed
 
     private void confirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmActionPerformed
-            Boolean verified = false;
-        
-        
-        
-        String user_entered_otp_str = enterotp.getText().trim();
-
-    if (user_entered_otp_str.isEmpty() || user_entered_otp_str.equals("Enter OTP here")) {
-        JOptionPane.showMessageDialog(this, "OTP field cannot be empty");
-        return;
-    }
-
-    int user_entered_otp;
-    try {
-        user_entered_otp = Integer.parseInt(user_entered_otp_str);
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "OTP must be a number.");
-        return;
-    }   
-// TODO add your handling code here:
+            // TODO add your handling code here:
+            OtpController Otp = new OtpController();
+            boolean check = Otp.confirm();
+        System.out.println(check);
     }//GEN-LAST:event_confirmActionPerformed
 
     private void enterotpFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_enterotpFocusGained
@@ -335,4 +322,14 @@ public class OTPs extends javax.swing.JFrame {
     private javax.swing.JLabel otpwillexpire;
     private javax.swing.JLabel timer;
     // End of variables declaration//GEN-END:variables
+    
+    public void addConfirmListener(ActionListener listener){
+      confirm.addActionListener(listener);      
+    }
+    
+    public javax.swing.JTextField getotp(){
+        return enterotp;
+    }
+    
+    
 }

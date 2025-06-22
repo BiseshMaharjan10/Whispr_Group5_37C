@@ -33,7 +33,7 @@ public class Fpasswordcontroller {
         }
         
         // Check if email already exists in the database
-        else if (!userDAO.isEmailExists(email)) {
+        else if (!userDAO.CheckUser(email)) {
             return "Email doesn't exist";
         }
 

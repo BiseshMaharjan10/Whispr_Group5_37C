@@ -23,6 +23,8 @@ import view.Signin;
 
 public class OtpController {
     
+    private OTPs otp;
+    
         //to redirect to sigin
     public class SignupOTPAction implements OTPs.OTPAction {
     @Override
@@ -94,6 +96,27 @@ public class OtpController {
             }
         };
     }
-}   
     
+    public boolean confirm(){
+        Boolean verified = false;
+        
+        
+        String user_entered_otp_str = otp.getotp().getText().trim();
+
+        if (user_entered_otp_str.isEmpty() || user_entered_otp_str.equals("Enter OTP here")) {
+            JOptionPane.showMessageDialog(otp, "OTP field cannot be empty");
+            return false;
+        }
+
+        int user_entered_otp;
+        try {
+            user_entered_otp = Integer.parseInt(user_entered_otp_str);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(otp, "OTP must be a number.");
+            return false;
+        }   
+        return false;
+    }
+}   
+ 
 

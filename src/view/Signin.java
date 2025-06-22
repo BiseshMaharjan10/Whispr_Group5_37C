@@ -39,12 +39,15 @@ setpassword.setEchoChar((char) 0);  // show as plain text initially
  emailerrorLabel.setText(""); // Empty at first
 
         emailaddress.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+    @Override
     public void insertUpdate(javax.swing.event.DocumentEvent e) {
         validateEmail();
     }
+    @Override
     public void removeUpdate(javax.swing.event.DocumentEvent e) {
         validateEmail();
     }
+    @Override
     public void changedUpdate(javax.swing.event.DocumentEvent e) {
         validateEmail();
     }

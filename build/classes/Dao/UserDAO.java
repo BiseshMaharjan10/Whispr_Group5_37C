@@ -6,10 +6,8 @@ import Database.MySqlConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
- import java.sql.SQLException;
- import java.util.logging.Level;
- import java.util.logging.Logger;
 import Model.UserModel;
+
 import Model.SigninModel;
 
 
@@ -18,18 +16,34 @@ public class UserDAO {
     private final MySqlConnection db = new MySqlConnection();
     
 
+    public boolean isEmailExists(String email) {
+        Connection conn = db.openConnection();
+        try {
+            String sql = "SELECT * FROM users WHERE email=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            return rs.next(); // email found
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        } finally {
+            db.closeConnection(conn);
+        }
+    }
+
 
 //for registring new users
 
     public boolean registerUser(UserModel user) {
         Connection conn = db.openConnection();
         try {
-            String sql = "INSERT INTO users (first_name, last_name, password,confirmpassword ,email) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO users (first_name, last_name, password, is_verified, email) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, user.getFirstname());
             ps.setString(2, user.getLastname());
             ps.setString(3, user.getPassword());
-            ps.setString(4, user.getConfirmpPassword());
+            ps.setBoolean(4, user.isVerified());
             ps.setString(5, user.getEmail());
 
             
@@ -42,25 +56,10 @@ public class UserDAO {
             db.closeConnection(conn);
         }
     }
-    
-    // for check existing Email
-     public boolean CheckUser(String user) {
-        Connection conn = db.openConnection();
-        String sql = "SELECT * FROM users WHERE email=?";
-          try {   
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, user);
-            ResultSet rs = ps.executeQuery();
-            return rs.next(); // email found
-        } catch (Exception e) {
-            System.out.println(e);
-            return false;
-        } finally {
-            db.closeConnection(conn);
-        }
-    }
 
-      
+    
+    
+    
     //for updating password
     public boolean UpdatePassword(String email, String newPassword) {
         Connection conn = db.openConnection();
@@ -166,12 +165,6 @@ public class UserDAO {
 
             return success;
         }
-
-  
-
-   
-
-        
 
 
 }

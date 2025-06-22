@@ -1,15 +1,101 @@
 package view;
 
-
+import Controller.Fpasswordcontroller;
 import java.awt.Color;
-import java.awt.event.ActionListener;
-
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import Controller.SignUPController;
+import javax.swing.JOptionPane;
+import Model.UserModel;
+import utils.EmailSender;
+/**
+ * @author prajita
+ */
 
 public class Signup extends javax.swing.JFrame {
-   
+    /**
+     * Creates new form Signup
+     */
+    private boolean isPasswordVisible = false;
+    private javax.swing.JLabel emailerrorLabel;
+    private javax.swing.JLabel errorLabelPassword;
 
+//real time check for a verified email
     public Signup() {
         initComponents();
+        
+        //show red for diffrerent email
+        errorLabelPassword = new javax.swing.JLabel();
+errorLabelPassword.setForeground(Color.RED);
+errorLabelPassword.setText("");
+this.add(errorLabelPassword);
+errorLabelPassword.setBounds(250, 230, 250, 20); // for position for error
+
+confirmpassword.getDocument().addDocumentListener(new DocumentListener() {
+    public void insertUpdate(DocumentEvent e) {
+        validatePasswordMatch();
+    }
+    public void removeUpdate(DocumentEvent e) {
+        validatePasswordMatch();
+    }
+    public void changedUpdate(DocumentEvent e) {
+        validatePasswordMatch();
+    }
+});
+
+
+  
+        //for red error text for email
+        emailerrorLabel = new javax.swing.JLabel();
+ emailerrorLabel.setForeground(Color.RED);
+ emailerrorLabel.setText(""); // Empty at first
+
+        emailaddress.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+    public void insertUpdate(javax.swing.event.DocumentEvent e) {
+        validateEmail();
+    }
+    public void removeUpdate(javax.swing.event.DocumentEvent e) {
+        validateEmail();
+    }
+    public void changedUpdate(javax.swing.event.DocumentEvent e) {
+        validateEmail();
+    }
+});
+        
+        //for show passsword toggle
+        setpassword.setText("Set Password");
+setpassword.setForeground(Color.GRAY);
+setpassword.setEchoChar((char) 0);  // show as plain text initially
+
+confirmpassword.setText("Confirm Password");
+confirmpassword.setForeground(Color.GRAY);
+confirmpassword.setEchoChar((char) 0);
+    }   
+    //for validate email
+    private void validateEmail() {
+    String input = emailaddress.getText().trim();
+    boolean isValid = input.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
+
+    if (!isValid) {
+        emailaddress.setForeground(Color.RED);
+         emailerrorLabel.setText("Invalid email format");
+    } else {
+        emailaddress.setForeground(Color.BLACK);
+         emailerrorLabel.setText("");
+    }
+}
+    //for same exact password 
+    private void validatePasswordMatch() {
+    String pass = String.valueOf(setpassword.getPassword()).trim();
+    String confirm = String.valueOf(confirmpassword.getPassword()).trim();
+
+    if (!confirm.equals(pass)) {
+        errorLabelPassword.setText("Passwords do not match");
+        confirmpassword.setForeground(Color.RED);
+    } else {
+        errorLabelPassword.setText("");
+        confirmpassword.setForeground(Color.BLACK);
+    }
 }
   
 
@@ -36,7 +122,6 @@ public class Signup extends javax.swing.JFrame {
         confirmpassword = new javax.swing.JPasswordField();
         setpassword = new javax.swing.JPasswordField();
         showpassword = new javax.swing.JCheckBox();
-        signinbtn = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
 
@@ -109,6 +194,7 @@ public class Signup extends javax.swing.JFrame {
 
         signinlink.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
         signinlink.setForeground(new java.awt.Color(29, 61, 130));
+        signinlink.setText("<html><u>Sign in</u></html>");
         signinlink.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 signinlinkMouseClicked(evt);
@@ -171,10 +257,6 @@ public class Signup extends javax.swing.JFrame {
             }
         });
 
-        signinbtn.setBackground(new java.awt.Color(29, 61, 130));
-        signinbtn.setForeground(new java.awt.Color(252, 251, 244));
-        signinbtn.setText("Sign In");
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -183,9 +265,7 @@ public class Signup extends javax.swing.JFrame {
                 .addGap(87, 87, 87)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(signinbtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(signinlink)
+                .addComponent(signinlink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(46, Short.MAX_VALUE)
@@ -244,8 +324,7 @@ public class Signup extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(signinlink)
-                    .addComponent(signinbtn))
+                    .addComponent(signinlink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(77, Short.MAX_VALUE))
         );
 
@@ -319,6 +398,57 @@ public class Signup extends javax.swing.JFrame {
     }//GEN-LAST:event_firstnameActionPerformed
 
     private void signupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signupActionPerformed
+    String f_name = firstname.getText().trim();   //trim removes the unnecessary spaces
+    String s_name = lastname.getText().trim(); 
+    String email = emailaddress.getText().trim();
+    String password = String.valueOf(setpassword.getPassword());
+    String confirmPassword = String.valueOf(confirmpassword.getPassword());
+    String purpose = "signup";
+    Boolean isverified = false;
+    
+    
+    //to store user credentials
+    SignUPController controller = new SignUPController();
+    String result = controller.registerUser(f_name, s_name, email, password, confirmPassword);
+
+    
+    if (result.equals("User registered successfully!")) {
+        String temp_result = EmailSender.Emailsend(email,purpose,isverified);
+        JOptionPane.showMessageDialog(this, temp_result);
+    
+        // Create an instance of the other JFrame window
+        OTPs otpWindow = new OTPs("signup");
+
+        // Show the other window
+        otpWindow.setVisible(true);
+
+        // Optionally, close the current window
+        this.dispose();}// TODO add your handling code here:
+    else{
+    JOptionPane.showMessageDialog(this, result);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+
+//    if(result.equals("User registered successfully!")){
+//            Signin signinwindow = new Signin();
+//
+//    // Show the other window
+//    signinwindow.setVisible(true);
+//
+//    // Optionally, close the current window
+//    this.dispose();    // TODO add your handling code here:
+//    
+//    }
+        
+
+
    
     }//GEN-LAST:event_signupActionPerformed
 
@@ -361,7 +491,16 @@ public class Signup extends javax.swing.JFrame {
     }//GEN-LAST:event_setpasswordFocusLost
 
     private void showpasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showpasswordActionPerformed
-        // TODO add your handling code here:
+         if (showpassword.isSelected()) {
+        setpassword.setEchoChar((char) 0); // Show password as plain text
+        confirmpassword.setEchoChar((char)0);
+    } else {
+        if (!String.valueOf(setpassword.getPassword()).equals("Set Password")) {
+            setpassword.setEchoChar('*'); // Mask password
+        }if (!String.valueOf(confirmpassword.getPassword()).equals("Confirm Password")) {
+            confirmpassword.setEchoChar('*'); // Mask password
+        }
+    }         // TODO add your handling code here:
     }//GEN-LAST:event_showpasswordActionPerformed
 
     private void confirmpasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmpasswordActionPerformed
@@ -385,7 +524,14 @@ public class Signup extends javax.swing.JFrame {
     }//GEN-LAST:event_confirmpasswordFocusLost
 
     private void signinlinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signinlinkMouseClicked
-    // TODO add your handling code here:
+        // Create an instance of the other JFrame window
+    Signin signinwindow = new Signin();
+
+    // Show the other window
+    signinwindow.setVisible(true);
+
+    // Optionally, close the current window
+    this.dispose();    // TODO add your handling code here:
     }//GEN-LAST:event_signinlinkMouseClicked
 
     /**
@@ -439,41 +585,7 @@ public class Signup extends javax.swing.JFrame {
     private javax.swing.JTextField lastname;
     private javax.swing.JPasswordField setpassword;
     private javax.swing.JCheckBox showpassword;
-    private javax.swing.JButton signinbtn;
     private javax.swing.JLabel signinlink;
     private javax.swing.JButton signup;
     // End of variables declaration//GEN-END:variables
-
-   public void addAddUserListener(ActionListener listener){
-      signup.addActionListener(listener);      
-    }
-   public void addLoginListener(ActionListener listener){
-      signinbtn.addActionListener(listener);      
-    }
-   
-
-     public javax.swing.JTextField getPasswordField() {
-         return setpassword;
-     }
-
-    public javax.swing.JTextField getConfrimPassword() {
-        return confirmpassword;
-    }
-    
-    public javax.swing.JTextField getFirstName() {
-        return firstname;
-    }
-    public javax.swing.JTextField getLastName() {
-        return lastname;
-    }
-     public javax.swing.JTextField getEmailField() {
-         return emailaddress;
-     }
-    
-    
-    
-
-    public void open() {
-    }
-
 }

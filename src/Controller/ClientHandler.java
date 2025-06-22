@@ -133,7 +133,7 @@ public class ClientHandler implements Runnable {
 
                     if (msg.getReceiver() != null && !msg.getReceiver().trim().isEmpty()) {
                         String a = msg.getReceiver();
-                         System.out.println("user found online : \"" + a + "\"");
+                         System.out.println("user found in_database : \"" + a + "\"");
                         sendPrivateMessage(msg);
                         
                     } else {

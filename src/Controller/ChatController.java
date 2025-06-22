@@ -33,6 +33,7 @@ public class ChatController implements ActionListener {
     private ObjectInputStream in;
     private String currentUserName;
     private JPanel bottompanel = new JPanel();
+    
     private final Box.Filler bottomFiller = new Box.Filler(
             new Dimension(0, 0),
             new Dimension(0, 0),
@@ -51,6 +52,7 @@ public class ChatController implements ActionListener {
         this.currentUserName = currentUserName;
         this.searchField = searchField;
         this.bottompanel = bottompanel;
+
 
         initializeConnection();
     }
@@ -75,14 +77,34 @@ public class ChatController implements ActionListener {
             out.flush();
 
             new Thread(() -> {
+                
+                
+                System.out.println("Step 2: Listener thread started");
+                
+                
+                
                 while (socket.isConnected()) {
                     try {
                         Object obj = in.readObject();
+                        
+                        
+                        System.out.println("Step 3: Object received: " + obj);
 
                         if (obj instanceof Message) {
+                            
+                            
+                            
+                            System.out.println("Step 4: Object is in the message: " + obj);
+                            
+                            
                             Message msg = (Message) obj;
+                           
                             if ("SERVER".equals(msg.getSender()) && msg.getMessage().contains(",")) {
                                 // Assume it's online user list
+                                
+                                System.out.println("Step 5: It's a SERVER message");
+                                
+                                
                                 String[] users = msg.getMessage().split(",");
                                 SwingUtilities.invokeLater(() -> {
                                     DefaultListModel<String> model = new DefaultListModel<>();
@@ -94,9 +116,15 @@ public class ChatController implements ActionListener {
                                     contactList.setModel(model); // updates JList
                                 });
                             } else {
+                                
+                                
+                                System.out.println("this is inside else");
+                                
                                 // Handle normal messages
                                 if (msg.getSender().equals(currentUserName)) {
-                                    displayMessage("Me", msg.getMessage(), true);
+                                    displayMessage("Me",msg.getMessage(),true);
+                                    System.out.println("this is receiveMessage");
+                                    
                                 } else {
                                     displayMessage(msg.getSender(), msg.getMessage(), false);
                                 }
@@ -159,36 +187,7 @@ public class ChatController implements ActionListener {
         }
         messageInput.setText("");
     }
-
-//    public void receiveMessage(Message msg) {
-//        String from = msg.getSender();
-//        String content = msg.getMessage();
-//        chatHistory.putIfAbsent(from, new ArrayList<>());
-//
-//        String timestamp = LocalTime.now().withSecond(0).withNano(0).toString();
-//        JLabel messageLabel = new JLabel("<html><div style='padding: 8px; background: #FFF; border-radius: 10px; max-width: 300px; text-align: left;'>" +
-//                content + "<br><span style='font-size: 10px; color: gray;'>" + timestamp + "</span></div></html>");
-//
-//        JPanel wrapper = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-//        wrapper.setOpaque(false);
-//        wrapper.add(messageLabel);
-//
-//        chatHistory.get(from).add(messageLabel);
-//        messagePanel.add(wrapper, messagePanel.getComponentCount() - 1);
-//        messagePanel.add(Box.createVerticalStrut(5), messagePanel.getComponentCount() - 1);
-//        
-//        messagePanel.add(Box.createVerticalGlue());
-//
-//        messagePanel.revalidate();
-//        messagePanel.repaint();
-//
-//        SwingUtilities.invokeLater(() -> {
-//            JScrollBar vertical = messageScroll.getVerticalScrollBar();
-//            vertical.setValue(vertical.getMaximum());
-//        });
-//    }
-    
-    
+ 
 
     public void highlightMessages() {
         String keyword = searchField.getText();
@@ -251,6 +250,43 @@ public class ChatController implements ActionListener {
             }
         }
     }
+    
+    
+        public void receiveMessage(String message) {
+            
+            
+            System.out.println("Step 7: receiveMessage called with message: " + message);
+            
+            
+            Message msg = new Message();
+        String from = msg.getSender();
+        String content = msg.getMessage();
+        chatHistory.putIfAbsent(from, new ArrayList<>());
+        
+
+        String timestamp = LocalTime.now().withSecond(0).withNano(0).toString();
+        JLabel messageLabel = new JLabel("<html><div style='padding: 8px; background: #FFF; border-radius: 10px; max-width: 300px; text-align: left;'>" +
+                content + "<br><span style='font-size: 10px; color: gray;'>" + timestamp + "</span></div></html>");
+
+        JPanel wrapper = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        wrapper.setOpaque(false);
+        wrapper.add(messageLabel);
+
+        chatHistory.get(from).add(messageLabel);
+        messagePanel.add(wrapper, messagePanel.getComponentCount() - 1);
+        messagePanel.add(Box.createVerticalStrut(5), messagePanel.getComponentCount() - 1);
+        
+        messagePanel.add(Box.createVerticalGlue());
+
+        messagePanel.revalidate();
+        messagePanel.repaint();
+
+        SwingUtilities.invokeLater(() -> {
+            JScrollBar vertical = messageScroll.getVerticalScrollBar();
+            vertical.setValue(vertical.getMaximum());
+        });
+    }
+
 
     public void showMessages(String contact, JPanel bottomPanel) {
         messagePanel.removeAll();
@@ -263,43 +299,26 @@ public class ChatController implements ActionListener {
             messagePanel.add(wrapper);
             messagePanel.add(Box.createVerticalStrut(5));
         }
-        messagePanel.add(bottomFiller); 
         
-        messagePanel.add(Box.createVerticalGlue());
-//        messagePanel.add(bottomPanel);
-
         messagePanel.revalidate();
         messagePanel.repaint();
+        messagePanel.add(Box.createVerticalGlue());
+        messagePanel.add(bottomFiller);
 
         SwingUtilities.invokeLater(() -> {
-            int viewportHeight = messageScroll.getViewport().getHeight();
-            int panelHeight = messagePanel.getPreferredSize().height;
-
-            if (panelHeight < viewportHeight) {
-                bottomFiller.changeShape(
-                        new Dimension(0, viewportHeight - panelHeight),
-                        new Dimension(0, viewportHeight - panelHeight),
-                        new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE)
-                );
-            } else {
-                bottomFiller.changeShape(
-                        new Dimension(0, 0),
-                        new Dimension(0, 0),
-                        new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE)
-                );
-            }
-
             JScrollBar vertical = messageScroll.getVerticalScrollBar();
             vertical.setValue(vertical.getMaximum());
         });
     }
-    
+
     
     public void displayMessage(String sender, String messageText, boolean isOwnMessage) {
         SwingUtilities.invokeLater(() -> {
-            String timestamp = LocalTime.now().withSecond(0).withNano(0).toString();
+            messagePanel.remove(bottomFiller);
+            System.out.println("this is displayMessage");
 
-            String bubbleColor = isOwnMessage ? "#DDFECD" : "#F0F0F0"; // light green vs light gray
+            String timestamp = LocalTime.now().withSecond(0).withNano(0).toString();
+            String bubbleColor = isOwnMessage ? "#DDFECD" : "#F0F0F0";
             String align = isOwnMessage ? "right" : "left";
 
             JLabel messageLabel = new JLabel("<html><div style='padding: 8px; background: " + bubbleColor
@@ -307,42 +326,24 @@ public class ChatController implements ActionListener {
                     + messageText + "<br><span style='font-size: 10px; color: gray;'>"
                     + timestamp + "</span></div></html>");
 
+            // ✅ STORE in chatHistory
+            chatHistory.putIfAbsent(sender, new ArrayList<>());
+            chatHistory.get(sender).add(messageLabel);
+
             JPanel wrapper = new JPanel(new FlowLayout(isOwnMessage ? FlowLayout.RIGHT : FlowLayout.LEFT));
             wrapper.setOpaque(false);
             wrapper.add(messageLabel);
-            
-            messagePanel.remove(bottomFiller);
-            
+
             messagePanel.add(wrapper);
             messagePanel.add(Box.createVerticalStrut(5));
-            
-            messagePanel.add(bottomFiller);
             messagePanel.add(Box.createVerticalGlue());
+            messagePanel.add(bottomFiller);
 
             messagePanel.revalidate();
             messagePanel.repaint();
 
-            SwingUtilities.invokeLater(() -> {
-                int viewportHeight = messageScroll.getViewport().getHeight();
-                int panelHeight = messagePanel.getPreferredSize().height;
-
-                if (panelHeight < viewportHeight) {
-                    bottomFiller.changeShape(
-                            new Dimension(0, viewportHeight - panelHeight),
-                            new Dimension(0, viewportHeight - panelHeight),
-                            new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE)
-                    );
-                } else {
-                    bottomFiller.changeShape(
-                            new Dimension(0, 0),
-                            new Dimension(0, 0),
-                            new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE)
-                    );
-                }
-
-                JScrollBar vertical = messageScroll.getVerticalScrollBar();
-                vertical.setValue(vertical.getMaximum());
-            });
+            JScrollBar vertical = messageScroll.getVerticalScrollBar();
+            vertical.setValue(vertical.getMaximum());
         });
     }
 }

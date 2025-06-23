@@ -11,18 +11,20 @@ public class Message implements Serializable {
     private String lastName;
     private String sender;
     private String message;
+    private String status; // e.g., SENT, DELIVERED, SEEN
 
     public Message() {}
 
-    public Message(int id, String firstName, String lastName, String sender, String message) {
+    public Message(int id, String firstName, String lastName, String sender, String message, String status) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.sender = sender;
         this.message = message;
+        this.status = status;
     }
         // New constructor for sender, recipient(full name), and message text
-    public Message(String sender, String recipient, String message) {
+    public Message(String sender, String recipient, String message, String status) {
         this.sender = sender;
         String[] names = recipient.split(" ", 2);
         if (names.length == 2) {
@@ -33,6 +35,7 @@ public class Message implements Serializable {
             this.lastName = "";
         }
         this.message = message;
+        this.status = status;
     }
 
     // Getters
@@ -56,6 +59,10 @@ public class Message implements Serializable {
         return message;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     // Setters
     public void setId(int id) {
         this.id = id;
@@ -75,6 +82,10 @@ public class Message implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     // Convenience method for full name

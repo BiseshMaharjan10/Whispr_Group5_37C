@@ -1,9 +1,8 @@
-
 package view;
 
-import Controller.Backend;
 import Controller.SignUPController;
 import Controller.Fpasswordcontroller;
+import Controller.OtpController;
 import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -11,6 +10,7 @@ import utils.EmailSender;
 import Dao.otpDAO;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+import Dao.UserDAO;
 
 /**
  *
@@ -26,6 +26,9 @@ public class OTPs extends javax.swing.JFrame {
 
         this.purpose = purpose;
         
+        OtpController controller = new OtpController();
+        confirm.addActionListener(controller.getOtpConfirmActionListener(this, purpose));
+        
        
     }
 
@@ -38,38 +41,17 @@ public class OTPs extends javax.swing.JFrame {
        
         
     }
-
+    
+    public String getEnteredOtp(){
+        return enterotp.getText().trim();
+    }
 
     
     public interface OTPAction {
     void onValidOTP(JFrame currentFrame);
 }
      
-    
-    //to redirect to sigin
-    public class SignupOTPAction implements OTPAction {
-    @Override
-    public void onValidOTP(JFrame currentFrame) {
-        // Redirect to Signin Frame
-        Signin signinFrame = new Signin();
-        signinFrame.setVisible(true);
-        currentFrame.dispose();
-    }
-}
-    //to redirect to signup
-    public class ForgotPasswordOTPAction implements OTPAction {
-    @Override
-    public void onValidOTP(JFrame currentFrame) {
-        // Redirect to Fpassword2
-        Fpassword2 resetWindow = new Fpassword2();
-        resetWindow.setVisible(true);
-        currentFrame.dispose();
-    }
-}
-    
-
-    
-    
+        
         // Method to start the countdown
             public void startCountdownAsync() {
         new Thread(() -> {
@@ -80,12 +62,12 @@ public class OTPs extends javax.swing.JFrame {
                 return;
             }
 
-            for (int i = 120; i >= 0; i--) {
+            for (int i = 180; i >= 0; i--) {
                 int minutes = i / 60;
                 int seconds = i % 60;
 
                 SwingUtilities.invokeLater(() -> {
-                    System.out.println("Countdown reached.");
+                    System.out.println("Counting every second");
                     timer.setText(String.format("%02d:%02d", minutes, seconds));
                     otpwillexpire.setText(String.format("OTP will Expire  in "));
                 });
@@ -98,8 +80,9 @@ public class OTPs extends javax.swing.JFrame {
                 }
 
                 if (i == 0 ) {
-                    otpDAO deletedotp = new otpDAO();
-                    boolean success = deletedotp.deleteUnverifiedOtps();
+                    OtpController controller = new OtpController();
+                    boolean success =controller.expireUnverifiedOtps();
+                   
                     SwingUtilities.invokeLater(() -> {
                             otpexpire.setText(String.format("OTP Expired"));
                             timer.setText(String.format(""));
@@ -286,51 +269,7 @@ public class OTPs extends javax.swing.JFrame {
     } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(this, "OTP must be a number.");
         return;
-    }
-    
-    
-    //main part
-    Fpasswordcontroller controller = new Fpasswordcontroller();
-    String result2 = controller.Matchotps(user_entered_otp);
-
-    if ("Invalid OTP".equals(result2) || "OTP didn't match".equals(result2)) {
-        JOptionPane.showMessageDialog(this, result2);
-    }else{
-    
-    
-    //if otp fetched succesfully
-    if (result2.equals("Here we go")) {
-    OTPAction action;
-   
-    if (purpose.equals("signup")) {
-        action = new OTPAction() {
-            @Override
-            public void onValidOTP(JFrame currentFrame) {
-                
-                Signin signin = new Signin();
-                signin.setVisible(true);
-                currentFrame.dispose();
-            }
-        }; 
-            }
-     else {
-        action = new OTPAction() {
-            @Override
-            public void onValidOTP(JFrame currentFrame) {
-                Fpassword2 resetWindow = new Fpassword2();
-                resetWindow.setVisible(true);
-                currentFrame.dispose();
-            }
-        };
-    }
-    
-    // Now call the action
-    action.onValidOTP(this); 
- } 
-    }
-    
-    
-    
+    }   
 // TODO add your handling code here:
     }//GEN-LAST:event_confirmActionPerformed
 

@@ -119,8 +119,7 @@ public class ChatController implements ActionListener {
 
             String timestamp = LocalTime.now().withSecond(0).withNano(0).toString();
             JLabel messageLabel = new JLabel("<html><div style='padding: 8px; background: #DCF8C6; border-radius: 10px; max-width: 300px; text-align: right;'>" +
-                    text + "<br><span style='font-size: 10px; color: gray;'>" + timestamp +
-                    " <span style='color:#34B7F1;'>&#10003;</span></span></div></html>");
+                    text + "<br><span style='font-size: 10px; color: gray;'>" + timestamp + "</span></div></html>");
 
             JPanel wrapper = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
             wrapper.setOpaque(false);
@@ -228,7 +227,7 @@ public class ChatController implements ActionListener {
     public void sendMessage(String from, String to, String messageText) {
         if (out != null) {
             try {
-                Message message = new Message(0, "", "", from, messageText, "SENT");
+                Message message = new Message(0, "", "", from, messageText);
                 out.writeObject(message);
                 out.flush();
                 System.out.println("Sent from " + from + " to " + to + ": " + messageText);
@@ -270,12 +269,11 @@ public class ChatController implements ActionListener {
 
             String bubbleColor = isOwnMessage ? "#DDFECD" : "#F0F0F0"; // light green vs light gray
             String align = isOwnMessage ? "right" : "left";
-            String tick = isOwnMessage ? " <span style='color:#34B7F1;'>&#10003;&#10003;</span>" : ""; // double tick for sent messages
 
             JLabel messageLabel = new JLabel("<html><div style='padding: 8px; background: " + bubbleColor
                     + "; border-radius: 10px; max-width: 300px; text-align: " + align + ";'>"
                     + messageText + "<br><span style='font-size: 10px; color: gray;'>"
-                    + timestamp + tick + "</span></div></html>");
+                    + timestamp + "</span></div></html>");
 
             JPanel wrapper = new JPanel(new FlowLayout(isOwnMessage ? FlowLayout.RIGHT : FlowLayout.LEFT));
             wrapper.setOpaque(false);

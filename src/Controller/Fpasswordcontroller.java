@@ -33,7 +33,7 @@ public class Fpasswordcontroller {
         }
         
         // Check if email already exists in the database
-        else if (!userDAO.isEmailExists(email)) {
+        else if (!userDAO.CheckUser(email)) {
             return "Email doesn't exist";
         }
 
@@ -73,8 +73,6 @@ public class Fpasswordcontroller {
                 Boolean after_otp_update = temp_verification.updateIsVerified(temp_vv,isVerified);
                 
                 return "Here we go";
-                
-
 
             } else {
                 return "Invalid OTP";

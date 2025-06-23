@@ -15,6 +15,7 @@ import java.util.concurrent.*;
 import Model.OTPModel;
 import java.time.LocalDateTime;
 import Controller.Fpasswordcontroller;
+import Dao.UserDAO;
 import javax.swing.JLabel;
 import view.OTPs;
 
@@ -96,6 +97,7 @@ public static void startCountdownAsync(int seconds) {
 public static String Emailsend(String email, String purpose, boolean verified) {
     // Generate OTP
     int otp = EmailSender.generateOTP();
+    String temp_code = String.valueOf(otp);
 
     // Register the OTP
     Fpasswordcontroller temp = new Fpasswordcontroller();
@@ -114,6 +116,7 @@ public static String Emailsend(String email, String purpose, boolean verified) {
     }
     // Send the email
     sendEmail(email, subject, body);
+                        
 
 
     return "OTP sent to: " + email;

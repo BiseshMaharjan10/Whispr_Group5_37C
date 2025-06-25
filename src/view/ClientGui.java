@@ -24,6 +24,7 @@ public class ClientGui extends JFrame {
     private JLabel dynamicTextLabel;
     private String currentUserName;
 
+
     public ClientGui(String currentUserName) {
         
         setTitle("Whispr");
@@ -105,7 +106,8 @@ public class ClientGui extends JFrame {
         leftPanel.add(logoutLabel, BorderLayout.SOUTH);
 
         imageLabel = new JLabel();
-        imageLabel.setPreferredSize(new Dimension(40, 40));
+        imageLabel.setPreferredSize(new Dimension(50, 50));
+        imageLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 17)); // top, left, bottom, right
 
         dynamicTextLabel = new JLabel(currentUserName);
         dynamicTextLabel.setFont(new Font("Arial", Font.PLAIN, 12));

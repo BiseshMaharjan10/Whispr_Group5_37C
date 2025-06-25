@@ -80,6 +80,22 @@ public class ChatClientDAO {
         }
     }
     
+    public boolean updateUserImagePath(String email, String imagePath) {
+        Connection conn = db.openConnection();
+        try {
+            String sql = "UPDATE users SET picture_path = ? WHERE email = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, imagePath);
+            stmt.setString(2, email);
+
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;  // true if update succeeded
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
     
     
 }

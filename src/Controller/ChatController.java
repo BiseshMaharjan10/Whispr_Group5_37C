@@ -28,6 +28,10 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
+
 public class ChatController implements ActionListener {
     private final ChatClientDAO chatClientDAO;
     private final JList<String> contactList;
@@ -39,6 +43,9 @@ public class ChatController implements ActionListener {
     private final JLabel imageLabel;
     private final String currentUserName;
     private final ClientGui userView;
+    private String selectedImagePath;
+    private String userEmail;
+  
 
     private final Map<String, List<JLabel>> chatHistory = new HashMap<>();
     private final Box.Filler bottomFiller = new Box.Filler(
@@ -47,6 +54,7 @@ public class ChatController implements ActionListener {
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    
 
     public ChatController(ClientGui userView) {
         this.userView = userView;
@@ -61,9 +69,16 @@ public class ChatController implements ActionListener {
         this.imageLabel = userView.getImageLabel();
         this.currentUserName = userView.getCurrentUsername();
 
+        userView.getImageLabel().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                handleImageClick();
+            } 
+        });  
+        
         initializeConnection();
     }
-
+    
     private void initializeConnection() {
         try {
             socket = new Socket("127.0.0.1", 1234);
@@ -128,9 +143,10 @@ public class ChatController implements ActionListener {
             displayMessage("Me", text, true);
             String[] names = to.split(" ", 2);
             
-            String email = chatClientDAO.getEmail(names[0], names.length > 1 ? names[1] : "");
-            
-            sendMessage(currentUserName, email, text);
+            String Email = chatClientDAO.getEmail(names[0], names.length > 1 ? names[1] : "");
+            sendMessage(currentUserName, Email, text);
+            this.userEmail = Email;
+
         } else {
             JOptionPane.showMessageDialog(null, "Select contact & write message", "Error", JOptionPane.WARNING_MESSAGE);
         }
@@ -248,5 +264,39 @@ public class ChatController implements ActionListener {
     
     public ActionListener getSendActionListener() {
         return this;
+    }
+    
+    public void handleImageClick() {
+        System.out.println("Image clicked!");
+        
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Select an Image");
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "jpeg", "png", "gif"));
+
+        int result = chooser.showOpenDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = chooser.getSelectedFile();
+            String path = selectedFile.getAbsolutePath();
+
+            // Update image label in GUI
+            ImageIcon icon = new ImageIcon(new ImageIcon(path).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH));
+            userView.getImageLabel().setIcon(icon);
+            
+            Boolean success = chatClientDAO.updateUserImagePath(userEmail, path);
+            String results = success ? "wow":"now";
+            
+                System.out.println("image path" + path);
+                
+        }
+    }
+    
+    private void showImagePopup(String imagePath) {
+        ImageIcon fullSizeIcon = new ImageIcon(imagePath);
+        JLabel fullImageLabel = new JLabel(fullSizeIcon);
+        JScrollPane scrollPane = new JScrollPane(fullImageLabel);
+        scrollPane.setPreferredSize(new Dimension(400, 400));
+
+        JOptionPane.showMessageDialog(null, scrollPane, "Full Image", JOptionPane.PLAIN_MESSAGE);
     }
 }

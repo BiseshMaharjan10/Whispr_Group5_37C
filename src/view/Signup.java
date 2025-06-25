@@ -452,7 +452,7 @@ public class Signup extends javax.swing.JFrame {
     }
    
 
-     public javax.swing.JTextField getPasswordField() {
+    public javax.swing.JTextField getPasswordField() {
          return setpassword;
      }
 

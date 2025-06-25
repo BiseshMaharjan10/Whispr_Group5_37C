@@ -11,6 +11,8 @@ public class Whispr_project {
        Signup signupForm = new Signup();
        SignUPController signupController = new SignUPController(signupForm);
        signupController.open();
+       
+       
     }
     
 }

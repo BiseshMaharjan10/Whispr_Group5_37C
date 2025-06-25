@@ -56,9 +56,29 @@ public class ClientGui extends JFrame {
         messageInput = new JTextField();
         contactList = new JList<>();
         
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        topPanel.add(searchPanel);
-        topPanel.add(searchButton);
+        JPanel topPanel = new JPanel(new BorderLayout());
+        // Create the profile picture label to show the uploaded image
+
+        //  Profile Button
+        JButton profileButton = new JButton("👤");
+        profileButton.setFocusPainted(false);
+        profileButton.setBorderPainted(false);
+        profileButton.setContentAreaFilled(false);
+        profileButton.setFont(new Font("Arial", Font.PLAIN, 18));
+        profileButton.setToolTipText("Upload Profile Picture ");
+        
+
+        topPanel.add(searchButton, BorderLayout.WEST);      // Search icon on the left
+        topPanel.add(searchPanel, BorderLayout.CENTER);     // Search field in center
+        topPanel.add(profileButton, BorderLayout.EAST);     // Profile icon on the right
+        
+        profileButton.addActionListener(e -> {
+            Profile profile = new Profile();
+            System.out.println("Clicked");
+            profile.setVisible(true);
+        });
+        
+
         
         //for bottom part
         messagePanel = new JPanel();

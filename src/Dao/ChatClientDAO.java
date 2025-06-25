@@ -35,4 +35,33 @@ public class ChatClientDAO {
     
     
     
+    
+    public String getFirstnLastName(String email) {
+        Connection conn = db.openConnection();
+        try {
+            String sql = "SELECT first_name, last_name FROM users WHERE email=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String firstName = rs.getString("first_name");
+                String lastName = rs.getString("last_name");
+                return firstName + " " + lastName;// 
+            } else {
+                return null; 
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        } finally {
+            db.closeConnection(conn);
+        }
+    }
+    
+    
+    
+    
+    
+    
 }

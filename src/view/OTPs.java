@@ -79,7 +79,7 @@ public class OTPs extends javax.swing.JFrame {
                 } catch (InterruptedException e) {
                     System.out.println("Countdown interrupted.");
                     break;
-                }
+                }   
 
                 if (i == 0 ) {
                     OtpController controller = new OtpController();

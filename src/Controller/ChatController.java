@@ -1,8 +1,9 @@
 package Controller;
 
 import Dao.ChatClientDAO;
-import Model.Message;
+import Model.MessageModel;
 import view.ClientGui;
+
 
 import javax.swing.*;
 import java.awt.Cursor;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatController implements ActionListener {
-    private final ChatClientDAO userDAO;
+    private final ChatClientDAO chatClientDAO;
     private final JList<String> contactList;
     private final JTextField messageInput;
     private final JPanel messagePanel;
@@ -37,6 +38,7 @@ public class ChatController implements ActionListener {
     private final JPanel bottomPanel;
     private final JLabel imageLabel;
     private final String currentUserName;
+    private final ClientGui userView;
 
     private final Map<String, List<JLabel>> chatHistory = new HashMap<>();
     private final Box.Filler bottomFiller = new Box.Filler(
@@ -46,17 +48,18 @@ public class ChatController implements ActionListener {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    public ChatController(ChatClientDAO dao, JList<String> contacts, JTextField input, JPanel msgPanel,
-                          JScrollPane msgScroll, String username, JTextField search, JPanel bottom, JLabel imgLabel) {
-        this.userDAO = dao;
-        this.contactList = contacts;
-        this.messageInput = input;
-        this.messagePanel = msgPanel;
-        this.messageScroll = msgScroll;
-        this.searchField = search;
-        this.bottomPanel = bottom;
-        this.imageLabel = imgLabel;
-        this.currentUserName = username;
+    public ChatController(ClientGui userView) {
+        this.userView = userView;
+        
+        this.chatClientDAO = new ChatClientDAO();
+        this.contactList = userView.getContactList();
+        this.messageInput = userView.getMessageInput();
+        this.messagePanel = userView.getMessagePanel();
+        this.messageScroll = userView.getMessageScroll();
+        this.searchField = userView.getSearchField();
+        this.bottomPanel = userView.getBottomPanel();
+        this.imageLabel = userView.getImageLabel();
+        this.currentUserName = userView.getCurrentUsername();
 
         initializeConnection();
     }
@@ -68,8 +71,9 @@ public class ChatController implements ActionListener {
             in = new ObjectInputStream(socket.getInputStream());
             out.writeObject(currentUserName);
             out.flush();
-
+    
             new Thread(() -> listenForMessages()).start();
+            
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Cannot connect to the server.", "Connection Error", JOptionPane.ERROR_MESSAGE);
@@ -79,12 +83,13 @@ public class ChatController implements ActionListener {
     private void listenForMessages() {
         while (socket.isConnected()) {
             try {
+                    
                 Object obj = in.readObject();
-                if (obj instanceof Message msg) {
+                if (obj instanceof MessageModel msg) {
+                    
                     handleIncomingMessage(msg);
                 }
-                
-                
+  
             } catch (Exception e) {
                 e.printStackTrace();
                 break;
@@ -92,7 +97,7 @@ public class ChatController implements ActionListener {
         }
     }
 
-    private void handleIncomingMessage(Message msg) {
+    private void handleIncomingMessage(MessageModel msg) {
         if ("SERVER".equals(msg.getSender()) && msg.getMessage().contains(",")) {
             
             System.out.println("this is inside handleincomeing message if");
@@ -122,7 +127,9 @@ public class ChatController implements ActionListener {
             messageInput.setText("");
             displayMessage("Me", text, true);
             String[] names = to.split(" ", 2);
-            String email = userDAO.getEmail(names[0], names.length > 1 ? names[1] : "");
+            
+            String email = chatClientDAO.getEmail(names[0], names.length > 1 ? names[1] : "");
+            
             sendMessage(currentUserName, email, text);
         } else {
             JOptionPane.showMessageDialog(null, "Select contact & write message", "Error", JOptionPane.WARNING_MESSAGE);
@@ -157,7 +164,7 @@ public class ChatController implements ActionListener {
 
     public void sendMessage(String from, String to, String text) {
         try {
-            out.writeObject(new Message(from, to, text));
+            out.writeObject(new MessageModel(from, to, text));
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -221,10 +228,24 @@ public class ChatController implements ActionListener {
                 JScrollPane scroll = new JScrollPane(img);
                 scroll.setPreferredSize(new Dimension(400, 400));
                 JOptionPane.showMessageDialog(null, scroll, "Full Image", JOptionPane.PLAIN_MESSAGE);
-            }
+            } 
         });
     }
-
+    
+    
+    public List<String> getAllUserFullNames() {
+        
+        ChatClientDAO getall = new ChatClientDAO();
+        List<MessageModel> users = getall.getAllUsers();
+        List<String> fullNames = new ArrayList<>();
+        for (MessageModel user : users) {
+            String fullName = user.getFirstName() + " " + user.getLastName();
+            fullNames.add(fullName);
+        }
+        return fullNames;
+    }
+    
+    
     public ActionListener getSendActionListener() {
         return this;
     }

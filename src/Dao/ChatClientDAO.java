@@ -1,6 +1,6 @@
 package Dao;
 
-import Model.Message;
+import Model.MessageModel;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,8 @@ import Database.MySqlConnection;
 public class ChatClientDAO {
     private final MySqlConnection db = new MySqlConnection();
 
-    public List<Message> getAllUsers() {
-        List<Message> userList = new ArrayList<>();
+    public List<MessageModel> getAllUsers() {
+        List<MessageModel> userList = new ArrayList<>();
         String sql = "SELECT first_name, last_name FROM users";
         Connection conn = db.openConnection();
 
@@ -18,7 +18,7 @@ public class ChatClientDAO {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Message user = new Message(); // If you meant User, rename your model
+                MessageModel user = new MessageModel(); // If you meant User, rename your model
                 user.setFirstName(rs.getString("first_name"));
                 user.setLastName(rs.getString("last_name"));
                 userList.add(user);

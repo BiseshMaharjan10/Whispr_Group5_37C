@@ -3,6 +3,7 @@ package utils;
 import view.ClientGui;
 import Controller.ChatController;
 import Dao.ChatClientDAO;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -13,22 +14,13 @@ public class Main {
             SwingUtilities.invokeLater(() -> {
                 // Create GUI
                 ClientGui gui = new ClientGui(username);
-                
-                // Create DAO
-                ChatClientDAO dao = new ChatClientDAO();
 
                 // Create Controller and wire its
-                ChatController controller = new ChatController(
-                    dao,
-                    gui.getContactList(),
-                    gui.getMessageInput(),
-                    gui.getMessagePanel(),
-                    gui.getMessageScroll(),
-                    username,
-                    gui.getSearchField(),
-                    gui.getBottomPanel(),
-                    gui.getImageLabel()
-                );
+                ChatController controller = new ChatController(gui);
+                
+                // Set contact list (assuming you want to preload users here)
+                List<String> contactNames = controller.getAllUserFullNames();
+                gui.setContactListData(contactNames); // use a setter method inside ClientGui
 
                 // Connect Listeners
                 gui.addSendButtonListener(controller.getSendActionListener());

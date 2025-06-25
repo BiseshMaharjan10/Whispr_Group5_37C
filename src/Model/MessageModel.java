@@ -2,7 +2,7 @@ package Model;
 
 import java.io.Serializable;
 
-public class Message implements Serializable {
+public class MessageModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -13,9 +13,9 @@ public class Message implements Serializable {
     private String message;
     private String receiver;
 
-    public Message() {}
+    public MessageModel() {}
 
-    public Message(int id, String firstName, String lastName, String sender, String message) {
+    public MessageModel(int id, String firstName, String lastName, String sender, String message) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -24,7 +24,7 @@ public class Message implements Serializable {
 
     }
         // New constructor for sender, recipient(full name), and message text
-    public Message(String sender, String receiver, String message) {
+    public MessageModel(String sender, String receiver, String message) {
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;

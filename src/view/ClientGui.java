@@ -22,8 +22,10 @@ public class ClientGui extends JFrame {
     private JButton searchButton;
     private JLabel timerLabel;
     private JLabel dynamicTextLabel;
+    private String currentUserName;
 
     public ClientGui(String currentUserName) {
+        
         setTitle("Whispr");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,6 +38,9 @@ public class ClientGui extends JFrame {
     }
 
     private void initComponents(String currentUserName) {
+        
+        this.currentUserName = currentUserName;
+        
         searchField = new JTextField(20);
         searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.setVisible(false);
@@ -127,14 +132,16 @@ public class ClientGui extends JFrame {
         contactList.setCellRenderer(new ContactCellRenderer());
     }
 
+    
+    //action listeners
     public void addSendButtonListener(java.awt.event.ActionListener listener) {
         sendButton.addActionListener(listener);
     }
-
+    
     public void addMessageInputListener(java.awt.event.ActionListener listener) {
         messageInput.addActionListener(listener);
     }
-
+    
     public void addContactListSelectionListener(ListSelectionListener listener) {
         contactList.addListSelectionListener(listener);
     }
@@ -155,10 +162,16 @@ public class ClientGui extends JFrame {
         searchField.setText("");
     }
 
+    //setters
     public void setContactListData(List<String> contacts) {
         contactList.setListData(contacts.toArray(new String[0]));
-    }
+    } 
     
+    //getters
+    
+    public String getCurrentUsername(){
+        return currentUserName;
+    }
     public JTextField getMessageInput() {
         return messageInput;
     }

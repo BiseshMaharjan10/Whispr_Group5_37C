@@ -2,23 +2,30 @@ package Controller;
 
 import Dao.ChatClientDAO;
 import Model.Message;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Rectangle;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-
+import view.ClientGui;
 
 import javax.swing.*;
-import java.io.*;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Image;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
 import java.net.Socket;
+
 import java.time.LocalTime;
-import java.util.*;
-
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChatController implements ActionListener {
     private final ChatClientDAO userDAO;
@@ -26,45 +33,32 @@ public class ChatController implements ActionListener {
     private final JTextField messageInput;
     private final JPanel messagePanel;
     private final JScrollPane messageScroll;
-    private final Map<String, List<JLabel>> chatHistory;
-    private JTextField searchField; 
+    private final JTextField searchField;
+    private final JPanel bottomPanel;
+    private final JLabel imageLabel;
+    private final String currentUserName;
+
+    private final Map<String, List<JLabel>> chatHistory = new HashMap<>();
+    private final Box.Filler bottomFiller = new Box.Filler(
+        new Dimension(0, 0), new Dimension(0, 0), new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-    private String currentUserName;
-    private JPanel bottompanel = new JPanel();
-    
-    private final Box.Filler bottomFiller = new Box.Filler(
-            new Dimension(0, 0),
-            new Dimension(0, 0),
-            new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE)
-    );
 
-    public ChatController(ChatClientDAO userDAO, JList<String> contactList, JTextField messageInput,
-                          JPanel messagePanel, JScrollPane messageScroll, String currentUserName, JTextField searchField,
-                      JPanel bottompanel) {
-        this.userDAO = userDAO;
-        this.contactList = contactList;
-        this.messageInput = messageInput;
-        this.messagePanel = messagePanel;
-        this.messageScroll = messageScroll;
-        this.chatHistory = new HashMap<>();
-        this.currentUserName = currentUserName;
-        this.searchField = searchField;
-        this.bottompanel = bottompanel;
-
+    public ChatController(ChatClientDAO dao, JList<String> contacts, JTextField input, JPanel msgPanel,
+                          JScrollPane msgScroll, String username, JTextField search, JPanel bottom, JLabel imgLabel) {
+        this.userDAO = dao;
+        this.contactList = contacts;
+        this.messageInput = input;
+        this.messagePanel = msgPanel;
+        this.messageScroll = msgScroll;
+        this.searchField = search;
+        this.bottomPanel = bottom;
+        this.imageLabel = imgLabel;
+        this.currentUserName = username;
 
         initializeConnection();
-    }
-    
-        public List<String> getAllUserFullNames() {
-        List<Message> users = userDAO.getAllUsers();
-        List<String> fullNames = new ArrayList<>();
-        for (Message user : users) {
-            String fullName = user.getFirstName() + " " + user.getLastName();
-            fullNames.add(fullName);
-        }
-        return fullNames;
     }
 
     private void initializeConnection() {
@@ -72,278 +66,166 @@ public class ChatController implements ActionListener {
             socket = new Socket("127.0.0.1", 1234);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-
-            out.writeObject(currentUserName); // send username
+            out.writeObject(currentUserName);
             out.flush();
 
-            new Thread(() -> {
-                
-                
-                System.out.println("Step 2: Listener thread started");
-                
-                
-                
-                while (socket.isConnected()) {
-                    try {
-                        Object obj = in.readObject();
-                        
-                        
-                        System.out.println("Step 3: Object received: " + obj);
-
-                        if (obj instanceof Message) {
-                            
-                            
-                            
-                            System.out.println("Step 4: Object is in the message: " + obj);
-                            
-                            
-                            Message msg = (Message) obj;
-                           
-                            if ("SERVER".equals(msg.getSender()) && msg.getMessage().contains(",")) {
-                                // Assume it's online user list
-                                
-                                System.out.println("Step 5: It's a SERVER message");
-                                
-                                
-                                String[] users = msg.getMessage().split(",");
-                                SwingUtilities.invokeLater(() -> {
-                                    DefaultListModel<String> model = new DefaultListModel<>();
-                                    for (String user : users) {
-                                        if (!user.equals(currentUserName)) {
-                                            model.addElement(user);
-                                        }
-                                    }
-                                    contactList.setModel(model); // updates JList
-                                });
-                            } else {
-                                
-                                
-                                System.out.println("this is inside else");
-                                
-                                // Handle normal messages
-                                if (msg.getSender().equals(currentUserName)) {
-                                    displayMessage("Me",msg.getMessage(),true);
-                                    System.out.println("this is receiveMessage");
-                                    
-                                } else {
-                                    displayMessage(msg.getSender(), msg.getMessage(), false);
-                                }
-                            }
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        break;
-                    }
-                }
-            }).start();
-
+            new Thread(() -> listenForMessages()).start();
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Cannot connect to the server.", "Connection Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    private void listenForMessages() {
+        while (socket.isConnected()) {
+            try {
+                Object obj = in.readObject();
+                if (obj instanceof Message msg) {
+                    handleIncomingMessage(msg);
+                }
+                
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
+        }
+    }
+
+    private void handleIncomingMessage(Message msg) {
+        if ("SERVER".equals(msg.getSender()) && msg.getMessage().contains(",")) {
+            
+            System.out.println("this is inside handleincomeing message if");
+            updateContactList(msg.getMessage());
+        } else if (contactList.getSelectedValue() != null) {
+            System.out.println("this is inside handleincomeing message else");
+            boolean isSelf = msg.getSender().equals(currentUserName);
+            displayMessage(msg.getSender(), msg.getMessage(), isSelf);
+        }
+    }
+
+    private void updateContactList(String csv) {
+        SwingUtilities.invokeLater(() -> {
+            DefaultListModel<String> model = new DefaultListModel<>();
+            for (String user : csv.split(",")) {
+                if (!user.equals(currentUserName)) model.addElement(user);
+            }
+            contactList.setModel(model);
+        });
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        String selectedContact = contactList.getSelectedValue();
+        String to = contactList.getSelectedValue();
         String text = messageInput.getText().trim();
+        if (to != null && !text.isEmpty()) {
+            messageInput.setText("");
+            displayMessage("Me", text, true);
+            String[] names = to.split(" ", 2);
+            String email = userDAO.getEmail(names[0], names.length > 1 ? names[1] : "");
+            sendMessage(currentUserName, email, text);
+        } else {
+            JOptionPane.showMessageDialog(null, "Select contact & write message", "Error", JOptionPane.WARNING_MESSAGE);
+        }
+    }
 
-        if (!text.isEmpty() && selectedContact != null) {
-            chatHistory.putIfAbsent(selectedContact, new ArrayList<>());
-
+    public void displayMessage(String sender, String message, boolean isOwnMessage) {
+        
+        System.out.println("this is inside displayMessage");
+        SwingUtilities.invokeLater(() -> {
+            messagePanel.remove(bottomFiller);
+            String bubbleColor = isOwnMessage ? "#DDFECD" : "#F0F0F0";
+            String align = isOwnMessage ? "right" : "left";
             String timestamp = LocalTime.now().withSecond(0).withNano(0).toString();
-            JLabel messageLabel = new JLabel("<html><div style='padding: 8px; background: #DCF8C6; border-radius: 10px; max-width: 300px; text-align: right;'>" +
-                    text + "<br><span style='font-size: 10px; color: gray;'>" + timestamp + "</span></div></html>");
+            JLabel msgLabel = new JLabel("<html><div style='padding: 8px; background: " + bubbleColor +
+                "; border-radius: 10px; max-width: 300px; text-align: " + align + ";'>" +
+                message + "<br><span style='font-size: 10px; color: gray;'>" + timestamp + "</span></div></html>");
 
-            JPanel wrapper = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+            chatHistory.computeIfAbsent(sender, k -> new ArrayList<>()).add(msgLabel);
+            JPanel wrapper = new JPanel(new FlowLayout(isOwnMessage ? FlowLayout.RIGHT : FlowLayout.LEFT));
             wrapper.setOpaque(false);
-            wrapper.add(messageLabel);
-
-            chatHistory.get(selectedContact).add(messageLabel);
-            messagePanel.add(wrapper, messagePanel.getComponentCount() - 1);
-            messagePanel.add(Box.createVerticalStrut(5), messagePanel.getComponentCount() - 1);
-
+            wrapper.add(msgLabel);
+            messagePanel.add(wrapper);
+            messagePanel.add(Box.createVerticalStrut(5));
+            messagePanel.add(Box.createVerticalGlue());
+            messagePanel.add(bottomFiller);
             messagePanel.revalidate();
             messagePanel.repaint();
-            messageInput.setText("");
-
-            SwingUtilities.invokeLater(() -> {
-                JScrollBar vertical = messageScroll.getVerticalScrollBar();
-                vertical.setValue(vertical.getMaximum());
-            });
-            
-            
-                String[] names = selectedContact.split(" ", 2);
-                String firstName = names[0];
-                String lastName = (names.length > 1) ? names[1] : "";
-                
-            ChatClientDAO temp_object = new ChatClientDAO();
-            String corresponding_email = temp_object.getEmail(firstName, lastName);
-            
-            sendMessage(currentUserName, corresponding_email, text);
-        } else {
-            JOptionPane.showMessageDialog(null, "Please select a contact and enter a message.", "Error", JOptionPane.WARNING_MESSAGE);
-        }
-        messageInput.setText("");
+            messageScroll.getVerticalScrollBar().setValue(messageScroll.getVerticalScrollBar().getMaximum());
+        });
     }
- 
+
+    public void sendMessage(String from, String to, String text) {
+        try {
+            out.writeObject(new Message(from, to, text));
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Failed to send message", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     public void highlightMessages() {
-        String keyword = searchField.getText();
-        String selectedContact = contactList.getSelectedValue();
-
-        if (selectedContact == null || keyword.isEmpty()) {
-            showMessages(selectedContact, messagePanel);  // Show normal messages
+        String keyword = searchField.getText().trim();
+        String contact = contactList.getSelectedValue();
+        if (contact == null || keyword.isEmpty()) {
+            showMessages(contact);
             return;
         }
 
-        java.util.List<JLabel> originalMessages = chatHistory.getOrDefault(selectedContact, new java.util.ArrayList<>());
+        List<JLabel> original = chatHistory.getOrDefault(contact, new ArrayList<>());
         messagePanel.removeAll();
+        for (JLabel msg : original) {
+            String raw = msg.getText().replaceAll("<[^>]*>", "");
+            JLabel highlighted = raw.contains(keyword)
+                ? new JLabel("<html><div style='padding: 8px; background: yellow;'>" + raw + "</div></html>")
+                : new JLabel(msg.getText());
 
-        boolean scrolled = false;
+            JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            wrapper.setOpaque(false);
+            wrapper.add(highlighted);
+            messagePanel.add(wrapper);
+            messagePanel.add(Box.createVerticalStrut(5));
+        }
+        messagePanel.revalidate();
+        messagePanel.repaint();
+    }
 
-        for (int i = originalMessages.size() - 1; i >= 0; i--) {
-            JLabel original = originalMessages.get(i);
-            String text = original.getText();
-            String plainText = text.replaceAll("<[^>]*>", ""); // remove HTML tags
-
-            JLabel label;
-            if (plainText.contains(keyword)) {
-                // Highlight keyword
-                String highlighted = plainText.replace(keyword, "<span style='background: yellow;'>" + keyword + "</span>");
-                label = new JLabel("<html><div style='padding: 8px; background: #DCF8C6; border-radius: 10px; max-width: 300px; text-align: right;'>"
-                        + highlighted + "</div></html>");
-
-                if (!scrolled) {
-                    final JLabel scrollTarget = original;
-                    SwingUtilities.invokeLater(() -> scrollTarget.scrollRectToVisible(new Rectangle(scrollTarget.getBounds())));
-                    scrolled = true;
-                }
-            } else {
-                label = new JLabel(text); // unmodified
-            }
-
-            label.setAlignmentX(Component.RIGHT_ALIGNMENT);
+    public void showMessages(String contact) {
+        messagePanel.removeAll();
+        List<JLabel> messages = chatHistory.getOrDefault(contact, new ArrayList<>());
+        for (JLabel label : messages) {
             JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT));
             wrapper.setOpaque(false);
             wrapper.add(label);
             messagePanel.add(wrapper);
             messagePanel.add(Box.createVerticalStrut(5));
         }
-        messagePanel.revalidate();
-        messagePanel.repaint();
-    }
-
-    public void sendMessage(String from, String to, String messageText) {
-        if (out != null) {
-            try {
-                
-                Message message = new Message(from, to, messageText);
-                out.writeObject(message);
-                out.flush();
-                System.out.println("Sent " + from +" to " + to + ":" + messageText);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Failed to send the message.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-    
-    
-        public void receiveMessage(String message) {
-            
-            
-            System.out.println("Step 7: receiveMessage called with message: " + message);
-            
-            
-            Message msg = new Message();
-        String from = msg.getSender();
-        String content = msg.getMessage();
-        chatHistory.putIfAbsent(from, new ArrayList<>());
-        
-
-        String timestamp = LocalTime.now().withSecond(0).withNano(0).toString();
-        JLabel messageLabel = new JLabel("<html><div style='padding: 8px; background: #FFF; border-radius: 10px; max-width: 300px; text-align: left;'>" +
-                content + "<br><span style='font-size: 10px; color: gray;'>" + timestamp + "</span></div></html>");
-
-        JPanel wrapper = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-        wrapper.setOpaque(false);
-        wrapper.add(messageLabel);
-
-        chatHistory.get(from).add(messageLabel);
-        messagePanel.add(wrapper, messagePanel.getComponentCount() - 1);
-        messagePanel.add(Box.createVerticalStrut(5), messagePanel.getComponentCount() - 1);
-        
-        messagePanel.add(Box.createVerticalGlue());
-
-        messagePanel.revalidate();
-        messagePanel.repaint();
-
-        SwingUtilities.invokeLater(() -> {
-            JScrollBar vertical = messageScroll.getVerticalScrollBar();
-            vertical.setValue(vertical.getMaximum());
-        });
-    }
-
-
-    public void showMessages(String contact, JPanel bottomPanel) {
-        messagePanel.removeAll();
-        List<JLabel> messages = chatHistory.getOrDefault(contact, new ArrayList<>());
-
-        for (JLabel label : messages) {
-            JPanel wrapper = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
-            wrapper.setOpaque(false);
-            wrapper.add(label);
-            messagePanel.add(wrapper);
-            messagePanel.add(Box.createVerticalStrut(5));
-        }
-        
-        messagePanel.revalidate();
-        messagePanel.repaint();
         messagePanel.add(Box.createVerticalGlue());
         messagePanel.add(bottomFiller);
+        messagePanel.revalidate();
+        messagePanel.repaint();
+        messageScroll.getVerticalScrollBar().setValue(messageScroll.getVerticalScrollBar().getMaximum());
+    }
 
-        SwingUtilities.invokeLater(() -> {
-            JScrollBar vertical = messageScroll.getVerticalScrollBar();
-            vertical.setValue(vertical.getMaximum());
+    public void updateImage(String imagePath) {
+        ImageIcon icon = new ImageIcon(new ImageIcon(imagePath).getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
+        imageLabel.setIcon(icon);
+        imageLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        for (MouseListener ml : imageLabel.getMouseListeners()) imageLabel.removeMouseListener(ml);
+
+        imageLabel.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                JLabel img = new JLabel(new ImageIcon(imagePath));
+                JScrollPane scroll = new JScrollPane(img);
+                scroll.setPreferredSize(new Dimension(400, 400));
+                JOptionPane.showMessageDialog(null, scroll, "Full Image", JOptionPane.PLAIN_MESSAGE);
+            }
         });
     }
 
-    
-    public void displayMessage(String sender, String messageText, boolean isOwnMessage) {
-        SwingUtilities.invokeLater(() -> {
-            messagePanel.remove(bottomFiller);
-            System.out.println("this is displayMessage");
-
-            String timestamp = LocalTime.now().withSecond(0).withNano(0).toString();
-            String bubbleColor = isOwnMessage ? "#DDFECD" : "#F0F0F0";
-            String align = isOwnMessage ? "right" : "left";
-
-            JLabel messageLabel = new JLabel("<html><div style='padding: 8px; background: " + bubbleColor
-                    + "; border-radius: 10px; max-width: 300px; text-align: " + align + ";'>"
-                    + messageText + "<br><span style='font-size: 10px; color: gray;'>"
-                    + timestamp + "</span></div></html>");
-
-            // ✅ STORE in chatHistory
-            chatHistory.putIfAbsent(sender, new ArrayList<>());
-            chatHistory.get(sender).add(messageLabel);
-
-            JPanel wrapper = new JPanel(new FlowLayout(isOwnMessage ? FlowLayout.RIGHT : FlowLayout.LEFT));
-            wrapper.setOpaque(false);
-            wrapper.add(messageLabel);
-
-            messagePanel.add(wrapper);
-            messagePanel.add(Box.createVerticalStrut(5));
-            messagePanel.add(Box.createVerticalGlue());
-            messagePanel.add(bottomFiller);
-
-            messagePanel.revalidate();
-            messagePanel.repaint();
-
-            JScrollBar vertical = messageScroll.getVerticalScrollBar();
-            vertical.setValue(vertical.getMaximum());
-        });
+    public ActionListener getSendActionListener() {
+        return this;
     }
 }

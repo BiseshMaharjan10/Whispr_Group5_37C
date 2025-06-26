@@ -16,7 +16,7 @@ public class MessageModel implements Serializable {
 
     public MessageModel() {}
 
-    public Message(int id, String firstName, String lastName, String sender, String message, String status) {
+
     public MessageModel(int id, String firstName, String lastName, String sender, String message) {
         this.id = id;
         this.firstName = firstName;
@@ -25,10 +25,7 @@ public class MessageModel implements Serializable {
         this.message = message;
         this.status = status;
     }
-        // New constructor for sender, recipient(full name), and message text
-    public Message(String sender, String recipient, String message, String status) {
 
-    }
         // New constructor for sender, recipient(full name), and message text
     public MessageModel(String sender, String receiver, String message) {
         this.sender = sender;

@@ -97,6 +97,10 @@ public class SigninController {
         
         return currentUserEmail;
     }
+    
+    void open() {
+        
+    }
 }
 
 

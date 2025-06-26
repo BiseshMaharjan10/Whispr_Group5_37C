@@ -16,7 +16,7 @@ public class Main {
                 ClientGui gui = new ClientGui(username);
 
                 // Create Controller and wire its
-                ChatController controller = new ChatController(gui);
+                ChatController controller = new ChatController(gui, "bcoderunner@gmail.com");
                 
                 // Set contact list (assuming you want to preload users here)
                 List<String> contactNames = controller.getAllUserFullNames();

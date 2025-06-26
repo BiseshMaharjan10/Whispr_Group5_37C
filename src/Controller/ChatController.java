@@ -3,6 +3,7 @@ package Controller;
 import Dao.ChatClientDAO;
 import Model.MessageModel;
 import view.ClientGui;
+import Controller.SigninController;
 
 
 import javax.swing.*;
@@ -45,6 +46,7 @@ public class ChatController implements ActionListener {
     private final ClientGui userView;
     private String selectedImagePath;
     private String userEmail;
+    private SigninController signin; 
   
 
     private final Map<String, List<JLabel>> chatHistory = new HashMap<>();
@@ -56,10 +58,11 @@ public class ChatController implements ActionListener {
     private ObjectInputStream in;
     
 
-    public ChatController(ClientGui userView) {
+    public ChatController(ClientGui userView, String userEmail) {
         this.userView = userView;
-        
         this.chatClientDAO = new ChatClientDAO();
+        
+        this.userEmail = userEmail;
         this.contactList = userView.getContactList();
         this.messageInput = userView.getMessageInput();
         this.messagePanel = userView.getMessagePanel();
@@ -145,7 +148,6 @@ public class ChatController implements ActionListener {
             
             String Email = chatClientDAO.getEmail(names[0], names.length > 1 ? names[1] : "");
             sendMessage(currentUserName, Email, text);
-            this.userEmail = Email;
 
         } else {
             JOptionPane.showMessageDialog(null, "Select contact & write message", "Error", JOptionPane.WARNING_MESSAGE);
@@ -284,19 +286,19 @@ public class ChatController implements ActionListener {
             userView.getImageLabel().setIcon(icon);
             
             Boolean success = chatClientDAO.updateUserImagePath(userEmail, path);
-            String results = success ? "wow":"now";
+            String results = success ? "saved ":"didn't save";
             
-                System.out.println("image path" + path);
+                System.out.println("image path " + results + " "+ userEmail);
                 
         }
     }
     
-    private void showImagePopup(String imagePath) {
-        ImageIcon fullSizeIcon = new ImageIcon(imagePath);
-        JLabel fullImageLabel = new JLabel(fullSizeIcon);
-        JScrollPane scrollPane = new JScrollPane(fullImageLabel);
-        scrollPane.setPreferredSize(new Dimension(400, 400));
-
-        JOptionPane.showMessageDialog(null, scrollPane, "Full Image", JOptionPane.PLAIN_MESSAGE);
-    }
+//    private void showImagePopup(String imagePath) {
+//        ImageIcon fullSizeIcon = new ImageIcon(imagePath);
+//        JLabel fullImageLabel = new JLabel(fullSizeIcon);
+//        JScrollPane scrollPane = new JScrollPane(fullImageLabel);
+//        scrollPane.setPreferredSize(new Dimension(400, 400));
+//
+//        JOptionPane.showMessageDialog(null, scrollPane, "Full Image", JOptionPane.PLAIN_MESSAGE);
+//    }
 }

@@ -1,16 +1,23 @@
 package Controller;
 
 import Dao.UserDAO;
+import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import view.ClientGui;
 import view.Signin;
 
 public class SigninController {
     private UserDAO userDAO = new UserDAO();
     private final Signin signin;
+    public String username;
+    public String currentUserEmail;
+    
     
     public SigninController (Signin signin){
         this.signin = signin;
+        
         
     }
     public String loginUser(String email, String password) {
@@ -22,22 +29,77 @@ public class SigninController {
         
         // Check credentials in database
         boolean success = userDAO.Logincredentials(email, password);
-        String full_name = userDAO.Checknames(email);
+        String username = userDAO.Checknames(email);
+        this.currentUserEmail = email;
+                
+        if(success){
+            if (username != null && !username.trim().isEmpty()) {
+                SwingUtilities.invokeLater(() -> {
+                    // Create GUI
+                    ClientGui gui = new ClientGui(username);
 
-        
-        if(success){ 
-            SwingUtilities.invokeLater(() -> new ClientGui(full_name).setVisible(true));
-            signin.dispose();
+                    // Create Controller and wire its
+                    ChatController controller = new ChatController(gui,email);
+
+                    // Set contact list (assuming you want to preload users here)
+                    List<String> contactNames = controller.getAllUserFullNames();
+                    gui.setContactListData(contactNames); // use a setter method inside ClientGui
+
+                    // Connect Listeners
+                    gui.addSendButtonListener(controller.getSendActionListener());
+                    gui.addMessageInputListener(controller.getSendActionListener());
+                    gui.addContactListSelectionListener(e -> {
+                        String selected = gui.getSelectedContact();
+                        if (selected != null) {
+                            controller.showMessages(selected);
+                            gui.getBottomPanel().setVisible(true);
+                        }
+                    });
+                    gui.addSearchButtonListener(e -> gui.toggleSearchPanel(true));
+                    gui.addSearchFieldListener(new javax.swing.event.DocumentListener() {
+                        @Override
+                        public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                            controller.highlightMessages();
+                        }
+
+                        @Override
+                        public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                            controller.highlightMessages();
+                        }
+
+                        @Override
+                        public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                            controller.highlightMessages();
+                        }
+                    });
+                    
+               try {
+                        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException e) {
+                        e.printStackTrace();  // or log it properly
+                    }
+                                        
+                    // Show GUI
+                    gui.setVisible(true);
+                });
+            } else {
+                JOptionPane.showMessageDialog(null, "Username is required.");
+                System.exit(0);
+            }
         }else {
             return "Credentials didn't match";
         }
         return null;
     }
-
-    void open() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    
+    
+    public String getCurrentUserEmail(){
+        
+        return currentUserEmail;
     }
 }
+
+
 
 
 

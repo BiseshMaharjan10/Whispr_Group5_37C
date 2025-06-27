@@ -25,13 +25,19 @@ public class Main {
                 // Connect Listeners
                 gui.addSendButtonListener(controller.getSendActionListener());
                 gui.addMessageInputListener(controller.getSendActionListener());
+                
                 gui.addContactListSelectionListener(e -> {
+                    if (!e.getValueIsAdjusting()) {
                     String selected = gui.getSelectedContact();
                     if (selected != null) {
+                        ChatController chat_controller = new ChatController(selected);
+                        gui.showProfileButton();
+                        
                         controller.showMessages(selected);
                         gui.getBottomPanel().setVisible(true);
                     }
-                });
+                    
+                }});
                 gui.addSearchButtonListener(e -> gui.toggleSearchPanel(true));
                 gui.addSearchFieldListener(new javax.swing.event.DocumentListener() {
                     @Override

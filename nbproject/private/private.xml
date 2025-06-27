@@ -12,8 +12,15 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/Controller/ChatController.java</file>
-            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/view/ClientGui.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/view/Fpassword2.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/Controller/Fpassword2Controller.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/Controller/OtpController.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/Model/OTPModel.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/view/OTPs.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/Controller/ClientHandler.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/Controller/Fpasswordcontroller.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/view/NOpfp.jpg</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/view/FPassword.java</file>
         </group>
     </open-files>
 </project-private>

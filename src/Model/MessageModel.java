@@ -12,8 +12,16 @@ public class MessageModel implements Serializable {
     private String sender;
     private String message;
     private String receiver;
+    private String currentUserName;
 
-    public MessageModel() {}
+    
+    public MessageModel(){
+    
+    }
+    
+    public MessageModel(String selectedUserName) {
+        this.currentUserName = selectedUserName;
+    }
 
     public MessageModel(int id, String firstName, String lastName, String sender, String message) {
         this.id = id;
@@ -30,18 +38,7 @@ public class MessageModel implements Serializable {
         this.message = message;
         
 
-        
-//        String[] names = receiver.split(" ", 2);
-//        
-//        if (names.length == 2) {
-//            this.firstName = names[0];
-//            this.lastName = names[1];
-//        } else {
-//            this.firstName = receiver;
-//            this.lastName = "";
-//        }
-
-    }
+        }
 
     // Getters
     public int getId() {
@@ -66,6 +63,10 @@ public class MessageModel implements Serializable {
     public String getReceiver(){
         return receiver;
         
+    }
+    
+    public String getCurrentUserName() {
+        return currentUserName;
     }
 
     // Setters

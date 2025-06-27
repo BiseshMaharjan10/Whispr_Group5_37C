@@ -60,7 +60,7 @@ public class ClientGui extends JFrame {
         profileButton.setContentAreaFilled(false);
         profileButton.setFont(new Font("Arial", Font.PLAIN, 18));
         profileButton.setToolTipText("Upload Profile Picture ");
-        profileButton.setVisible(true); 
+        profileButton.setVisible(false); 
         
 
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -167,7 +167,13 @@ public class ClientGui extends JFrame {
     public void addSearchButtonListener(java.awt.event.ActionListener listener) {
         searchButton.addActionListener(listener);
     }
-
+    
+    public void addProfileListener(ActionListener listener) {
+        profileButton.addActionListener(listener);
+    }
+    
+    
+    //setters
     public void toggleSearchPanel(boolean visible) {
         searchPanel.setVisible(visible);
     }
@@ -176,7 +182,6 @@ public class ClientGui extends JFrame {
         searchField.setText("");
     }
 
-    //setters
     public void setContactListData(List<String> contacts) {
         contactList.setListData(contacts.toArray(new String[0]));
     } 
@@ -185,9 +190,6 @@ public class ClientGui extends JFrame {
         profileButton.setVisible(true);
     }
 
-    public void hideProfileButton() {
-        profileButton.setVisible(false);
-    }
     
     //getters
     
@@ -249,7 +251,6 @@ public class ClientGui extends JFrame {
         }
     }
     
-    public void addProfileListener(ActionListener listener){
-        profileButton.addActionListener(listener);
-    }
+    
+
 }

@@ -4,10 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import Model.MessageModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import view.ClientGui;
-import view.Profile;
+import Dao.ChatClientDAO;
 
 public class ClientHandler implements Runnable {
 
@@ -16,19 +13,12 @@ public class ClientHandler implements Runnable {
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private String clientUsername;
-    private ClientGui client;
-//     this.client = client;
-////        client.addProfileListener(new ProfileListener());
-//        client.addProfileListener(new newProfileListener());
 
     public ClientHandler(Socket socket) {
         try {
             this.socket = socket;
             this.out = new ObjectOutputStream(socket.getOutputStream());
             this.in = new ObjectInputStream(socket.getInputStream());
-             this.client = client;
-//        client.addProfileListener(new ProfileListener());
-        client.addProfileListener(new newProfileListener());
 
             this.clientUsername = (String) in.readObject(); // receive username
             clientHandlers.add(this);
@@ -40,63 +30,10 @@ public class ClientHandler implements Runnable {
         } catch (IOException | ClassNotFoundException e) {
             closeEverything(socket, in, out);
         }
-        
-        
-    }
-    
-//    public ClientHandler(ClientGui client){
-//        this.client = client;
-////        client.addProfileListener(new ProfileListener());
-//        client.addProfileListener(new newProfileListener());
-//    }
-// public void setupProfileListener(Profile view){
-//        view.addProfileListener(new newProfileListener());
-//    }
-   public class newProfileListener implements ActionListener{
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            System.out.println("Clicked");
-            Profile profile = new Profile();
-            
-            profile.setVisible(true);
-            
-            if(client !=null) client.dispose();
-        }
-        
-    
-    
-//    class ProfileListener implements ActionListener{
-//
-//        @Override
-//        public void actionPerformed(ActionEvent e) {
-//            Profile pp = new Profile();
-//            ProfileController controller = new ProfileController(pp);
-//            controller.openProfile();
-//        }
-//        
     }
 
     
-    @Override
-    public void run() {
-        while (socket.isConnected()) {
-            try {
-                Object obj = in.readObject();
 
-                if (obj instanceof MessageModel) {
-                    MessageModel msg = (MessageModel) obj;
-
-                    // Broadcast to others or handle private messaging if needed
-                    broadcastMessage(msg);
-                }
-
-            } catch (IOException | ClassNotFoundException e) {
-                closeEverything(socket, in, out);
-                break;
-            }
-        }
-    }
     
 
     public void broadcastMessage(MessageModel messageToSend) {
@@ -134,20 +71,26 @@ public class ClientHandler implements Runnable {
     }
     
     
-    
-    public void sendPrivateMessage(String recipientUsername, String message) {
-    for (ClientHandler clientHandler : clientHandlers) {
-        if (clientHandler.clientUsername.equals(recipientUsername)) {
-            try {
-                clientHandler.out.writeObject(clientUsername + ": " + message);
-                clientHandler.out.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
+    public void sendPrivateMessage(MessageModel msg) {
+        
+        //fetch the first and last name from email
+        ChatClientDAO temp_obj = new ChatClientDAO();
+        String first_n_lastName = temp_obj.getFirstnLastName(msg.getReceiver());
+        
+        
+        for (ClientHandler clientHandler : clientHandlers) {
+            if (clientHandler.clientUsername.equals(first_n_lastName)) {
+                try {
+                    clientHandler.out.writeObject(msg);
+                    clientHandler.out.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             }
-            break;
         }
     }
-}
+    
     
     public void sendOnlineUsers() {
         ArrayList<String> onlineUsernames = new ArrayList<>();
@@ -167,4 +110,44 @@ public class ClientHandler implements Runnable {
             }
         }
     }
+    
+    
+    
+    
+    
+        @Override
+    public void run() {
+        while (socket.isConnected()) {
+            try {
+                Object obj = in.readObject();
+                
+
+
+                if (obj instanceof MessageModel) {
+                    MessageModel msg = (MessageModel) obj;
+                    
+                    
+                    System.out.println("\nDEBUG: Received message from: " + msg.getSender() + 
+                   ", to: " + msg.getReceiver() + 
+                   ", message: " + msg.getMessage());
+
+                    if (msg.getReceiver() != null && !msg.getReceiver().trim().isEmpty()) {
+                        String a = msg.getReceiver();
+                         System.out.println("user found in_database : \"" + a + "\"");
+                        sendPrivateMessage(msg);
+                        
+                    } else {
+                        System.out.println("user not found sending message in group");
+                        broadcastMessage(msg); // Optional, for group message
+                    }
+                }
+
+            } catch (IOException | ClassNotFoundException e) {
+                closeEverything(socket, in, out);
+                break;
+            }
+        }
+    }
+    
+    
 }

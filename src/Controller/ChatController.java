@@ -50,6 +50,7 @@ public class ChatController implements ActionListener {
     private String userEmail;
     private SigninController signin;
     private String selectedUserEmail;
+    
   
 
     private final Map<String, List<JLabel>> chatHistory = new HashMap<>();
@@ -84,15 +85,15 @@ public class ChatController implements ActionListener {
             } 
         });  
         
-        userView.addProfileListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            Profile profileView = new Profile();
-            ProfileModel model = new ProfileModel("Default profile");
-            new ProfileController(profileView, ChatController.this, model);
-            profileView.setVisible(true);
-        }
-});
+//        userView.addProfileListener(new ActionListener() {
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//            Profile profileView = new Profile();
+////            ProfileModel model = new ProfileModel("Default profile");
+//            new ProfileController(profileView, ChatController.this, model);
+//            profileView.setVisible(true);
+//        }
+//});
         
         initializeConnection();
     }
@@ -133,12 +134,16 @@ public class ChatController implements ActionListener {
     private void handleIncomingMessage(MessageModel msg) {
         if ("SERVER".equals(msg.getSender()) && msg.getMessage().contains(",")) {
             
-            System.out.println("this is inside handleincomeing message if");
+
             updateContactList(msg.getMessage());
         } else if (contactList.getSelectedValue() != null) {
-            System.out.println("this is inside handleincomeing message else");
+            
+            userView.showProfileButton();
             boolean isSelf = msg.getSender().equals(currentUserName);
             displayMessage(msg.getSender(), msg.getMessage(), isSelf);
+            
+        }else if (contactList.getModel().getSize() == 0) {
+            userView.hideProfileButton();
         }
     }
 

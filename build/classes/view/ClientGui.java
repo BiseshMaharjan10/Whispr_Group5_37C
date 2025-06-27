@@ -54,12 +54,13 @@ public class ClientGui extends JFrame {
         messageInput = new JTextField();
         contactList = new JList<>();
         
-        JButton profileButton = new JButton("👤");
+        profileButton = new JButton("👤");
         profileButton.setFocusPainted(false);
         profileButton.setBorderPainted(false);
         profileButton.setContentAreaFilled(false);
         profileButton.setFont(new Font("Arial", Font.PLAIN, 18));
         profileButton.setToolTipText("Upload Profile Picture ");
+        profileButton.setVisible(true); 
         
 
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -179,6 +180,14 @@ public class ClientGui extends JFrame {
     public void setContactListData(List<String> contacts) {
         contactList.setListData(contacts.toArray(new String[0]));
     } 
+    
+    public void showProfileButton() {
+        profileButton.setVisible(true);
+    }
+
+    public void hideProfileButton() {
+        profileButton.setVisible(false);
+    }
     
     //getters
     

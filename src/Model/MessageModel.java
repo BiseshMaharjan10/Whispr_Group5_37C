@@ -11,6 +11,7 @@ public class MessageModel implements Serializable {
     private String lastName;
     private String sender;
     private String message;
+    private String receiver;
 
     public MessageModel() {}
 
@@ -20,19 +21,26 @@ public class MessageModel implements Serializable {
         this.lastName = lastName;
         this.sender = sender;
         this.message = message;
+
     }
         // New constructor for sender, recipient(full name), and message text
-    public MessageModel(String sender, String recipient, String message) {
+    public MessageModel(String sender, String receiver, String message) {
         this.sender = sender;
-        String[] names = recipient.split(" ", 2);
-        if (names.length == 2) {
-            this.firstName = names[0];
-            this.lastName = names[1];
-        } else {
-            this.firstName = recipient;
-            this.lastName = "";
-        }
+        this.receiver = receiver;
         this.message = message;
+        
+
+        
+//        String[] names = receiver.split(" ", 2);
+//        
+//        if (names.length == 2) {
+//            this.firstName = names[0];
+//            this.lastName = names[1];
+//        } else {
+//            this.firstName = receiver;
+//            this.lastName = "";
+//        }
+
     }
 
     // Getters
@@ -55,6 +63,10 @@ public class MessageModel implements Serializable {
     public String getMessage() {
         return message;
     }
+    public String getReceiver(){
+        return receiver;
+        
+    }
 
     // Setters
     public void setId(int id) {
@@ -75,6 +87,10 @@ public class MessageModel implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+    
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 
     // Convenience method for full name

@@ -18,6 +18,7 @@ public class ProfileController{ //implements ActionListener {
     private ChatClientDAO dao;
     private String selectedUserEmail;
     private ProfileModel model;
+    private String temp_name = "bisesh";
 //    private ChatController controller;
     
     public ProfileController(Profile view, ChatController controller, ProfileModel model){
@@ -27,6 +28,9 @@ public class ProfileController{ //implements ActionListener {
         
         this.selectedUserEmail = controller.getSelectedUserEmail();
         this.fullName = dao.getFirstnLastName(selectedUserEmail);
+        
+        System.out.println("currentUsername" + model.getprofileName());
+        
 //        userProfile.addProfileListener(new ProfileListener());
         
 
@@ -39,6 +43,7 @@ public class ProfileController{ //implements ActionListener {
                 view.updateName(model.getprofileName());
             }
         });
+
     
     
     }

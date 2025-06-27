@@ -1,11 +1,11 @@
 package utils;
 
-import view.ClientGui;
 import Controller.ChatController;
-import Dao.ChatClientDAO;
 import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import view.ClientGui;
 
-import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {

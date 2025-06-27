@@ -1,10 +1,10 @@
 package Dao;
 
+import Database.MySqlConnection;
 import Model.MessageModel;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import Database.MySqlConnection;
 
 public class ChatClientDAO {
     private final MySqlConnection db = new MySqlConnection();

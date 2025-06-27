@@ -21,6 +21,7 @@ public class Signin extends javax.swing.JFrame {
      */
     
 //        private boolean isPasswordVisible = true;
+<<<<<<< HEAD
         private javax.swing.JLabel emailerrorLabel;
         
     public Signin() {
@@ -50,6 +51,37 @@ setpassword.setEchoChar((char) 0);  // show as plain text initially
     }
 });
     }
+=======
+//        private javax.swing.JLabel emailerrorLabel;
+//        
+    public Signin() {
+        initComponents();
+//        
+//          //for show passsword toggle
+//        setpassword.setText("Password");
+//setpassword.setForeground(Color.GRAY);
+//setpassword.setEchoChar((char) 0);  // show as plain text initially
+//
+//        
+//        
+//        //for red error text for email
+//        emailerrorLabel = new javax.swing.JLabel();
+// emailerrorLabel.setForeground(Color.RED);
+// emailerrorLabel.setText(""); // Empty at first
+//
+//        emailaddress.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+//    public void insertUpdate(javax.swing.event.DocumentEvent e) {
+//        validateEmail();
+//    }
+//    public void removeUpdate(javax.swing.event.DocumentEvent e) {
+//        validateEmail();
+//    }
+//    public void changedUpdate(javax.swing.event.DocumentEvent e) {
+//        validateEmail();
+//    }
+//});
+   }
+>>>>>>> signin
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -59,6 +91,7 @@ setpassword.setEchoChar((char) 0);  // show as plain text initially
     
     
     //for validate email
+<<<<<<< HEAD
     private void validateEmail() {
     String input = emailaddress.getText().trim();
     boolean isValid = input.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
@@ -71,6 +104,20 @@ setpassword.setEchoChar((char) 0);  // show as plain text initially
          emailerrorLabel.setText("");
     }
     }
+=======
+//    private void validateEmail() {
+//    String input = emailaddress.getText().trim();
+//    boolean isValid = input.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
+//
+//    if (!isValid) {
+//        emailaddress.setForeground(Color.RED);
+//         emailerrorLabel.setText("Invalid email format");
+//    } else {
+//        emailaddress.setForeground(Color.BLACK);
+//         emailerrorLabel.setText("");
+//    }
+//    }
+>>>>>>> signin
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

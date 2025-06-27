@@ -6,7 +6,11 @@ import view.ClientGui;
 import view.Signin;
 
 public class SigninController {
+<<<<<<< HEAD
     private UserDAO userDAO = new UserDAO();
+=======
+    private final UserDAO userDAO = new UserDAO();
+>>>>>>> signin
     private final Signin signin;
     
     public SigninController (Signin signin){

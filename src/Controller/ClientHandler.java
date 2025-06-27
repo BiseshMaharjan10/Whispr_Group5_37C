@@ -1,10 +1,10 @@
 package Controller;
 
+import Dao.ChatClientDAO;
+import Model.MessageModel;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import Model.MessageModel;
-import Dao.ChatClientDAO;
 
 public class ClientHandler implements Runnable {
 

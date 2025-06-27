@@ -7,12 +7,18 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.ListSelectionListener;
 import Controller.ChatController;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import view.RoundImageLabel;
 
 public class ClientGui extends JFrame {
 
     private JTextField messageInput;
     private JButton sendButton;
     private JList<String> contactList;
+    private JList<String> emailList;
     private JPanel bottomPanel;
     private JPanel messagePanel;
     private JScrollPane messageScroll;
@@ -23,6 +29,8 @@ public class ClientGui extends JFrame {
     private JLabel timerLabel;
     private JLabel dynamicTextLabel;
     private String currentUserName;
+    private ChatController controller;
+    private  JLabel friendsImageLabel;
 
 
     public ClientGui(String currentUserName) {
@@ -80,12 +88,12 @@ public class ClientGui extends JFrame {
         inputPanel.add(messageInput, BorderLayout.CENTER);
         inputPanel.add(sendButton, BorderLayout.EAST);
 
-        JLabel currentUserLabel = new JLabel("Logged in as: " + currentUserName);
-        currentUserLabel.setFont(new Font("Arial", Font.ITALIC, 12));
-        currentUserLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+//        JLabel currentUserLabel = new JLabel("Logged in as: " + currentUserName);
+//        currentUserLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+//        currentUserLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
         bottomPanel.add(inputPanel, BorderLayout.CENTER);
-        bottomPanel.add(currentUserLabel, BorderLayout.SOUTH);
+//        bottomPanel.add(currentUserLabel, BorderLayout.SOUTH);
 
         JPanel messageArea = new JPanel(new BorderLayout());
         messageArea.add(topPanel, BorderLayout.NORTH);
@@ -93,24 +101,24 @@ public class ClientGui extends JFrame {
         messageArea.add(bottomPanel, BorderLayout.SOUTH);
 
         JScrollPane contactScroll = new JScrollPane(contactList);
-        contactScroll.setPreferredSize(new Dimension(150, 0));
+        contactScroll.setPreferredSize(new Dimension(200, 0)); //width, height
         contactScroll.setBorder(BorderFactory.createTitledBorder("Your friends"));
 
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.add(contactScroll, BorderLayout.CENTER);
 
-        JLabel logoutLabel = new JLabel("Log out");
-        logoutLabel.setFont(new Font("Arial", Font.ITALIC, 12));
-        logoutLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        logoutLabel.setBorder(BorderFactory.createEmptyBorder(15, 8, 5, 0));
-        leftPanel.add(logoutLabel, BorderLayout.SOUTH);
+//        JLabel logoutLabel = new JLabel("Log out");
+//        logoutLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+//        logoutLabel.setHorizontalAlignment(SwingConstants.CENTER);
+//        logoutLabel.setBorder(BorderFactory.createEmptyBorder(15, 8, 5, 0));
+//        leftPanel.add(logoutLabel, BorderLayout.SOUTH);
 
-        imageLabel = new JLabel();
+        imageLabel = new RoundImageLabel(null);
         imageLabel.setPreferredSize(new Dimension(50, 50));
-        imageLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 17)); // top, left, bottom, right
+        imageLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10)); // top, left, bottom, right
 
         dynamicTextLabel = new JLabel(currentUserName);
-        dynamicTextLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        dynamicTextLabel.setFont(new Font("Arial", Font.BOLD, 12));
         dynamicTextLabel.setHorizontalAlignment(SwingConstants.LEFT);
         dynamicTextLabel.setVerticalAlignment(SwingConstants.CENTER);
 
@@ -120,7 +128,7 @@ public class ClientGui extends JFrame {
         leftPanel.add(bottomInfoPanel, BorderLayout.SOUTH);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, messageArea);
-        splitPane.setDividerLocation(150);
+        splitPane.setDividerLocation(200);
         splitPane.setDividerSize(1);
         splitPane.setEnabled(false);
 
@@ -219,13 +227,29 @@ public class ClientGui extends JFrame {
     }
 
     class ContactCellRenderer extends DefaultListCellRenderer {
+
+        private ImageIcon defaultIcon;
+
+        public ContactCellRenderer() {
+            // Load a default icon (you can replace this with dynamic loading too)
+
+        }
+
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            label.setHorizontalAlignment(SwingConstants.CENTER);
+            
+            Image img = new ImageIcon("assets/profile.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            defaultIcon = new ImageIcon(img);
+
+            label.setIcon(defaultIcon);  // 👈 Set the icon
+            label.setIconTextGap(10);    // Gap between icon and text
+            label.setHorizontalAlignment(SwingConstants.LEFT);
             label.setFont(new Font("Arial", Font.PLAIN, 18));
-            label.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
+            label.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
             return label;
         }
     }
+    
 }

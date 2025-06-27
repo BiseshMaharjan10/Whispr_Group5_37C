@@ -5,7 +5,6 @@ import Model.MessageModel;
 import view.ClientGui;
 import Controller.SigninController;
 
-
 import javax.swing.*;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -17,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -32,21 +32,33 @@ import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import view.RoundImageLabel;
 
 public class ChatController implements ActionListener {
     private final ChatClientDAO chatClientDAO;
-    private final JList<String> contactList;
-    private final JTextField messageInput;
-    private final JPanel messagePanel;
-    private final JScrollPane messageScroll;
-    private final JTextField searchField;
-    private final JPanel bottomPanel;
-    private final JLabel imageLabel;
-    private final String currentUserName;
+    private  SigninController signin;
     private final ClientGui userView;
+    
+    private final JList<String> contactList;
+    private  JList<String> emailList;
+    private final JTextField messageInput;
+    private final JTextField searchField;
+    private final JPanel messagePanel;
+    private final JPanel bottomPanel;
+    private final JScrollPane messageScroll;
+    private final JLabel imageLabel;
+    
+    private final String currentUserName;
     private String selectedImagePath;
-    private String userEmail;
-    private SigninController signin; 
+    private String loggedInUserEmail;
+    private String selectedUserEmail;
+    
+    private File selectedFile;
+    private ImageIcon selectedUserIcon;
+
   
 
     private final Map<String, List<JLabel>> chatHistory = new HashMap<>();
@@ -58,11 +70,11 @@ public class ChatController implements ActionListener {
     private ObjectInputStream in;
     
 
-    public ChatController(ClientGui userView, String userEmail) {
+    public ChatController(ClientGui userView, String userEmail) throws IOException {
         this.userView = userView;
         this.chatClientDAO = new ChatClientDAO();
         
-        this.userEmail = userEmail;
+        this.loggedInUserEmail = userEmail;
         this.contactList = userView.getContactList();
         this.messageInput = userView.getMessageInput();
         this.messagePanel = userView.getMessagePanel();
@@ -75,10 +87,15 @@ public class ChatController implements ActionListener {
         userView.getImageLabel().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                handleImageClick();
+                try {
+                    handleImageClick();
+                } catch (IOException ex) {
+                    Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } 
         });  
         
+        updateUserImage();
         initializeConnection();
     }
     
@@ -117,11 +134,10 @@ public class ChatController implements ActionListener {
 
     private void handleIncomingMessage(MessageModel msg) {
         if ("SERVER".equals(msg.getSender()) && msg.getMessage().contains(",")) {
-            
-            System.out.println("this is inside handleincomeing message if");
             updateContactList(msg.getMessage());
+            
         } else if (contactList.getSelectedValue() != null) {
-            System.out.println("this is inside handleincomeing message else");
+            
             boolean isSelf = msg.getSender().equals(currentUserName);
             displayMessage(msg.getSender(), msg.getMessage(), isSelf);
         }
@@ -148,6 +164,8 @@ public class ChatController implements ActionListener {
             
             String Email = chatClientDAO.getEmail(names[0], names.length > 1 ? names[1] : "");
             sendMessage(currentUserName, Email, text);
+            
+            this.selectedUserEmail = Email;
 
         } else {
             JOptionPane.showMessageDialog(null, "Select contact & write message", "Error", JOptionPane.WARNING_MESSAGE);
@@ -268,7 +286,8 @@ public class ChatController implements ActionListener {
         return this;
     }
     
-    public void handleImageClick() {
+    public void handleImageClick() throws IOException {
+        
         System.out.println("Image clicked!");
         
         JFileChooser chooser = new JFileChooser();
@@ -280,16 +299,47 @@ public class ChatController implements ActionListener {
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = chooser.getSelectedFile();
             String path = selectedFile.getAbsolutePath();
+            
+            this.selectedFile = selectedFile;
 
             // Update image label in GUI
             ImageIcon icon = new ImageIcon(new ImageIcon(path).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH));
-            userView.getImageLabel().setIcon(icon);
+            BufferedImage img = ImageIO.read(selectedFile);
+            ((RoundImageLabel) imageLabel).setImage(img);
             
-            Boolean success = chatClientDAO.updateUserImagePath(userEmail, path);
+            Boolean success = chatClientDAO.updateUserImagePath(loggedInUserEmail, path);
             String results = success ? "saved ":"didn't save";
             
-                System.out.println("image path " + results + " "+ userEmail);
+
+            
+            System.out.println("image path " + results + " "+ loggedInUserEmail + selectedFile);
                 
+        }
+    }
+    
+    
+    private void updateUserImage() throws IOException {
+        String currentUserImagePath = chatClientDAO.getImagePath(loggedInUserEmail);
+        String allUserImagePath = chatClientDAO.getImagePath(selectedUserEmail);
+
+        if (currentUserImagePath != null && !currentUserImagePath.isEmpty()) {
+            File currentUserFile = new File(currentUserImagePath);
+            if (currentUserFile.exists()) {
+                BufferedImage img = ImageIO.read(currentUserFile);
+                ((RoundImageLabel) imageLabel).setImage(img);
+            } else {
+                System.err.println("Current user image file not found: " + currentUserImagePath);
+            }
+        }
+
+        if (allUserImagePath != null && !allUserImagePath.isEmpty()) {
+            File friendFile = new File(allUserImagePath);
+            if (friendFile.exists()) {
+                BufferedImage friendImg = ImageIO.read(friendFile);
+                ((RoundImageLabel) imageLabel).setImage(friendImg);
+            } else {
+                System.err.println("Friend user image file not found: " + allUserImagePath);
+            }
         }
     }
     

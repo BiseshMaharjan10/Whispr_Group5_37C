@@ -3,8 +3,10 @@ package view;
 import Controller.Fpasswordcontroller;
 import java.awt.Color;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 
 
 /**
@@ -368,4 +370,8 @@ public class Fpassword2 extends javax.swing.JFrame {
     private javax.swing.JPasswordField setpassword;
     private javax.swing.JCheckBox showpassword;
     // End of variables declaration//GEN-END:variables
+
+    public JPasswordField getPassword(){
+        return confirmpassword;
+    }
 }

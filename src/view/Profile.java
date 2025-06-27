@@ -8,7 +8,7 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-
+import Controller.ProfileController;
 /**
  *
  * @author kanchanmaharjan
@@ -20,6 +20,7 @@ public class Profile extends javax.swing.JFrame {
      */
     public Profile() {
         initComponents();
+        setVisible(true);
         setTitle("User Profile");
         setSize(300, 200);
         setLocationRelativeTo(null);
@@ -63,6 +64,16 @@ public class Profile extends javax.swing.JFrame {
             .addComponent(ProfImag, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        ProfileName.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                ProfileNameAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -96,6 +107,12 @@ public class Profile extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void ProfileNameAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_ProfileNameAncestorAdded
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ProfileNameAncestorAdded
+
+    
 
     /**
      * @param args the command line arguments
@@ -140,4 +157,12 @@ public class Profile extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
+
+    public void updateName(String selectedUsername) {
+        ProfileName.setText( selectedUsername );
+    }
+    
+    
+
+
 }

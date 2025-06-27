@@ -3,7 +3,11 @@ package Controller;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import Model.Message;
+import Model.MessageModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import view.ClientGui;
+import view.Profile;
 
 public class ClientHandler implements Runnable {
 
@@ -12,6 +16,7 @@ public class ClientHandler implements Runnable {
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private String clientUsername;
+    private ClientGui client;
 
     public ClientHandler(Socket socket) {
         try {
@@ -21,7 +26,7 @@ public class ClientHandler implements Runnable {
 
             this.clientUsername = (String) in.readObject(); // receive username
             clientHandlers.add(this);
-            Message joinMsg = new Message();
+            MessageModel joinMsg = new MessageModel();
             joinMsg.setSender("SERVER");
             joinMsg.setMessage(clientUsername + " has entered the chat!");
             broadcastMessage(joinMsg);
@@ -29,6 +34,24 @@ public class ClientHandler implements Runnable {
         } catch (IOException | ClassNotFoundException e) {
             closeEverything(socket, in, out);
         }
+        
+        
+    }
+    
+    public ClientHandler(ClientGui client){
+        this.client = client;
+        client.addProfileListener(new ProfileListener());
+    }
+    
+    class ProfileListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Profile pp = new Profile();
+            ProfileController controller = new ProfileController(pp);
+            controller.openProfile();
+        }
+        
     }
 
     
@@ -38,8 +61,8 @@ public class ClientHandler implements Runnable {
             try {
                 Object obj = in.readObject();
 
-                if (obj instanceof Message) {
-                    Message msg = (Message) obj;
+                if (obj instanceof MessageModel) {
+                    MessageModel msg = (MessageModel) obj;
 
                     // Broadcast to others or handle private messaging if needed
                     broadcastMessage(msg);
@@ -53,7 +76,7 @@ public class ClientHandler implements Runnable {
     }
     
 
-    public void broadcastMessage(Message messageToSend) {
+    public void broadcastMessage(MessageModel messageToSend) {
         for (ClientHandler clientHandler : clientHandlers) {
             try {
                 if (!clientHandler.clientUsername.equals(clientUsername)) {
@@ -77,7 +100,7 @@ public class ClientHandler implements Runnable {
         }
 
         clientHandlers.remove(this);
-        Message joinMsg = new Message();
+        MessageModel joinMsg = new MessageModel();
         joinMsg.setSender("SERVER");
         joinMsg.setMessage(clientUsername + " left the chat!");
         broadcastMessage(joinMsg);
@@ -111,7 +134,7 @@ public class ClientHandler implements Runnable {
 
         for (ClientHandler handler : clientHandlers) {
             try {
-                Message userListMsg = new Message();
+                MessageModel userListMsg = new MessageModel();
                 userListMsg.setSender("SERVER");
                 userListMsg.setMessage("" + String.join(",", onlineUsernames));
                 handler.out.writeObject(userListMsg);

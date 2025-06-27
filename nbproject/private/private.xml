@@ -14,7 +14,16 @@
         <group>
             <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/Controller/ProfileController.java</file>
             <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/Model/ProfileModel.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/Controller/ChatController.java</file>
             <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/view/Profile.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/view/ClientGui.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/Controller/ClientHandler.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/view/Signin.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/Controller/ChangeListener.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/view/OTPs.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/view/otps.jpg</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/Dao/ChatClientDAO.java</file>
+            <file>file:/Users/kanchanmaharjan/NetBeansProjects/Whispr_Group5_37C/src/Controller/OtpController.java</file>
         </group>
     </open-files>
 </project-private>

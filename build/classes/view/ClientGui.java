@@ -3,63 +3,57 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import Controller.ChatController;
-import Dao.ChatClientDAO;
-import java.io.IOException;
-import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
-
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.ListSelectionListener;
+import Controller.ChatController;
+import java.awt.event.ActionListener;
 
 public class ClientGui extends JFrame {
 
     private JTextField messageInput;
     private JButton sendButton;
     private JList<String> contactList;
-    private JPanel bottompanel;
+    private JPanel bottomPanel;
     private JPanel messagePanel;
     private JScrollPane messageScroll;
-    private ChatController controller;
     private JTextField searchField;
     private JPanel searchPanel;
-    
+    private JButton profileButton;
+    private JLabel imageLabel;
+    private JButton searchButton;
+    private JLabel timerLabel;
+    private JLabel dynamicTextLabel;
+    private String currentUserName;
 
 
     public ClientGui(String currentUserName) {
+        
         setTitle("Whispr");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         getContentPane().setBackground(Color.decode("#FCFBF4"));
+
         
+        initComponents(currentUserName);
+    }
+
+    private void initComponents(String currentUserName) {
         
-        // 🔍 Top Panel with Search
+        this.currentUserName = currentUserName;
+        
         searchField = new JTextField(20);
         searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.setVisible(false);
         searchPanel.add(searchField);
 
-        JButton searchButton = new JButton("🔍");
-        searchButton.addActionListener(e -> {
-        boolean currentlyVisible = searchPanel.isVisible();
-        searchPanel.setVisible(!currentlyVisible);
-
-        // Optional: clear search field and reset messages when hiding
-        if (currentlyVisible) {
-            searchField.setText("");
-            controller.highlightMessages();
-            }
-        });
-        
+        searchButton = new JButton("\uD83D\uDD0D");
 
         messageInput = new JTextField();
         contactList = new JList<>();
         
-        JPanel topPanel = new JPanel(new BorderLayout());
-        // Create the profile picture label to show the uploaded image
-
-        //  Profile Button
         JButton profileButton = new JButton("👤");
         profileButton.setFocusPainted(false);
         profileButton.setBorderPainted(false);
@@ -68,60 +62,30 @@ public class ClientGui extends JFrame {
         profileButton.setToolTipText("Upload Profile Picture ");
         
 
-        topPanel.add(searchButton, BorderLayout.WEST);      // Search icon on the left
-        topPanel.add(searchPanel, BorderLayout.CENTER);     // Search field in center
-        topPanel.add(profileButton, BorderLayout.EAST);     // Profile icon on the right
-        
-        profileButton.addActionListener(e -> {
-            Profile profile = new Profile();
-            System.out.println("Clicked");
-            profile.setVisible(true);
-        });
-        
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(profileButton, BorderLayout.WEST);
+        topPanel.add(searchPanel, BorderLayout.CENTER);
+        topPanel.add(searchButton, BorderLayout.EAST);
 
-        
-        //for bottom part
         messagePanel = new JPanel();
         messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
         messagePanel.setBackground(Color.WHITE);
+
         messageScroll = new JScrollPane(messagePanel);
         messageScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        JPanel messageArea = new JPanel(new BorderLayout());
-        messageArea.add(topPanel, BorderLayout.NORTH);
-        messageArea.add(messageScroll, BorderLayout.CENTER);
 
-        
-         //  Real-time search listener
-        searchField.getDocument().addDocumentListener(new DocumentListener() {
-            public void insertUpdate(DocumentEvent e) {
-                controller.highlightMessages();
-            }
-
-            public void removeUpdate(DocumentEvent e) {
-                controller.highlightMessages();
-            }
-
-            public void changedUpdate(DocumentEvent e) {
-                controller.highlightMessages();
-            }
-        });
-
-        
-        
-        
-
-        // Unified bottom panel with input, send button, and "Logged in as"
-        bottompanel = new JPanel(new BorderLayout());
-        bottompanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-//        bottompanel.setPreferredSize(new Dimension(0, 60));
+        bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        bottomPanel.setPreferredSize(new Dimension(0, 80));
+        bottomPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+        bottomPanel.setVisible(false);
 
         messageInput.setFont(new Font("Arial", Font.PLAIN, 18));
         messageInput.setPreferredSize(new Dimension(0, 40));
-        
+
         sendButton = new JButton("Send");
         sendButton.setFont(new Font("Arial", Font.PLAIN, 18));
         sendButton.setPreferredSize(new Dimension(100, 40));
-        
 
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.add(messageInput, BorderLayout.CENTER);
@@ -131,64 +95,152 @@ public class ClientGui extends JFrame {
         currentUserLabel.setFont(new Font("Arial", Font.ITALIC, 12));
         currentUserLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        bottompanel.add(inputPanel, BorderLayout.CENTER);
-        bottompanel.add(currentUserLabel, BorderLayout.SOUTH);
-        bottompanel.setVisible(false);
+        bottomPanel.add(inputPanel, BorderLayout.CENTER);
+        bottomPanel.add(currentUserLabel, BorderLayout.SOUTH);
 
-
-
-        // Contacts
-        ChatClientDAO dao = new ChatClientDAO();
-        controller = new ChatController(dao, contactList, messageInput, messagePanel, messageScroll,currentUserName, searchField, bottompanel);
-
-        List<String> contactNames = controller.getAllUserFullNames();
-        contactList.setListData(contactNames.toArray(new String[0]));
-        contactList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        contactList.setCellRenderer(new ContactCellRenderer());
+        JPanel messageArea = new JPanel(new BorderLayout());
+        messageArea.add(topPanel, BorderLayout.NORTH);
+        messageArea.add(messageScroll, BorderLayout.CENTER);
+        messageArea.add(bottomPanel, BorderLayout.SOUTH);
 
         JScrollPane contactScroll = new JScrollPane(contactList);
         contactScroll.setPreferredSize(new Dimension(150, 0));
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, contactScroll, messageArea);
-        splitPane.setDividerLocation(150); // Width of left panel
-        splitPane.setDividerSize(1);       // Thin dividing line
-        splitPane.setEnabled(false);       // Make it non-draggable
+        contactScroll.setBorder(BorderFactory.createTitledBorder("Your friends"));
+
+        JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.add(contactScroll, BorderLayout.CENTER);
+
+        JLabel logoutLabel = new JLabel("Log out");
+        logoutLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+        logoutLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        logoutLabel.setBorder(BorderFactory.createEmptyBorder(15, 8, 5, 0));
+        leftPanel.add(logoutLabel, BorderLayout.SOUTH);
+
+        imageLabel = new JLabel();
+        imageLabel.setPreferredSize(new Dimension(50, 50));
+        imageLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 17)); // top, left, bottom, right
+
+        dynamicTextLabel = new JLabel(currentUserName);
+        dynamicTextLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        dynamicTextLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        dynamicTextLabel.setVerticalAlignment(SwingConstants.CENTER);
+
+        JPanel bottomInfoPanel = new JPanel(new GridLayout(1, 2));
+        bottomInfoPanel.add(imageLabel);
+        bottomInfoPanel.add(dynamicTextLabel);
+        leftPanel.add(bottomInfoPanel, BorderLayout.SOUTH);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, messageArea);
+        splitPane.setDividerLocation(150);
+        splitPane.setDividerSize(1);
+        splitPane.setEnabled(false);
+
         add(splitPane, BorderLayout.CENTER);
-        // Disable arrow navigation
+
         InputMap im = contactList.getInputMap(JComponent.WHEN_FOCUSED);
         im.put(KeyStroke.getKeyStroke("DOWN"), "none");
         im.put(KeyStroke.getKeyStroke("UP"), "none");
 
-        // Action Listener setup
-        sendButton.addActionListener(controller);
-        messageInput.addActionListener(controller);
+        contactList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        contactList.setCellRenderer(new ContactCellRenderer());
+    }
 
-        contactList.addListSelectionListener(e -> {
-            String selected = contactList.getSelectedValue();
-            if (selected != null) {
-                controller.showMessages(selected, bottompanel);
-                bottompanel.setVisible(true);
-            }
-        });
+    
+    //action listeners
+    public void addSendButtonListener(java.awt.event.ActionListener listener) {
+        sendButton.addActionListener(listener);
+    }
+    
+    public void addMessageInputListener(java.awt.event.ActionListener listener) {
+        messageInput.addActionListener(listener);
+    }
+    
+    public void addContactListSelectionListener(ListSelectionListener listener) {
+        contactList.addListSelectionListener(listener);
+    }
 
-            bottompanel.setPreferredSize(new Dimension(0, 80)); // fixed height
-            bottompanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80)); // ensure it never grows taller
-            bottompanel.setPreferredSize(new Dimension(0, 80)); // fixed height
-            bottompanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80)); // ensure it never grows taller
+    public void addSearchFieldListener(DocumentListener listener) {
+        searchField.getDocument().addDocumentListener(listener);
+    }
 
-            add(bottompanel, BorderLayout.SOUTH);
+    public void addSearchButtonListener(java.awt.event.ActionListener listener) {
+        searchButton.addActionListener(listener);
+    }
+
+    public void toggleSearchPanel(boolean visible) {
+        searchPanel.setVisible(visible);
+    }
+
+    public void clearSearchField() {
+        searchField.setText("");
+    }
+
+    //setters
+    public void setContactListData(List<String> contacts) {
+        contactList.setListData(contacts.toArray(new String[0]));
+    } 
+    
+    //getters
+    
+    public String getCurrentUsername(){
+        return currentUserName;
+    }
+    public JTextField getMessageInput() {
+        return messageInput;
+    }
+    
+    public JTextField getSearchField() {
+        return searchField;
+    }
+    
+    public JList<String> getContactList() {
+        return contactList;
+    }
+
+    public String getSearchQuery() {
+        return searchField.getText().trim();
+    }
+
+    public String getMessageText() {
+        return messageInput.getText().trim();
+    }
+
+    public void clearMessageInput() {
+        messageInput.setText("");
+    }
+
+    public String getSelectedContact() {
+        return contactList.getSelectedValue();
+    }
+
+    public JPanel getMessagePanel() {
+        return messagePanel;
+    }
+
+    public JScrollPane getMessageScroll() {
+        return messageScroll;
+    }
+
+    public JPanel getBottomPanel() {
+        return bottomPanel;
+    }
+
+    public JLabel getImageLabel() {
+        return imageLabel;
     }
 
     class ContactCellRenderer extends DefaultListCellRenderer {
         @Override
-        public Component getListCellRendererComponent(
-                JList<?> list, Object value, int index,
-                boolean isSelected, boolean cellHasFocus) {
-
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             label.setHorizontalAlignment(SwingConstants.CENTER);
             label.setFont(new Font("Arial", Font.PLAIN, 18));
             label.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
             return label;
         }
+    }
+    
+    public void addProfileListener(ActionListener listener){
+        profileButton.addActionListener(listener);
     }
 }

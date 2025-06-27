@@ -103,6 +103,9 @@
           </SubComponents>
         </Container>
         <Component class="javax.swing.JLabel" name="ProfileName">
+          <Events>
+            <EventHandler event="ancestorAdded" listener="javax.swing.event.AncestorListener" parameters="javax.swing.event.AncestorEvent" handler="ProfileNameAncestorAdded"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

@@ -21,9 +21,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.Box;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -31,35 +33,36 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import view.ClientGui;
 import view.Profile;
 
 
 
-
-
-
-
-
-
-
-
 public class ChatController implements ActionListener {
-    private  ChatClientDAO chatClientDAO;
-    private  JList<String> contactList;
-    private  JTextField messageInput;
-    private  JPanel messagePanel;
-    private  JScrollPane messageScroll;
-    private  JTextField searchField;
-    private  JPanel bottomPanel;
-    private  JLabel imageLabel;
-    private  String currentUserName;
-    private  ClientGui userView;
-    private String selectedImagePath;
-    private String userEmail;
-    private SigninController signin;
-    public static String selectedUserName;
+    private final ChatClientDAO chatClientDAO;
+    private  SigninController signin;
+    private final ClientGui userView;
+    private MessageModel model;
     
+    private final JList<String> contactList;
+    private  JList<String> emailList;
+    private final JTextField messageInput;
+    private final JTextField searchField;
+    private final JPanel messagePanel;
+    private final JPanel bottomPanel;
+    private final JScrollPane messageScroll;
+    private final JLabel imageLabel;
+    
+    private final String currentUserName;
+    private String selectedImagePath;
+    private String loggedInUserEmail;
+    private String selectedUserEmail;
+    private String selectedUserName;
+    
+    private File selectedFile;
+    private ImageIcon selectedUserIcon;
+
   
 
     private final Map<String, List<JLabel>> chatHistory = new HashMap<>();
@@ -76,10 +79,12 @@ public class ChatController implements ActionListener {
         this.selectedUserName = selectedUserName;
     }
 
-
-    public ChatController(ClientGui userView) {
+    public ChatController(ClientGui userView, String userEmail) throws IOException {
         this.userView = userView;
         this.chatClientDAO = new ChatClientDAO();
+        this.model = new MessageModel();
+        
+        this.loggedInUserEmail = userEmail;
         this.contactList = userView.getContactList();
         this.messageInput = userView.getMessageInput();
         this.messagePanel = userView.getMessagePanel();
@@ -95,7 +100,11 @@ public class ChatController implements ActionListener {
         userView.getImageLabel().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                handleImageClick();
+                try {
+                    handleImageClick();
+                } catch (IOException ex) {
+                    Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } 
         });  
         
@@ -111,6 +120,7 @@ public class ChatController implements ActionListener {
         }
 });
         
+        updateUserImage();
         initializeConnection();
     }
 
@@ -153,6 +163,7 @@ public class ChatController implements ActionListener {
             
 
             updateContactList(msg.getMessage());
+            
         } else if (contactList.getSelectedValue() != null) {
             
             boolean isSelf = msg.getSender().equals(currentUserName);
@@ -160,16 +171,43 @@ public class ChatController implements ActionListener {
         }
     }
 
-    private void updateContactList(String csv) {
+    public void updateContactList(String csv) {
         SwingUtilities.invokeLater(() -> {
-            DefaultListModel<String> model = new DefaultListModel<>();
-            for (String user : csv.split(",")) {
-                if (!user.equals(currentUserName)) model.addElement(user);
+            // If contactList model is not yet set, initialize it with users from DB
+            if (contactList.getModel() == null || !(contactList.getModel() instanceof DefaultListModel)) {               
+                DefaultListModel<String> temp_model = new DefaultListModel<>();
+                for (String name : getAllUserFullNames()) {
+                    if (!name.equals(currentUserName)) {
+                        temp_model.addElement(name);
+                    }
+                }
+                contactList.setModel(temp_model);
             }
-            contactList.setModel(model);
+
+            DefaultListModel<String> temp_model = (DefaultListModel<String>) contactList.getModel();
+
+            // Now add new users from csv
+            for (String user : csv.split(",")) {
+                user = user.trim();
+                if (!user.equals(currentUserName) && !temp_model.contains(user) && !user.equals("")) {
+                    temp_model.addElement(user); // Add only if not already in list
+                }
+            }
         });
     }
+    
+    public List<String> getAllUserFullNames() {
 
+        ChatClientDAO getall = new ChatClientDAO();
+        List<MessageModel> users = getall.getAllUsers();
+        List<String> fullNames = new ArrayList<>();
+        for (MessageModel user : users) {
+            String fullName = user.getFirstName() + " " + user.getLastName();
+            fullNames.add(fullName);
+        }
+        return fullNames;
+    }
+        
     @Override
     public void actionPerformed(ActionEvent e) {
         String to = contactList.getSelectedValue();
@@ -182,6 +220,8 @@ public class ChatController implements ActionListener {
             
             String Email = chatClientDAO.getEmail(names[0], names.length > 1 ? names[1] : "");
             sendMessage(currentUserName, Email, text);
+            
+            this.selectedUserEmail = Email;
 
         } else {
             JOptionPane.showMessageDialog(null, "Select contact & write message", "Error", JOptionPane.WARNING_MESSAGE);
@@ -283,26 +323,13 @@ public class ChatController implements ActionListener {
             } 
         });
     }
-    
-    
-    public List<String> getAllUserFullNames() {
-        
-        ChatClientDAO getall = new ChatClientDAO();
-        List<MessageModel> users = getall.getAllUsers();
-        List<String> fullNames = new ArrayList<>();
-        for (MessageModel user : users) {
-            String fullName = user.getFirstName() + " " + user.getLastName();
-            fullNames.add(fullName);
-        }
-        return fullNames;
-    }
-    
-    
+
     public ActionListener getSendActionListener() {
         return this;
     }
     
-    public void handleImageClick() {
+    public void handleImageClick() throws IOException {
+        
         System.out.println("Image clicked!");
         
         JFileChooser chooser = new JFileChooser();
@@ -314,27 +341,66 @@ public class ChatController implements ActionListener {
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = chooser.getSelectedFile();
             String path = selectedFile.getAbsolutePath();
+            
+            this.selectedFile = selectedFile;
 
             // Update image label in GUI
             ImageIcon icon = new ImageIcon(new ImageIcon(path).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH));
-            userView.getImageLabel().setIcon(icon);
+            BufferedImage img = ImageIO.read(selectedFile);
+            ((RoundImageLabel) imageLabel).setImage(img);
             
-            Boolean success = chatClientDAO.updateUserImagePath(userEmail, path);
+            Boolean success = chatClientDAO.updateUserImagePath(loggedInUserEmail, path);
             String results = success ? "saved ":"didn't save";
             
-                System.out.println("image path " + results + " "+ userEmail);
+
+            
+            System.out.println("image path " + results + " "+ loggedInUserEmail + selectedFile);
                 
         }
     }
     
-//    private void showImagePopup(String imagePath) {
-//        ImageIcon fullSizeIcon = new ImageIcon(imagePath);
-//        JLabel fullImageLabel = new JLabel(fullSizeIcon);
-//        JScrollPane scrollPane = new JScrollPane(fullImageLabel);
-//        scrollPane.setPreferredSize(new Dimension(400, 400));
-//
-//        JOptionPane.showMessageDialog(null, scrollPane, "Full Image", JOptionPane.PLAIN_MESSAGE);
-//    }
     
+    private void updateUserImage() throws IOException {
+        String currentUserImagePath = chatClientDAO.getImagePath(loggedInUserEmail);
+        String allUserImagePath = chatClientDAO.getImagePath(selectedUserEmail);
 
+        if (currentUserImagePath != null && !currentUserImagePath.isEmpty()) {
+            File currentUserFile = new File(currentUserImagePath);
+            if (currentUserFile.exists()) {
+                BufferedImage img = ImageIO.read(currentUserFile);
+                ((RoundImageLabel) imageLabel).setImage(img);
+            } else {
+                System.err.println("Current user image file not found: " + currentUserImagePath);
+            }
+        }
+
+        if (allUserImagePath != null && !allUserImagePath.isEmpty()) {
+            File friendFile = new File(allUserImagePath);
+            if (friendFile.exists()) {
+                BufferedImage friendImg = ImageIO.read(friendFile);
+                ((RoundImageLabel) imageLabel).setImage(friendImg);
+            } else {
+                System.err.println("Friend user image file not found: " + allUserImagePath);
+            }
+        }
+    }
+    
+    public Map<String, String> getUserImageMap() {
+        Map<String, String> userImageMap = new HashMap<>();
+        ChatClientDAO dao = new ChatClientDAO();
+        List<MessageModel> allUsers = dao.getAllUsers(); // assuming it returns user first/last/email
+
+        for (MessageModel user : allUsers) {
+            String fullName = user.getFirstName() + " " + user.getLastName();
+            String email = dao.getEmail(user.getFirstName(), user.getLastName()); // or use user.getEmail() directly
+            String imagePath = dao.getImagePath(email);
+
+            if (imagePath != null) {
+                userImageMap.put(fullName, imagePath);
+            } else {
+                userImageMap.put(fullName, "/images/default.png"); // fallback image
+            }
+        }
+        return userImageMap;
+    }
 }

@@ -1,10 +1,12 @@
 package Controller;
 
 import Dao.UserDAO;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import utils.Main;
+import javax.swing.SwingUtilities;
+import view.ClientGui;
 import view.Signin;
 
 public class SigninController {
@@ -15,33 +17,76 @@ public class SigninController {
         this.signin = signin;
         this.signin.getSigninButton().addActionListener(new LoginListener());
     }
-    
-    public void open() {
-        this.signin.setVisible(true);
-    }
-    public void close() {
-        this.signin.dispose();
-    }
-    
-    class LoginListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String email = signin.getEmailField().getText().trim();
-            String password = String.valueOf(signin.getPasswordField().getPassword());
-            // Validate email format
-            boolean isValid = email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
-            if (!isValid) {
-                JOptionPane.showMessageDialog(signin, "Enter a valid email");
-                return;
-            }
-            // Check credentials in database
-            boolean success = userDAO.Logincredentials(email, password);
-            String full_name = userDAO.Checknames(email);
-            if(success){ 
-                Main.main(new String[0]);
-                signin.dispose();
+    public String loginUser(String email, String password) {
+        // Validate email format
+        boolean isValid = email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
+        if (!isValid) {
+            return "Enter a valid email";
+        }
+        
+        // Check credentials in database
+        boolean success = userDAO.Logincredentials(email, password);
+        String username = userDAO.Checknames(email);
+        this.currentUserEmail = email;
+                
+        if(success){
+            if (username != null && !username.trim().isEmpty()) {
+                SwingUtilities.invokeLater(() -> {
+               try {
+                   // Create GUI
+                   ClientGui gui = new ClientGui(username);
+                   
+                   
+                   // Create Controller and wire its
+                   ChatController controller = new ChatController(gui,email);
+                   
+                   // Set contact list (assuming you want to preload users here)
+//                   List<String> contactNames = model.getAllUserFullName();
+//                   gui.setContactListData(contactNames); // use a setter method inside ClientGui
+//                   
+                   // Connect Listeners
+                   gui.addSendButtonListener(controller.getSendActionListener());
+                   gui.addMessageInputListener(controller.getSendActionListener());
+                   gui.addContactListSelectionListener(e -> {
+                       String selected = gui.getSelectedContact();
+                       if (selected != null) {
+                           controller.showMessages(selected);
+                           gui.getBottomPanel().setVisible(true);
+                       }
+                   });
+                   gui.addSearchButtonListener(e -> gui.toggleSearchPanel(true));
+                   gui.addSearchFieldListener(new javax.swing.event.DocumentListener() {
+                       @Override
+                       public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                           controller.highlightMessages();
+                       }
+                       
+                       @Override
+                       public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                           controller.highlightMessages();
+                       }
+                       
+                       @Override
+                       public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                           controller.highlightMessages();
+                       }
+                   });
+                   
+                   try {
+                       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                   } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException e) {
+                       e.printStackTrace();  // or log it properly
+                   }
+                   
+                   // Show GUI
+                   gui.setVisible(true);
+               } catch (IOException ex) {
+                        Logger.getLogger(SigninController.class.getName()).log(Level.SEVERE, null, ex);  
+                    }
+                });
             } else {
-                JOptionPane.showMessageDialog(signin, "Credentials didn't match");
+                JOptionPane.showMessageDialog(null, "Username is required.");
+                System.exit(0);
             }
         }
     }

@@ -96,6 +96,28 @@ public class ChatClientDAO {
         }
     }
     
+    public String getImagePath(String email) {
+        Connection conn = db.openConnection();
+        try {
+            String sql = "SELECT picture_path FROM users WHERE email=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String imagePath = rs.getString("picture_path");
+                return imagePath;// return the imagePath
+            } else {
+                return null; // imagepath not found
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        } finally {
+            db.closeConnection(conn);
+        }
+    }
+    
     
     
     

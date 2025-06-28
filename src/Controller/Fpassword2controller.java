@@ -17,4 +17,14 @@ import view.Signin;
  *
  * @author kanchanmaharjan
  */
+    public Fpassword2Controller(Fpassword2 view) {
+        this.view = view;
+
+        // Add listener to reset button
+        this.view.addResetListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                reset();
+            }
+        });
 

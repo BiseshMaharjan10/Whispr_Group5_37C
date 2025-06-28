@@ -1,27 +1,58 @@
 package Model;
 
+import Dao.ChatClientDAO;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MessageModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private int id;
+    private String email;
     private String firstName;
     private String lastName;
     private String sender;
     private String message;
     private String receiver;
+    private String imagePath;
+    
+    private ChatClientDAO dao;
+    
+    private List<String> allUsersInDb;
+    private String firstnLastNameThroughemail;
+    private String emailThroughFirstnLastName;
+    private Boolean updateUserImagePath;
+    private String getImagePath;
+    
+    
+    
 
     public MessageModel() {}
 
-    public MessageModel(int id, String firstName, String lastName, String sender, String message) {
+    public MessageModel(int id, String fName, String lName, String sender, String message) {
+        ChatClientDAO dao = new ChatClientDAO();
+        this.firstnLastNameThroughemail = dao.getFirstnLastName(email);
+        this.emailThroughFirstnLastName = dao.getEmail(firstName, lastName);
+        this.updateUserImagePath = dao.updateUserImagePath(email, imagePath);
+        this.getImagePath = dao.getImagePath(email);
+        
         this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstName = fName;
+        this.lastName = lName;
         this.sender = sender;
         this.message = message;
 
+        List<MessageModel> users = dao.getAllUsers();
+        List<String> fullNames = new ArrayList<>();
+        for (MessageModel user : users) {
+            String fullName = user.getFirstName() + " " + user.getLastName();
+            fullNames.add(fullName);
+            
+            this.allUsersInDb = fullNames;
+
+        }
     }
         // New constructor for sender, recipient(full name), and message text
     public MessageModel(String sender, String receiver, String message) {
@@ -67,6 +98,10 @@ public class MessageModel implements Serializable {
         return receiver;
         
     }
+//    public List<String> getAllUserFullName() {
+//        return allUsersInDb;
+//
+//    }
 
     // Setters
     public void setId(int id) {

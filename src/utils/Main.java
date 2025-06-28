@@ -5,6 +5,7 @@ import Controller.ChatController;
 import Dao.ChatClientDAO;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,8 +24,11 @@ public class Main {
                     ChatController controller = new ChatController(gui, "bcoderunner@gmail.com");
                     
                     // Set contact list (assuming you want to preload users here)
-                    List<String> contactNames = controller.getAllUserFullNames();
-                    gui.setContactListData(contactNames); // use a setter method inside ClientGui
+                     controller.updateContactList("");
+//                    gui.setContactListData(contactNames); // use a setter method inside ClientGui
+                    
+                    Map<String, String> imageMap = controller.getUserImageMap();
+                    gui.setContactListRenderer(imageMap); // new method you'll define in ClientGui
                     
                     // Connect Listeners
                     gui.addSendButtonListener(controller.getSendActionListener());

@@ -1,6 +1,7 @@
 package Controller;
 
 import Dao.UserDAO;
+import Model.MessageModel;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -42,13 +43,14 @@ public class SigninController {
                    // Create GUI
                    ClientGui gui = new ClientGui(username);
                    
+                   
                    // Create Controller and wire its
                    ChatController controller = new ChatController(gui,email);
                    
                    // Set contact list (assuming you want to preload users here)
-                   List<String> contactNames = controller.getAllUserFullNames();
-                   gui.setContactListData(contactNames); // use a setter method inside ClientGui
-                   
+//                   List<String> contactNames = model.getAllUserFullName();
+//                   gui.setContactListData(contactNames); // use a setter method inside ClientGui
+//                   
                    // Connect Listeners
                    gui.addSendButtonListener(controller.getSendActionListener());
                    gui.addMessageInputListener(controller.getSendActionListener());

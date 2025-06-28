@@ -41,6 +41,7 @@ public class ChatController implements ActionListener {
     private final ChatClientDAO chatClientDAO;
     private  SigninController signin;
     private final ClientGui userView;
+    private MessageModel model;
     
     private final JList<String> contactList;
     private  JList<String> emailList;
@@ -73,6 +74,7 @@ public class ChatController implements ActionListener {
     public ChatController(ClientGui userView, String userEmail) throws IOException {
         this.userView = userView;
         this.chatClientDAO = new ChatClientDAO();
+        this.model = new MessageModel();
         
         this.loggedInUserEmail = userEmail;
         this.contactList = userView.getContactList();
@@ -143,16 +145,43 @@ public class ChatController implements ActionListener {
         }
     }
 
-    private void updateContactList(String csv) {
+    public void updateContactList(String csv) {
         SwingUtilities.invokeLater(() -> {
-            DefaultListModel<String> model = new DefaultListModel<>();
-            for (String user : csv.split(",")) {
-                if (!user.equals(currentUserName)) model.addElement(user);
+            // If contactList model is not yet set, initialize it with users from DB
+            if (contactList.getModel() == null || !(contactList.getModel() instanceof DefaultListModel)) {               
+                DefaultListModel<String> temp_model = new DefaultListModel<>();
+                for (String name : getAllUserFullNames()) {
+                    if (!name.equals(currentUserName)) {
+                        temp_model.addElement(name);
+                    }
+                }
+                contactList.setModel(temp_model);
             }
-            contactList.setModel(model);
+
+            DefaultListModel<String> temp_model = (DefaultListModel<String>) contactList.getModel();
+
+            // Now add new users from csv
+            for (String user : csv.split(",")) {
+                user = user.trim();
+                if (!user.equals(currentUserName) && !temp_model.contains(user) && !user.equals("")) {
+                    temp_model.addElement(user); // Add only if not already in list
+                }
+            }
         });
     }
+    
+    public List<String> getAllUserFullNames() {
 
+        ChatClientDAO getall = new ChatClientDAO();
+        List<MessageModel> users = getall.getAllUsers();
+        List<String> fullNames = new ArrayList<>();
+        for (MessageModel user : users) {
+            String fullName = user.getFirstName() + " " + user.getLastName();
+            fullNames.add(fullName);
+        }
+        return fullNames;
+    }
+        
     @Override
     public void actionPerformed(ActionEvent e) {
         String to = contactList.getSelectedValue();
@@ -267,21 +296,7 @@ public class ChatController implements ActionListener {
             } 
         });
     }
-    
-    
-    public List<String> getAllUserFullNames() {
-        
-        ChatClientDAO getall = new ChatClientDAO();
-        List<MessageModel> users = getall.getAllUsers();
-        List<String> fullNames = new ArrayList<>();
-        for (MessageModel user : users) {
-            String fullName = user.getFirstName() + " " + user.getLastName();
-            fullNames.add(fullName);
-        }
-        return fullNames;
-    }
-    
-    
+
     public ActionListener getSendActionListener() {
         return this;
     }
@@ -343,12 +358,22 @@ public class ChatController implements ActionListener {
         }
     }
     
-//    private void showImagePopup(String imagePath) {
-//        ImageIcon fullSizeIcon = new ImageIcon(imagePath);
-//        JLabel fullImageLabel = new JLabel(fullSizeIcon);
-//        JScrollPane scrollPane = new JScrollPane(fullImageLabel);
-//        scrollPane.setPreferredSize(new Dimension(400, 400));
-//
-//        JOptionPane.showMessageDialog(null, scrollPane, "Full Image", JOptionPane.PLAIN_MESSAGE);
-//    }
+    public Map<String, String> getUserImageMap() {
+        Map<String, String> userImageMap = new HashMap<>();
+        ChatClientDAO dao = new ChatClientDAO();
+        List<MessageModel> allUsers = dao.getAllUsers(); // assuming it returns user first/last/email
+
+        for (MessageModel user : allUsers) {
+            String fullName = user.getFirstName() + " " + user.getLastName();
+            String email = dao.getEmail(user.getFirstName(), user.getLastName()); // or use user.getEmail() directly
+            String imagePath = dao.getImagePath(email);
+
+            if (imagePath != null) {
+                userImageMap.put(fullName, imagePath);
+            } else {
+                userImageMap.put(fullName, "/images/default.png"); // fallback image
+            }
+        }
+        return userImageMap;
+    }
 }

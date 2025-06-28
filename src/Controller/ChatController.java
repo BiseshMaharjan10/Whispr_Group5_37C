@@ -32,6 +32,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import view.ClientGui;
+import view.Profile;
+
+
+
+
 
 
 
@@ -40,19 +45,21 @@ import view.ClientGui;
 
 
 public class ChatController implements ActionListener {
-    private final ChatClientDAO chatClientDAO;
-    private final JList<String> contactList;
-    private final JTextField messageInput;
-    private final JPanel messagePanel;
-    private final JScrollPane messageScroll;
-    private final JTextField searchField;
-    private final JPanel bottomPanel;
-    private final JLabel imageLabel;
-    private final String currentUserName;
-    private final ClientGui userView;
+    private  ChatClientDAO chatClientDAO;
+    private  JList<String> contactList;
+    private  JTextField messageInput;
+    private  JPanel messagePanel;
+    private  JScrollPane messageScroll;
+    private  JTextField searchField;
+    private  JPanel bottomPanel;
+    private  JLabel imageLabel;
+    private  String currentUserName;
+    private  ClientGui userView;
     private String selectedImagePath;
     private String userEmail;
-    private SigninController signin; 
+    private SigninController signin;
+    public static String selectedUserName;
+    
   
 
     private final Map<String, List<JLabel>> chatHistory = new HashMap<>();
@@ -64,11 +71,15 @@ public class ChatController implements ActionListener {
     private ObjectInputStream in;
     
 
-    public ChatController(ClientGui userView, String userEmail) {
+    public ChatController(String selectedUserName) {
+        
+        this.selectedUserName = selectedUserName;
+    }
+
+
+    public ChatController(ClientGui userView) {
         this.userView = userView;
         this.chatClientDAO = new ChatClientDAO();
-        
-        this.userEmail = userEmail;
         this.contactList = userView.getContactList();
         this.messageInput = userView.getMessageInput();
         this.messagePanel = userView.getMessagePanel();
@@ -77,6 +88,9 @@ public class ChatController implements ActionListener {
         this.bottomPanel = userView.getBottomPanel();
         this.imageLabel = userView.getImageLabel();
         this.currentUserName = userView.getCurrentUsername();
+        
+        
+        MessageModel model = new MessageModel(selectedUserName);
 
         userView.getImageLabel().addMouseListener(new MouseAdapter() {
             @Override
@@ -85,8 +99,21 @@ public class ChatController implements ActionListener {
             } 
         });  
         
+        
+        userView.addProfileListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Profile profileView = new Profile();
+            new ProfileController(profileView, ChatController.this);
+            profileView.setVisible(true);
+            profileView.updateName(selectedUserName);
+            
+        }
+});
+        
         initializeConnection();
     }
+
     
     private void initializeConnection() {
         try {
@@ -124,12 +151,12 @@ public class ChatController implements ActionListener {
     private void handleIncomingMessage(MessageModel msg) {
         if ("SERVER".equals(msg.getSender()) && msg.getMessage().contains(",")) {
             
-            System.out.println("this is inside handleincomeing message if");
+
             updateContactList(msg.getMessage());
         } else if (contactList.getSelectedValue() != null) {
-            System.out.println("this is inside handleincomeing message else");
+            
             boolean isSelf = msg.getSender().equals(currentUserName);
-            displayMessage(msg.getSender(), msg.getMessage(), isSelf);
+            displayMessage(msg.getSender(), msg.getMessage(), isSelf);        
         }
     }
 
@@ -147,6 +174,7 @@ public class ChatController implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String to = contactList.getSelectedValue();
         String text = messageInput.getText().trim();
+        
         if (to != null && !text.isEmpty()) {
             messageInput.setText("");
             displayMessage("Me", text, true);
@@ -307,4 +335,6 @@ public class ChatController implements ActionListener {
 //
 //        JOptionPane.showMessageDialog(null, scrollPane, "Full Image", JOptionPane.PLAIN_MESSAGE);
 //    }
+    
+
 }

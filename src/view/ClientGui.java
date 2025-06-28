@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -12,6 +13,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionListener;
 
@@ -25,6 +27,7 @@ public class ClientGui extends JFrame {
     private JScrollPane messageScroll;
     private JTextField searchField;
     private JPanel searchPanel;
+    private JButton profileButton;
     private JLabel imageLabel;
     private JButton searchButton;
     private JLabel timerLabel;
@@ -58,14 +61,25 @@ public class ClientGui extends JFrame {
 
         messageInput = new JTextField();
         contactList = new JList<>();
+        
+        profileButton = new JButton("👤");
+        profileButton.setFocusPainted(false);
+        profileButton.setBorderPainted(false);
+        profileButton.setContentAreaFilled(false);
+        profileButton.setFont(new Font("Arial", Font.PLAIN, 18));
+        profileButton.setToolTipText("Upload Profile Picture ");
+        profileButton.setVisible(false); 
+        
 
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        topPanel.add(searchPanel);
-        topPanel.add(searchButton);
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(profileButton, BorderLayout.WEST);
+        topPanel.add(searchPanel, BorderLayout.CENTER);
+        topPanel.add(searchButton, BorderLayout.EAST);
 
         messagePanel = new JPanel();
         messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
         messagePanel.setBackground(Color.WHITE);
+
         messageScroll = new JScrollPane(messagePanel);
         messageScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
@@ -161,7 +175,13 @@ public class ClientGui extends JFrame {
     public void addSearchButtonListener(java.awt.event.ActionListener listener) {
         searchButton.addActionListener(listener);
     }
-
+    
+    public void addProfileListener(ActionListener listener) {
+        profileButton.addActionListener(listener);
+    }
+    
+    
+    //setters
     public void toggleSearchPanel(boolean visible) {
         searchPanel.setVisible(visible);
     }
@@ -170,10 +190,14 @@ public class ClientGui extends JFrame {
         searchField.setText("");
     }
 
-    //setters
     public void setContactListData(List<String> contacts) {
         contactList.setListData(contacts.toArray(new String[0]));
     } 
+    
+    public void showProfileButton() {
+        profileButton.setVisible(true);
+    }
+
     
     //getters
     
@@ -234,4 +258,7 @@ public class ClientGui extends JFrame {
             return label;
         }
     }
+    
+    
+
 }

@@ -10,14 +10,14 @@ public class MessageModel implements Serializable {
     private String firstName;
     private String lastName;
     private String sender;
+    private String receiver;
     private String message;
     private String status; // e.g., SENT, DELIVERED, SEEN
-    private String receiver;
+    private String currentUserName;
 
     public MessageModel() {}
 
-
-    public MessageModel(int id, String firstName, String lastName, String sender, String message) {
+    public MessageModel(int id, String firstName, String lastName, String sender, String message, String status) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -26,25 +26,22 @@ public class MessageModel implements Serializable {
         this.status = status;
     }
 
-        // New constructor for sender, recipient(full name), and message text
+    public MessageModel(int id, String firstName, String lastName, String sender, String message) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.sender = sender;
+        this.message = message;
+    }
+
     public MessageModel(String sender, String receiver, String message) {
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
-        this.status = status;
-        
+    }
 
-        
-//        String[] names = receiver.split(" ", 2);
-//        
-//        if (names.length == 2) {
-//            this.firstName = names[0];
-//            this.lastName = names[1];
-//        } else {
-//            this.firstName = receiver;
-//            this.lastName = "";
-//        }
-
+    public MessageModel(String selectedUserName) {
+        this.currentUserName = selectedUserName;
     }
 
     // Getters
@@ -64,16 +61,20 @@ public class MessageModel implements Serializable {
         return sender;
     }
 
+    public String getReceiver() {
+        return receiver;
+    }
+
     public String getMessage() {
         return message;
-    }
-    public String getReceiver(){
-        return receiver;
-        
     }
 
     public String getStatus() {
         return status;
+    }
+
+    public String getCurrentUserName() {
+        return currentUserName;
     }
 
     // Setters
@@ -93,16 +94,20 @@ public class MessageModel implements Serializable {
         this.sender = sender;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-    
     public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void setCurrentUserName(String currentUserName) {
+        this.currentUserName = currentUserName;
     }
 
     // Convenience method for full name
@@ -112,9 +117,6 @@ public class MessageModel implements Serializable {
 
     @Override
     public String toString() {
-        // For example: "John Doe: Hello!"
         return getFullName() + ": " + message;
     }
-
-
 }

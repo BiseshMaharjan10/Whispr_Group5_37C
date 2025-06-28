@@ -3,7 +3,8 @@ package Controller;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import Model.Message;
+import Model.MessageModel;
+import Dao.ChatClientDAO;
 
 public class ClientHandler implements Runnable {
 
@@ -21,7 +22,7 @@ public class ClientHandler implements Runnable {
 
             this.clientUsername = (String) in.readObject(); // receive username
             clientHandlers.add(this);
-            Message joinMsg = new Message();
+            MessageModel joinMsg = new MessageModel();
             joinMsg.setSender("SERVER");
             joinMsg.setMessage(clientUsername + " has entered the chat!");
             broadcastMessage(joinMsg);
@@ -32,28 +33,10 @@ public class ClientHandler implements Runnable {
     }
 
     
-    @Override
-    public void run() {
-        while (socket.isConnected()) {
-            try {
-                Object obj = in.readObject();
 
-                if (obj instanceof Message) {
-                    Message msg = (Message) obj;
-
-                    // Broadcast to others or handle private messaging if needed
-                    broadcastMessage(msg);
-                }
-
-            } catch (IOException | ClassNotFoundException e) {
-                closeEverything(socket, in, out);
-                break;
-            }
-        }
-    }
     
 
-    public void broadcastMessage(Message messageToSend) {
+    public void broadcastMessage(MessageModel messageToSend) {
         for (ClientHandler clientHandler : clientHandlers) {
             try {
                 if (!clientHandler.clientUsername.equals(clientUsername)) {
@@ -77,7 +60,7 @@ public class ClientHandler implements Runnable {
         }
 
         clientHandlers.remove(this);
-        Message joinMsg = new Message();
+        MessageModel joinMsg = new MessageModel();
         joinMsg.setSender("SERVER");
         joinMsg.setMessage(clientUsername + " left the chat!");
         broadcastMessage(joinMsg);
@@ -88,20 +71,26 @@ public class ClientHandler implements Runnable {
     }
     
     
-    
-    public void sendPrivateMessage(String recipientUsername, String message) {
-    for (ClientHandler clientHandler : clientHandlers) {
-        if (clientHandler.clientUsername.equals(recipientUsername)) {
-            try {
-                clientHandler.out.writeObject(clientUsername + ": " + message);
-                clientHandler.out.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
+    public void sendPrivateMessage(MessageModel msg) {
+        
+        //fetch the first and last name from email
+        ChatClientDAO temp_obj = new ChatClientDAO();
+        String first_n_lastName = temp_obj.getFirstnLastName(msg.getReceiver());
+        
+        
+        for (ClientHandler clientHandler : clientHandlers) {
+            if (clientHandler.clientUsername.equals(first_n_lastName)) {
+                try {
+                    clientHandler.out.writeObject(msg);
+                    clientHandler.out.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             }
-            break;
         }
     }
-}
+    
     
     public void sendOnlineUsers() {
         ArrayList<String> onlineUsernames = new ArrayList<>();
@@ -111,7 +100,7 @@ public class ClientHandler implements Runnable {
 
         for (ClientHandler handler : clientHandlers) {
             try {
-                Message userListMsg = new Message();
+                MessageModel userListMsg = new MessageModel();
                 userListMsg.setSender("SERVER");
                 userListMsg.setMessage("" + String.join(",", onlineUsernames));
                 handler.out.writeObject(userListMsg);
@@ -121,4 +110,44 @@ public class ClientHandler implements Runnable {
             }
         }
     }
+    
+    
+    
+    
+    
+        @Override
+    public void run() {
+        while (socket.isConnected()) {
+            try {
+                Object obj = in.readObject();
+                
+
+
+                if (obj instanceof MessageModel) {
+                    MessageModel msg = (MessageModel) obj;
+                    
+                    
+                    System.out.println("\nDEBUG: Received message from: " + msg.getSender() + 
+                   ", to: " + msg.getReceiver() + 
+                   ", message: " + msg.getMessage());
+
+                    if (msg.getReceiver() != null && !msg.getReceiver().trim().isEmpty()) {
+                        String a = msg.getReceiver();
+                         System.out.println("user found in_database : \"" + a + "\"");
+                        sendPrivateMessage(msg);
+                        
+                    } else {
+                        System.out.println("user not found sending message in group");
+                        broadcastMessage(msg); // Optional, for group message
+                    }
+                }
+
+            } catch (IOException | ClassNotFoundException e) {
+                closeEverything(socket, in, out);
+                break;
+            }
+        }
+    }
+    
+    
 }

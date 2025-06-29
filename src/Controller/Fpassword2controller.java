@@ -27,4 +27,38 @@ import view.Signin;
                 reset();
             }
         });
+  
+        this.view.addConfirmPasswordDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) {
+                validatePasswordMatch();
+            }
 
+            public void removeUpdate(DocumentEvent e) {
+                validatePasswordMatch();
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+                validatePasswordMatch();
+            }
+            });
+   
+    }
+   
+    
+        //for same password
+    private void validatePasswordMatch() {
+    String pass = String.valueOf(view.getSetPasswordField().getPassword()).trim();
+    String confirm = String.valueOf(view.getConfirmPasswordField().getPassword()).trim();
+
+    if (!confirm.equals(pass)) {
+        view.setErrorLabelText("Passwords do not match");
+        view.getConfirmPasswordField().setForeground(Color.RED);
+    } else {
+        view.setErrorLabelText("");
+        view.getConfirmPasswordField().setForeground(Color.BLACK);
+    }
+}
+   private void reset() {
+    String password = String.valueOf(view.getSetPasswordField().getPassword()).trim();
+    String confirmPassword = String.valueOf(view.getConfirmPasswordField().getPassword()).trim();
+// Optional: match check

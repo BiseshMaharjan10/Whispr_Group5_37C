@@ -6,16 +6,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import view.ClientGui;
 import view.Signin;
 
 public class SigninController {
     private final UserDAO userDAO = new UserDAO();
     private final Signin signin;
+    private  String currentUserEmail;
     
     public SigninController (Signin signin){
         this.signin = signin;
-        this.signin.getSigninButton().addActionListener(new LoginListener());
+//        this.signin.getSigninButton().addActionListener(new LoginListener());
     }
     public String loginUser(String email, String password) {
         // Validate email format
@@ -72,16 +75,20 @@ public class SigninController {
                        }
                    });
                    
-                   try {
-                       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                   } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException e) {
-                       e.printStackTrace();  // or log it properly
-                   }
+                   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); // or log it properly
                    
                    // Show GUI
                    gui.setVisible(true);
                } catch (IOException ex) {
                         Logger.getLogger(SigninController.class.getName()).log(Level.SEVERE, null, ex);  
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(SigninController.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (InstantiationException ex) {
+                        Logger.getLogger(SigninController.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IllegalAccessException ex) {
+                        Logger.getLogger(SigninController.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (UnsupportedLookAndFeelException ex) {
+                        Logger.getLogger(SigninController.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 });
             } else {
@@ -89,8 +96,14 @@ public class SigninController {
                 System.exit(0);
             }
         }
+        return null;
+    }
+    
+    void open() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
+
 
 
 

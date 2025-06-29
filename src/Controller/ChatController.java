@@ -3,6 +3,7 @@ package Controller;
 import Controller.SigninController;
 import Dao.ChatClientDAO;
 import Model.MessageModel;
+import view.ClientGui;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -10,7 +11,9 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -23,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -34,31 +39,31 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import view.ClientGui;
 import view.Profile;
+import view.RoundImageLabel;
 
 
 
 public class ChatController implements ActionListener {
-    private final ChatClientDAO chatClientDAO;
+    private  ChatClientDAO chatClientDAO;
     private  SigninController signin;
-    private final ClientGui userView;
+    private  ClientGui userView;
     private MessageModel model;
     
-    private final JList<String> contactList;
+    private  JList<String> contactList;
     private  JList<String> emailList;
-    private final JTextField messageInput;
-    private final JTextField searchField;
-    private final JPanel messagePanel;
-    private final JPanel bottomPanel;
-    private final JScrollPane messageScroll;
-    private final JLabel imageLabel;
+    private  JTextField messageInput;
+    private  JTextField searchField;
+    private  JPanel messagePanel;
+    private  JPanel bottomPanel;
+    private  JScrollPane messageScroll;
+    private  JLabel imageLabel;
     
-    private final String currentUserName;
+    private  String currentUserName;
     private String selectedImagePath;
     private String loggedInUserEmail;
     private String selectedUserEmail;
-    private String selectedUserName;
+    public String selectedUserName;
     
     private File selectedFile;
     private ImageIcon selectedUserIcon;

@@ -1,6 +1,6 @@
 package view;
 
-import Controller.Fpassword2Controller;
+//import Controller.Fpassword2Controller;
 import Controller.Fpasswordcontroller;
 import java.awt.Color;
 import java.awt.event.ActionListener;
@@ -300,13 +300,13 @@ public class Fpassword2 extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                Fpassword2 view = new Fpassword2();
-                new Fpassword2Controller(view);
-                new Fpassword2().setVisible(true);
-            }
-        });
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                Fpassword2 view = new Fpassword2();
+//                new Fpassword2Controller(view);
+//                new Fpassword2().setVisible(true);
+//            }
+//        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package view;
 
 import java.awt.Color;
@@ -9,6 +6,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import Controller.SigninController;
 import javax.swing.JOptionPane;
+import Dao.UserDAO;
+import utils.Main;
 
 /**
  *
@@ -21,40 +20,6 @@ public class Signin extends javax.swing.JFrame {
      */
     
 //        private boolean isPasswordVisible = true;
-<<<<<<< HEAD
-        private javax.swing.JLabel emailerrorLabel;
-        
-    public Signin() {
-        initComponents();
-        
-          //for show passsword toggle
-        setpassword.setText("Password");
-setpassword.setForeground(Color.GRAY);
-setpassword.setEchoChar((char) 0);  // show as plain text initially
-
-        
-        
-        //for red error text for email
-        emailerrorLabel = new javax.swing.JLabel();
- emailerrorLabel.setForeground(Color.RED);
- emailerrorLabel.setText(""); // Empty at first
-
-        emailaddress.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-    @Override
-    public void insertUpdate(javax.swing.event.DocumentEvent e) {
-        validateEmail();
-    }
-    @Override
-    public void removeUpdate(javax.swing.event.DocumentEvent e) {
-        validateEmail();
-    }
-    @Override
-    public void changedUpdate(javax.swing.event.DocumentEvent e) {
-        validateEmail();
-    }
-});
-    }
-=======
 //        private javax.swing.JLabel emailerrorLabel;
 //        
     public Signin() {
@@ -84,7 +49,6 @@ setpassword.setEchoChar((char) 0);  // show as plain text initially
 //    }
 //});
    }
->>>>>>> signin
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -94,20 +58,6 @@ setpassword.setEchoChar((char) 0);  // show as plain text initially
     
     
     //for validate email
-<<<<<<< HEAD
-    private void validateEmail() {
-    String input = emailaddress.getText().trim();
-    boolean isValid = input.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
-
-    if (!isValid) {
-        emailaddress.setForeground(Color.RED);
-         emailerrorLabel.setText("Invalid email format");
-    } else {
-        emailaddress.setForeground(Color.BLACK);
-         emailerrorLabel.setText("");
-    }
-    }
-=======
 //    private void validateEmail() {
 //    String input = emailaddress.getText().trim();
 //    boolean isValid = input.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
@@ -120,7 +70,6 @@ setpassword.setEchoChar((char) 0);  // show as plain text initially
 //         emailerrorLabel.setText("");
 //    }
 //    }
->>>>>>> signin
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -208,7 +157,7 @@ setpassword.setEchoChar((char) 0);  // show as plain text initially
 
         jLabel5.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(29, 61, 130));
-        jLabel5.setText("Because silent mode doesn’t mean offline");
+        jLabel5.setText("Because silent mode doesn't mean offline");
 
         jLabel6.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(29, 61, 130));
@@ -391,14 +340,21 @@ setpassword.setEchoChar((char) 0);  // show as plain text initially
     private void signinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signinActionPerformed
         String email = emailaddress.getText().trim();
         String password = String.valueOf(setpassword.getPassword());
-
-        SigninController controller = new SigninController(this);
-        String result = controller.loginUser(email, password);
-        
-        if(result != null){
-        JOptionPane.showMessageDialog(this, result);
+        UserDAO userDAO = new UserDAO();
+        // Validate email format
+        boolean isValid = email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
+        if (!isValid) {
+            JOptionPane.showMessageDialog(this, "Enter a valid email");
+            return;
         }
-
+        // Check credentials in database
+        boolean success = userDAO.Logincredentials(email, password);
+        if(success){ 
+            Main.main(new String[0]);
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Credentials didn't match");
+        }
     }//GEN-LAST:event_signinActionPerformed
 
     private void showpasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showpasswordActionPerformed
@@ -485,4 +441,15 @@ setpassword.setEchoChar((char) 0);  // show as plain text initially
     private javax.swing.JLabel signinlink;
     private javax.swing.JLabel signinlink1;
     // End of variables declaration//GEN-END:variables
+
+    // Add public getters for controller access
+    public javax.swing.JButton getSigninButton() {
+        return signin;
+    }
+    public javax.swing.JTextField getEmailField() {
+        return emailaddress;
+    }
+    public javax.swing.JPasswordField getPasswordField() {
+        return setpassword;
+    }
 }

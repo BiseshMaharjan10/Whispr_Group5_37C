@@ -1,19 +1,49 @@
 package view;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.ListSelectionListener;
 import Controller.ChatController;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
+import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.ImageIcon;
+import javax.swing.InputMap;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionListener;
 
 public class ClientGui extends JFrame {
 
     private JTextField messageInput;
     private JButton sendButton;
     private JList<String> contactList;
+    private JList<String> emailList;
     private JPanel bottomPanel;
     private JPanel messagePanel;
     private JScrollPane messageScroll;
@@ -25,6 +55,8 @@ public class ClientGui extends JFrame {
     private JLabel timerLabel;
     private JLabel dynamicTextLabel;
     private String currentUserName;
+    private ChatController controller;
+    private  JLabel friendsImageLabel;
 
 
     public ClientGui(String currentUserName) {
@@ -91,13 +123,8 @@ public class ClientGui extends JFrame {
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.add(messageInput, BorderLayout.CENTER);
         inputPanel.add(sendButton, BorderLayout.EAST);
-
-        JLabel currentUserLabel = new JLabel("Logged in as: " + currentUserName);
-        currentUserLabel.setFont(new Font("Arial", Font.ITALIC, 12));
-        currentUserLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-
+        
         bottomPanel.add(inputPanel, BorderLayout.CENTER);
-        bottomPanel.add(currentUserLabel, BorderLayout.SOUTH);
 
         JPanel messageArea = new JPanel(new BorderLayout());
         messageArea.add(topPanel, BorderLayout.NORTH);
@@ -105,24 +132,18 @@ public class ClientGui extends JFrame {
         messageArea.add(bottomPanel, BorderLayout.SOUTH);
 
         JScrollPane contactScroll = new JScrollPane(contactList);
-        contactScroll.setPreferredSize(new Dimension(150, 0));
+        contactScroll.setPreferredSize(new Dimension(220, 0)); //width, height
         contactScroll.setBorder(BorderFactory.createTitledBorder("Your friends"));
 
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.add(contactScroll, BorderLayout.CENTER);
 
-        JLabel logoutLabel = new JLabel("Log out");
-        logoutLabel.setFont(new Font("Arial", Font.ITALIC, 12));
-        logoutLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        logoutLabel.setBorder(BorderFactory.createEmptyBorder(15, 8, 5, 0));
-        leftPanel.add(logoutLabel, BorderLayout.SOUTH);
-
-        imageLabel = new JLabel();
+        imageLabel = new RoundImageLabel(null);
         imageLabel.setPreferredSize(new Dimension(50, 50));
-        imageLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 17)); // top, left, bottom, right
+        imageLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10)); // top, left, bottom, right
 
         dynamicTextLabel = new JLabel(currentUserName);
-        dynamicTextLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        dynamicTextLabel.setFont(new Font("Arial", Font.BOLD, 12));
         dynamicTextLabel.setHorizontalAlignment(SwingConstants.LEFT);
         dynamicTextLabel.setVerticalAlignment(SwingConstants.CENTER);
 
@@ -132,7 +153,7 @@ public class ClientGui extends JFrame {
         leftPanel.add(bottomInfoPanel, BorderLayout.SOUTH);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, messageArea);
-        splitPane.setDividerLocation(150);
+        splitPane.setDividerLocation(220);
         splitPane.setDividerSize(1);
         splitPane.setEnabled(false);
 
@@ -144,6 +165,7 @@ public class ClientGui extends JFrame {
 
         contactList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         contactList.setCellRenderer(new ContactCellRenderer());
+        contactList.setFixedCellHeight(60);  // Adjust number to increase vertical spacing
     }
 
     
@@ -184,7 +206,9 @@ public class ClientGui extends JFrame {
 
     public void setContactListData(List<String> contacts) {
         contactList.setListData(contacts.toArray(new String[0]));
-    } 
+    }
+    
+
     
     public void showProfileButton() {
         profileButton.setVisible(true);
@@ -239,18 +263,82 @@ public class ClientGui extends JFrame {
     public JLabel getImageLabel() {
         return imageLabel;
     }
-
+    
     class ContactCellRenderer extends DefaultListCellRenderer {
+
+        private  Map<String, String> userImageMap;
+
+        public ContactCellRenderer(Map<String, String> userImageMap) {
+            this.userImageMap = userImageMap;
+        }
+        public ContactCellRenderer(){
+            
+        }
+
         @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                boolean isSelected, boolean cellHasFocus) {
             JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            label.setHorizontalAlignment(SwingConstants.CENTER);
-            label.setFont(new Font("Arial", Font.PLAIN, 18));
-            label.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
+            
+            String userName = value.toString();
+            String imagePath = userImageMap.getOrDefault(userName, "/Users/bibek/Documents/screensaver/SCR-20240929-pdyl.jpeg");
+
+            try {
+                BufferedImage original = ImageIO.read(new File(imagePath));
+
+                // Crop square from center
+                int size = Math.min(original.getWidth(), original.getHeight());
+                int x = (original.getWidth() - size) / 2;
+                int y = (original.getHeight() - size) / 2;
+                BufferedImage cropped = original.getSubimage(x, y, size, size);
+
+                // Resize first with high-quality scaling
+                BufferedImage resized = new BufferedImage(30, 30, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2 = resized.createGraphics();
+                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.drawImage(cropped, 0, 0, 30, 30, null);
+                g2.dispose();
+
+                // Create a circular clipped image with smooth edges
+                BufferedImage circleBuffer = new BufferedImage(30, 30, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2d = circleBuffer.createGraphics();
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                // Make clip a circle
+                g2d.setClip(new Ellipse2D.Float(0, 0, 30, 30));
+
+                // Draw the resized image clipped in circle
+                g2d.drawImage(resized, 0, 0, null);
+                g2d.dispose();
+
+                label.setIcon(new ImageIcon(circleBuffer));
+            } catch (Exception e) {
+                e.printStackTrace();
+                label.setIcon(new ImageIcon("/Users/bibek/Documents/screensaver/SCR-20240929-pdyl.jpeg"));
+            }
+            
+            label.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY),
+                    BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            ));
+
+            label.setIconTextGap(10);
+            label.setHorizontalAlignment(SwingConstants.LEFT);
+            label.setFont(new Font("Arial", Font.BOLD, 16));
+            
+            Border matte = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY);
+            Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10); //top, left, bottom, right
+            label.setBorder(BorderFactory.createCompoundBorder(matte, padding));
+            
             return label;
         }
     }
     
-    
 
+    public void setContactListRenderer(Map<String, String> userImageMap) {
+        contactList.setCellRenderer(new ContactCellRenderer(userImageMap));
+    }
 }
+

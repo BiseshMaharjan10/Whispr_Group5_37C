@@ -1,10 +1,10 @@
 package Dao;
 
+import Database.MySqlConnection;
 import Model.MessageModel;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import Database.MySqlConnection;
 
 public class ChatClientDAO {
     private final MySqlConnection db = new MySqlConnection();
@@ -93,6 +93,28 @@ public class ChatClientDAO {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+    
+    public String getImagePath(String email) {
+        Connection conn = db.openConnection();
+        try {
+            String sql = "SELECT picture_path FROM users WHERE email=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String imagePath = rs.getString("picture_path");
+                return imagePath;// return the imagePath
+            } else {
+                return null; // imagepath not found
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        } finally {
+            db.closeConnection(conn);
         }
     }
     

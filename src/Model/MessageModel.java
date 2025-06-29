@@ -24,6 +24,9 @@ public class MessageModel implements Serializable {
     private String emailThroughFirstnLastName;
     private Boolean updateUserImagePath;
     private String getImagePath;
+    private String message;
+    private String currentUserName;
+    private String status;
     
     
     

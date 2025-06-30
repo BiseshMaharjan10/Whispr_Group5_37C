@@ -62,3 +62,25 @@ import view.Signin;
     String password = String.valueOf(view.getSetPasswordField().getPassword()).trim();
     String confirmPassword = String.valueOf(view.getConfirmPasswordField().getPassword()).trim();
 // Optional: match check
+    
+    if (!password.equals(confirmPassword)) {
+        view.setErrorLabelText("Passwords do not match");
+        view.getConfirmPasswordField().setForeground(Color.RED);
+        return;
+    } else {
+        view.setErrorLabelText("");
+        view.getConfirmPasswordField().setForeground(Color.BLACK);
+    }
+
+    // Call the model
+    Fpasswordcontroller controller = new Fpasswordcontroller();
+    String result = controller.ResetPassword(confirmPassword, password);  // Now both variables are defined
+
+    JOptionPane.showMessageDialog(view, result);
+
+    if (result.equals("Rest password Successful")) {
+        new Signin().setVisible(true);
+        view.dispose();
+    }
+   }
+}

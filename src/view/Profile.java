@@ -6,10 +6,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import Controller.ProfileController;
-/**
- *
- * @author kanchanmaharjan
- */
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
+
 public class Profile extends javax.swing.JFrame {
     private String temp_name = "bisesh";
     /**
@@ -42,7 +47,7 @@ public class Profile extends javax.swing.JFrame {
         jEditorPane1 = new javax.swing.JEditorPane();
         jPanel1 = new javax.swing.JPanel();
         ProfileName = new javax.swing.JLabel();
-        ProfImag = new javax.swing.JLabel();
+        profilePicLabel = new javax.swing.JLabel();
 
         jScrollPane1.setViewportView(jEditorPane1);
 
@@ -60,28 +65,28 @@ public class Profile extends javax.swing.JFrame {
             }
         });
 
-        ProfImag.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/NOpfp.jpg"))); // NOI18N
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(113, 113, 113)
-                .addComponent(ProfImag)
-                .addContainerGap(187, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(ProfileName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(40, 40, 40))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(197, 197, 197)
+                        .addComponent(ProfileName, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(140, 140, 140)
+                        .addComponent(profilePicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(176, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(ProfImag, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ProfileName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 175, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(profilePicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 117, Short.MAX_VALUE)
+                .addComponent(ProfileName, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -143,11 +148,11 @@ public class Profile extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel ProfImag;
     private javax.swing.JLabel ProfileName;
     private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel profilePicLabel;
     // End of variables declaration//GEN-END:variables
 
 
@@ -155,6 +160,58 @@ public class Profile extends javax.swing.JFrame {
     public void updateName(String selectedUsername) {
         ProfileName.setText( selectedUsername );
     }
+    
+    
+    public void updateProfilePic(String imagePath) {
+        if (imagePath != null && !imagePath.isEmpty()) {
+            File imageFile = new File(imagePath);
+            if (imageFile.exists()) {
+                try {
+                    BufferedImage originalImage = ImageIO.read(imageFile);
+
+                    int originalWidth = originalImage.getWidth();
+                    int originalHeight = originalImage.getHeight();
+
+                    // Max display area size (e.g. 150x150)
+                    int maxWidth = 150;
+                    int maxHeight = 150;
+
+                    // Calculate scaled size while keeping aspect ratio
+                    double widthRatio = (double) maxWidth / originalWidth;
+                    double heightRatio = (double) maxHeight / originalHeight;
+                    double scaleFactor = Math.min(widthRatio, heightRatio);
+
+                    int scaledWidth = (int) (originalWidth * scaleFactor);
+                    int scaledHeight = (int) (originalHeight * scaleFactor);
+
+                    // Scale the image
+                    Image scaledImage = originalImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+                    ImageIcon scaledIcon = new ImageIcon(scaledImage);
+
+                    // Resize the label and panel
+                    profilePicLabel.setIcon(scaledIcon);
+                    profilePicLabel.setPreferredSize(new Dimension(scaledWidth, scaledHeight));
+                    profilePicLabel.setSize(new Dimension(scaledWidth, scaledHeight));
+                    profilePicLabel.revalidate();
+
+                    // Optionally resize parent panel too
+                    if (profilePicLabel.getParent() != null) {
+                        profilePicLabel.getParent().setPreferredSize(new Dimension(scaledWidth, scaledHeight));
+                        profilePicLabel.getParent().revalidate();
+                    }
+
+                } catch (IOException e) {
+                    System.err.println("Error reading image: " + e.getMessage());
+                }
+            } else {
+                System.err.println("Image file not found: " + imagePath);
+            }
+        } else {
+            System.out.println("Image path is null or empty.");
+        }
+    }
+    
+    
     
     
 

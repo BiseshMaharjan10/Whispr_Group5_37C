@@ -1,6 +1,5 @@
 package Model;
 
-import Dao.ChatClientDAO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,45 +15,17 @@ public class MessageModel implements Serializable {
     private String sender;
     private String receiver;
     private String imagePath;
-    
-    private ChatClientDAO dao;
-    
-    private List<String> allUsersInDb;
-    private String firstnLastNameThroughemail;
-    private String emailThroughFirstnLastName;
-    private Boolean updateUserImagePath;
-    private String getImagePath;
     private String message;
     private String currentUserName;
     private String status;
-    
-    
-    
 
-    public MessageModel() {}
+    // Constructors
+    public MessageModel() {
+    }
 
-    public MessageModel(int id, String fName, String lName, String sender, String message) {
-        ChatClientDAO dao = new ChatClientDAO();
-        this.firstnLastNameThroughemail = dao.getFirstnLastName(email);
-        this.emailThroughFirstnLastName = dao.getEmail(firstName, lastName);
-        this.updateUserImagePath = dao.updateUserImagePath(email, imagePath);
-        this.getImagePath = dao.getImagePath(email);
-        
-        this.id = id;
-        this.firstName = fName;
-        this.lastName = lName;
+    public MessageModel(String sender, String message) {
         this.sender = sender;
         this.message = message;
-
-        List<MessageModel> users = dao.getAllUsers();
-        List<String> fullNames = new ArrayList<>();
-        for (MessageModel user : users) {
-            String fullName = user.getFirstName() + " " + user.getLastName();
-            fullNames.add(fullName);
-            
-            this.allUsersInDb = fullNames;
-
-        }
     }
 
     public MessageModel(String sender, String receiver, String message) {
@@ -63,13 +34,17 @@ public class MessageModel implements Serializable {
         this.message = message;
     }
 
-    public MessageModel(String selectedUserName) {
-        this.currentUserName = selectedUserName;
+    public MessageModel(String currentUserName) {
+        this.currentUserName = currentUserName;
     }
 
     // Getters
     public int getId() {
         return id;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public String getFirstName() {
@@ -88,25 +63,33 @@ public class MessageModel implements Serializable {
         return receiver;
     }
 
+    public String getImagePath() {
+        return imagePath;
+    }
+
     public String getMessage() {
         return message;
+    }
+
+    public String getCurrentUserName() {
+        return currentUserName;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public String getCurrentUserName() {
+    public String getSelectedUsername() {
         return currentUserName;
     }
-//    public List<String> getAllUserFullName() {
-//        return allUsersInDb;
-//
-//    }
 
     // Setters
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setFirstName(String firstName) {
@@ -125,23 +108,47 @@ public class MessageModel implements Serializable {
         this.receiver = receiver;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public void setCurrentUserName(String currentUserName) {
         this.currentUserName = currentUserName;
     }
 
-    // Convenience method for full name
-    public String getFullName() {
-        return firstName + " " + lastName;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
+    // Convenience method: return "First Last"
+    public String getFullName() {
+        String fname = (firstName == null) ? "" : firstName;
+        String lname = (lastName == null) ? "" : lastName;
+        return fname + " " + lname;
+    }
+
+    // Utility: Get online users from CSV in `message`
+    public List<String> getOnlineUsers() {
+        List<String> csvUsers = new ArrayList<>();
+        try {
+            if (message == null) return csvUsers;
+            for (String user : message.split(",")) {
+                String trimmed = user.trim();
+                if (!trimmed.isEmpty()) {
+                    csvUsers.add(trimmed);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error parsing CSV users: " + e.getMessage());
+        }
+        return csvUsers;
+    }
+
+    // For debugging/logs
     @Override
     public String toString() {
         return getFullName() + ": " + message;

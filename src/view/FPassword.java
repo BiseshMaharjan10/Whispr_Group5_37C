@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package view;
 import Controller.Fpasswordcontroller;
 import java.awt.Color;
@@ -9,10 +6,6 @@ import javax.swing.JOptionPane;
 import utils.EmailSender;
 import java.awt.event.ActionListener;
 
-/**
- *
- * @author bibek
- */
 public class FPassword extends javax.swing.JFrame {
 
     /**

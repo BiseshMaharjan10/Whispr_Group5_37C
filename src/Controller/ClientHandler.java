@@ -13,7 +13,11 @@ public class ClientHandler implements Runnable {
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private String clientUsername;
-
+    
+    public ClientHandler(){
+        
+    }
+    
     public ClientHandler(Socket socket) {
         try {
             this.socket = socket;

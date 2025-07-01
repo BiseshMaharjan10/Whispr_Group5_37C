@@ -59,6 +59,8 @@ public class ChatController implements ActionListener {
     private  JScrollPane messageScroll;
     private  JLabel imageLabel;
     
+    private static String firstName;
+    private static String lastName;
     private  String loggedInUserName;
     private String selectedImagePath;
     private String loggedInUserEmail;
@@ -80,10 +82,11 @@ public class ChatController implements ActionListener {
     
 
     public ChatController(String selectedUserName) {
-        
-        this.selectedUserName = selectedUserName;
-        
-        System.out.println("someone is calling please  ");
+        this.selectedUserName = selectedUserName.trim().replaceAll("\\s+", " "); // remove extra spaces
+        String[] parts = this.selectedUserName.split(" ");
+
+        this.firstName = parts[0];
+        this.lastName = (parts.length > 1) ? parts[1] : "";
     }
 
     public ChatController(ClientGui userView, String userEmail) throws IOException {
@@ -119,16 +122,33 @@ public class ChatController implements ActionListener {
         
         System.out.println("currentUsername " + selectedUserName + " userview idea " + userView.getSelectedContact());
         
+        
+        
+        //after clicking on other's profile
         userView.addProfileListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             Profile profileView = new Profile();
-            new ProfileController(profileView, ChatController.this);
+//            new ProfileController(profileView, ChatController.this);
             profileView.setVisible(true);
-            profileView.updateName(selectedUserName);
             
+            String selectedUserEmail =chatClientDAO.getEmail(firstName, lastName);
+            String selectedUserImagePath =chatClientDAO.getImagePath(selectedUserEmail);
+            
+            
+            profileView.updateName(selectedUserName);
+            profileView.updateProfilePic(selectedUserImagePath);
+            
+            System.out.println("currentuseremail ; "+selectedUserEmail + " from name "+ firstName +"  " + lastName);
+            System.out.println("imagepath ; "+selectedUserImagePath);
+            System.out.println("selected contact ; " + selectedUserName);
+            
+            
+
+
         }
         });
+        
         
         updateUserImage();
         initializeConnection();
@@ -171,7 +191,8 @@ public class ChatController implements ActionListener {
     private void handleIncomingMessage(MessageModel msg) {
         if ("SERVER".equals(msg.getSender()) && msg.getMessage().contains(",")) {
             
-
+            //sends online users to global variable
+            utils.GlobalState.onlineUsersCsv = msg.getMessage();
             updateContactList(msg.getMessage());
             
         } else if (contactList.getSelectedValue() != null) {
@@ -183,7 +204,6 @@ public class ChatController implements ActionListener {
 
     public void updateContactList(String csv) {
         SwingUtilities.invokeLater(() -> {
-            // If contactList model is not yet set, initialize it with users from DB
             if (contactList.getModel() == null || !(contactList.getModel() instanceof DefaultListModel)) {               
                 DefaultListModel<String> temp_model = new DefaultListModel<>();
                 for (String name : getAllUserFullNames()) {
@@ -204,6 +224,7 @@ public class ChatController implements ActionListener {
                 }
             }
         });
+//        return success;
     }
     
     public List<String> getAllUserFullNames() {
@@ -217,6 +238,7 @@ public class ChatController implements ActionListener {
         }
         return fullNames;
     }
+    
         
     @Override
     public void actionPerformed(ActionEvent e) {

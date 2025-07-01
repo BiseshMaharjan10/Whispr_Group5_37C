@@ -116,10 +116,5 @@ public class ChatClientDAO {
         } finally {
             db.closeConnection(conn);
         }
-    }
-    
-    
-    
-    
-    
+    }  
 }

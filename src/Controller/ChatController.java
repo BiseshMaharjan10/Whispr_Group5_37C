@@ -39,8 +39,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import view.Logout;
 import view.Profile;
 import view.RoundImageLabel;
+import view.Signin;
 
 
 
@@ -49,6 +51,7 @@ public class ChatController implements ActionListener {
     private  SigninController signin;
     private  ClientGui userView;
     private MessageModel model;
+    private Logout logoutWindow = null;
     
     private  JList<String> contactList;
     private  JList<String> emailList;
@@ -63,6 +66,7 @@ public class ChatController implements ActionListener {
     private static String lastName;
     private  String loggedInUserName;
     private String selectedImagePath;
+    private String currentUserImagePath;
     private String loggedInUserEmail;
     private String selectedUserEmail;
     public static String selectedUserName;
@@ -91,6 +95,7 @@ public class ChatController implements ActionListener {
 
     public ChatController(ClientGui userView, String userEmail) throws IOException {
         this.userView = userView;
+//        this.logoutWindow = new Logout();
         this.chatClientDAO = new ChatClientDAO();
         this.model = new MessageModel();
         
@@ -362,38 +367,72 @@ public class ChatController implements ActionListener {
     
     public void handleImageClick() throws IOException {
         
-        System.out.println("Image clicked!");
+        System.out.println("Image clicked! k");
+
         
-        JFileChooser chooser = new JFileChooser();
-        chooser.setDialogTitle("Select an Image");
-        chooser.setAcceptAllFileFilterUsed(false);
-        chooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "jpeg", "png", "gif"));
-
-        int result = chooser.showOpenDialog(null);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = chooser.getSelectedFile();
-            String path = selectedFile.getAbsolutePath();
-            
-            this.selectedFile = selectedFile;
-
-            // Update image label in GUI
-            ImageIcon icon = new ImageIcon(new ImageIcon(path).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH));
-            BufferedImage img = ImageIO.read(selectedFile);
-            ((RoundImageLabel) imageLabel).setImage(img);
-            
-            Boolean success = chatClientDAO.updateUserImagePath(loggedInUserEmail, path);
-            String results = success ? "saved ":"didn't save";
-            
-
-            
-            System.out.println("image path " + results + " "+ loggedInUserEmail + selectedFile);
-                
+        if (logoutWindow != null && logoutWindow.isDisplayable()) {
+            JOptionPane.showMessageDialog(null, "Logout window is already open!");
+            return;
         }
+//         new ProfileController(profileView, ChatController.this);
+        logoutWindow = new Logout();
+        logoutWindow.setVisible(true);
+
+        logoutWindow.updateName(loggedInUserName);
+        logoutWindow.updateProfilePic(currentUserImagePath);
+        
+        
+        logoutWindow.logoutButtonListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Signin view = new Signin();
+                logoutWindow.dispose();
+                userView.dispose();
+                view.setVisible(true);
+                
+                
+
+            }
+        });
+
+//        System.out.println("currentuseremail ; " + selectedUserEmail + " from name " + firstName + "  " + lastName);
+//        System.out.println("imagepath ; " + selectedUserImagePath);
+//        System.out.println("selected contact ; " + selectedUserName);
+        
+
+        
+//        JFileChooser chooser = new JFileChooser();
+//        chooser.setDialogTitle("Select an Image");
+//        chooser.setAcceptAllFileFilterUsed(false);
+//        chooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "jpeg", "png", "gif"));
+
+//        int result = chooser.showOpenDialog(null);
+//        if (result == JFileChooser.APPROVE_OPTION) {
+//            File selectedFile = chooser.getSelectedFile();
+//            String path = selectedFile.getAbsolutePath();
+//            
+//            this.selectedFile = selectedFile;
+//
+//            // Update image label in GUI
+//            ImageIcon icon = new ImageIcon(new ImageIcon(path).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH));
+//            BufferedImage img = ImageIO.read(selectedFile);
+//            ((RoundImageLabel) imageLabel).setImage(img);
+//            
+//            Boolean success = chatClientDAO.updateUserImagePath(loggedInUserEmail, path);
+//            String results = success ? "saved ":"didn't save";
+//            
+//
+//            
+//            System.out.println("image path " + results + " "+ loggedInUserEmail + selectedFile);
+//                
+//        }
     }
     
     
     private void updateUserImage() throws IOException {
         String currentUserImagePath = chatClientDAO.getImagePath(loggedInUserEmail);
+        this.currentUserImagePath = currentUserImagePath;
+        
         String allUserImagePath = chatClientDAO.getImagePath(selectedUserEmail);
 
         if (currentUserImagePath != null && !currentUserImagePath.isEmpty()) {

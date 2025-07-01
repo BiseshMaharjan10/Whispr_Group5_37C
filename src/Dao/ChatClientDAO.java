@@ -117,4 +117,24 @@ public class ChatClientDAO {
             db.closeConnection(conn);
         }
     }  
+ 
+    public boolean saveMessage(MessageModel messageModel) {
+        Connection conn = db.openConnection();
+   
+
+        try{
+            String sql = "INSERT INTO messages (sender_email, receiver_email, message) VALUES (?, ?, ?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, messageModel.getSender());
+            ps.setString(2, messageModel.getReceiver());
+            ps.setString(3, messageModel.getMessage());
+
+            ps.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

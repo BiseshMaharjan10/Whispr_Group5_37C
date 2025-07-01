@@ -31,7 +31,7 @@ public class Main {
                     ClientGui gui = new ClientGui(username);
                     
                     // Create Controller and wire its
-                    ChatController controller = new ChatController(gui, "bcoderunner@gmail.com");
+                    ChatController controller = new ChatController(gui, "nexbitt@gmail.com");
                     
                     //model 
                     MessageModel msg = new MessageModel();

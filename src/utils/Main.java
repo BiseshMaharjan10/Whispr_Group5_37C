@@ -53,6 +53,7 @@ public class Main {
                         
                         if (selected != null) {
                             controller.showMessages(selected);
+                            controller.loadChatHistory(selected);
                             gui.getBottomPanel().setVisible(true);
                             List<String> OnlineUsers = msg.getOnlineUsers();
                             
@@ -63,7 +64,7 @@ public class Main {
                                 System.out.println("he isn't online " + csv + " " + selected);
                             }
                             gui.showProfileButton();
-                            ChatController temp_controller = new ChatController(selected);
+                            ChatController temp_controller = new ChatController(selected, gui, "nexbitt@gmail.com");
                         }
                     });
                     gui.addSearchButtonListener(e -> gui.toggleSearchPanel(true));

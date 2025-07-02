@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,8 +63,8 @@ public class ChatController implements ActionListener {
     private  JScrollPane messageScroll;
     private  JLabel imageLabel;
     
-    private static String firstName;
-    private static String lastName;
+    private static String selectedUserFirstName;
+    private static String selectedUserLastName;
     private  String loggedInUserName;
     private String selectedImagePath;
     private String currentUserImagePath;
@@ -74,8 +75,6 @@ public class ChatController implements ActionListener {
     private File selectedFile;
     private ImageIcon selectedUserIcon;
 
-  
-
     private final Map<String, List<JLabel>> chatHistory = new HashMap<>();
     private final Box.Filler bottomFiller = new Box.Filler(
         new Dimension(0, 0), new Dimension(0, 0), new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
@@ -85,12 +84,17 @@ public class ChatController implements ActionListener {
     private ObjectInputStream in;
     
 
-    public ChatController(String selectedUserName) {
+    public ChatController(String selectedUserName, ClientGui userView, String userEmail) {
+        
         this.selectedUserName = selectedUserName.trim().replaceAll("\\s+", " "); // remove extra spaces
         String[] parts = this.selectedUserName.split(" ");
 
-        this.firstName = parts[0];
-        this.lastName = (parts.length > 1) ? parts[1] : "";
+        this.selectedUserFirstName = parts[0];
+        this.selectedUserLastName = (parts.length > 1) ? parts[1] : "";
+        
+        
+        
+
     }
 
     public ChatController(ClientGui userView, String userEmail) throws IOException {
@@ -131,27 +135,29 @@ public class ChatController implements ActionListener {
         
         //after clicking on other's profile
         userView.addProfileListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            Profile profileView = new Profile();
-//            new ProfileController(profileView, ChatController.this);
-            profileView.setVisible(true);
-            
-            String selectedUserEmail =chatClientDAO.getEmail(firstName, lastName);
-            String selectedUserImagePath =chatClientDAO.getImagePath(selectedUserEmail);
-            
-            
-            profileView.updateName(selectedUserName);
-            profileView.updateProfilePic(selectedUserImagePath);
-            
-            System.out.println("currentuseremail ; "+selectedUserEmail + " from name "+ firstName +"  " + lastName);
-            System.out.println("imagepath ; "+selectedUserImagePath);
-            System.out.println("selected contact ; " + selectedUserName);
-            
-            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Profile profileView = new Profile();
+    //            new ProfileController(profileView, ChatController.this);
+                profileView.setVisible(true);
+
+                selectedUserEmail = chatClientDAO.getEmail(selectedUserFirstName, selectedUserLastName);
+
+                
+                String selectedUserImagePath =chatClientDAO.getImagePath(selectedUserEmail);
 
 
-        }
+                profileView.updateName(selectedUserName);
+                profileView.updateProfilePic(selectedUserImagePath);
+
+                System.out.println("currentuseremail ; "+selectedUserEmail + " from name "+ selectedUserFirstName +"  " + selectedUserLastName);
+                System.out.println("imagepath ; "+selectedUserImagePath);
+                System.out.println("selected contact ; " + selectedUserName);
+
+
+
+
+            }
         });
         
         
@@ -250,6 +256,7 @@ public class ChatController implements ActionListener {
         String to = contactList.getSelectedValue();
         String text = messageInput.getText().trim();
         
+        
         if (to != null && !text.isEmpty()) {
             messageInput.setText("");
             displayMessage("Me", text, true);
@@ -257,8 +264,22 @@ public class ChatController implements ActionListener {
             
             String Email = chatClientDAO.getEmail(names[0], names.length > 1 ? names[1] : "");
             sendMessage(loggedInUserName, Email, text);
+
             
-            this.selectedUserEmail = Email;
+            this.selectedUserEmail = chatClientDAO.getEmail(selectedUserFirstName, selectedUserLastName);
+
+            
+            model.setSender(loggedInUserEmail);
+            model.setReceiver(selectedUserEmail);
+            model.setMessage(text);
+            model.setTimeStamp(LocalDateTime.now());
+            
+            System.out.println(selectedUserEmail + " Stage 2 : " + loggedInUserEmail);
+
+            boolean success = chatClientDAO.saveMessage(model);
+            String result = success ? "Saved to the database": "we encountered some errors here";
+            
+            System.out.println(result);
 
         } else {
             JOptionPane.showMessageDialog(null, "Select contact & write message", "Error", JOptionPane.WARNING_MESSAGE);
@@ -360,10 +381,14 @@ public class ChatController implements ActionListener {
             } 
         });
     }
+    
+    
 
     public ActionListener getSendActionListener() {
         return this;
     }
+    
+    
     
     public void handleImageClick() throws IOException {
         
@@ -483,5 +508,17 @@ public class ChatController implements ActionListener {
             }
         }
         return userImageMap;
+    }
+    
+    public void loadChatHistory(String selectedFullName) {
+        String[] names = selectedFullName.split(" ", 2);
+        String receiverEmail = chatClientDAO.getEmail(names[0], names.length > 1 ? names[1] : "");
+
+        List<MessageModel> history = chatClientDAO.getChatHistory(loggedInUserEmail, receiverEmail);
+
+        for (MessageModel msg : history) {
+            boolean isOwnMessage = msg.getSender().equals(loggedInUserEmail);
+            displayMessage(isOwnMessage ? "Me" : selectedFullName, msg.getMessage(), isOwnMessage);
+        }
     }
 }

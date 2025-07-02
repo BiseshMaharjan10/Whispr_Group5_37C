@@ -1,6 +1,7 @@
 package Model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class MessageModel implements Serializable {
     private String message;
     private String currentUserName;
     private String status;
+    private LocalDateTime timeStamp;  
 
     // Constructors
     public MessageModel() {
@@ -62,6 +64,9 @@ public class MessageModel implements Serializable {
     public String getReceiver() {
         return receiver;
     }
+    public LocalDateTime getTimeStamp(){
+        return timeStamp;
+    }
 
     public String getImagePath() {
         return imagePath;
@@ -88,9 +93,9 @@ public class MessageModel implements Serializable {
         this.id = id;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+//    public void setEmail(String email) {
+//        this.email = email;
+//    }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -106,6 +111,10 @@ public class MessageModel implements Serializable {
 
     public void setReceiver(String receiver) {
         this.receiver = receiver;
+    }
+    
+    public void setTimeStamp(LocalDateTime timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public void setImagePath(String imagePath) {

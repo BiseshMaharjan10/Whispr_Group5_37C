@@ -241,6 +241,11 @@ public class ClientGui extends JFrame {
     public void hideOnlineStatus(){
         onlineStatus.setVisible(false);
     }
+    
+    public void clearMessageInput() {
+        messageInput.setText("");
+    }
+    
 
     
     //getters
@@ -266,10 +271,6 @@ public class ClientGui extends JFrame {
 
     public String getMessageText() {
         return messageInput.getText().trim();
-    }
-
-    public void clearMessageInput() {
-        messageInput.setText("");
     }
 
     public String getSelectedContact() {

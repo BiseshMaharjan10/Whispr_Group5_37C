@@ -378,6 +378,7 @@ public class ChatController implements ActionListener {
         logoutWindow = new Logout();
         logoutWindow.setVisible(true);
 
+        updateUserImage();
         logoutWindow.updateName(loggedInUserName);
         logoutWindow.updateProfilePic(currentUserImagePath);
         
@@ -385,10 +386,19 @@ public class ChatController implements ActionListener {
         logoutWindow.logoutButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Signin view = new Signin();
-                logoutWindow.dispose();
-                userView.dispose();
-                view.setVisible(true);
+                int confirm = JOptionPane.showConfirmDialog(
+                        null,
+                        "Are you sure you want to log out?",
+                        "Confirm Logout",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    Signin view = new Signin();
+                    logoutWindow.dispose();
+                    userView.dispose();
+                    view.setVisible(true);
+                }
             }
         });
         
@@ -413,12 +423,11 @@ public class ChatController implements ActionListener {
                         ImageIcon icon = new ImageIcon(new ImageIcon(path).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH));
                         BufferedImage img = ImageIO.read(ChatController.this.selectedFile);
                         ((RoundImageLabel) imageLabel).setImage(img);
+                        logoutWindow.updateProfilePic(path);
                         
                         Boolean success = chatClientDAO.updateUserImagePath(loggedInUserEmail, path);
                         String results = success ? "saved ":"didn't save";
-                        
-                        
-                        
+  
                         System.out.println("image path " + results + " "+ loggedInUserEmail + selectedFile);
                     } catch (IOException ex) {
                         Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);

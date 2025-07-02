@@ -11,6 +11,7 @@ import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import utils.EmailSender;
+import view.FPassword;
 
 
 /**
@@ -21,6 +22,18 @@ public class Fpasswordcontroller {
     private UserDAO userDAO = new UserDAO();
 
     private static String userEmail; // Instance variable to store emaail
+
+    public Fpasswordcontroller(FPassword signin) {
+    }
+
+    public Fpasswordcontroller() {
+    }
+
+//    public Fpasswordcontroller() {
+//    }
+//
+//    public Fpasswordcontroller() {
+//    }
 
 
     public String register(String email) {
@@ -111,6 +124,10 @@ public class Fpasswordcontroller {
         return status ? "Rest password Successful" : "Can't reset the password";
     }
    }
+
+    void open() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
     
     

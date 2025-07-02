@@ -11,6 +11,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import view.ClientGui;
+import view.FPassword;
 import view.Signin;
 
 public class SigninController {
@@ -24,6 +25,9 @@ public class SigninController {
 //        this.signin.getSigninButton().addActionListener(new LoginListener());
     }
     public void open(){
+        this.signin.setVisible(true);
+    }
+    public void close(){
         this.signin.setVisible(true);
     }
     
@@ -106,18 +110,30 @@ public class SigninController {
         return null;
     }
     
-   class ForgotListener implements ActionListener{
+//   class ForgotListener implements ActionListener{
+//
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//          String email = signin.getEmailField().getText().trim();
+//          if(email.isEmpty()){
+//              JOptionPane.showMessageDialog(signin,"Please enter you email!");
+//              return;
+//          }
+//        }
+//       
+//   }
+    class ForgotListener implements ActionListener{
 
         @Override
         public void actionPerformed(ActionEvent e) {
-          String email = signin.getEmailField().getText().trim();
-          if(email.isEmpty()){
-              JOptionPane.showMessageDialog(signin,"Please enter you email!");
-              return;
-          }
+           FPassword signin = new FPassword();
+           Fpasswordcontroller fpass = new Fpasswordcontroller(signin);
+           signin.setVisible(true);
+           fpass.open();
+           close();
         }
-       
-   }
+
+    }
 }
 
 

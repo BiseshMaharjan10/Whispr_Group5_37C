@@ -97,7 +97,7 @@ public class ChatController implements ActionListener {
         this.userView = userView;
 //        this.logoutWindow = new Logout();
         this.chatClientDAO = new ChatClientDAO();
-        this.model = new MessageModel();
+        this.model = new MessageModel(selectedUserName);
         
         this.loggedInUserEmail = userEmail;
         this.contactList = userView.getContactList();
@@ -110,7 +110,7 @@ public class ChatController implements ActionListener {
         this.loggedInUserName = userView.getCurrentUsername();
         
         
-        MessageModel model = new MessageModel(selectedUserName);
+//        MessageModel model = new MessageModel(selectedUserName);
 
         userView.getImageLabel().addMouseListener(new MouseAdapter() {
             @Override
@@ -389,43 +389,44 @@ public class ChatController implements ActionListener {
                 logoutWindow.dispose();
                 userView.dispose();
                 view.setVisible(true);
-                
-                
-
             }
         });
-
-//        System.out.println("currentuseremail ; " + selectedUserEmail + " from name " + firstName + "  " + lastName);
-//        System.out.println("imagepath ; " + selectedUserImagePath);
-//        System.out.println("selected contact ; " + selectedUserName);
         
+        logoutWindow.changeProfileButtonListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                JFileChooser chooser = new JFileChooser();
+                chooser.setDialogTitle("Select an Image");
+                chooser.setAcceptAllFileFilterUsed(false);
+                chooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "jpeg", "png", "gif"));
 
-        
-//        JFileChooser chooser = new JFileChooser();
-//        chooser.setDialogTitle("Select an Image");
-//        chooser.setAcceptAllFileFilterUsed(false);
-//        chooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "jpeg", "png", "gif"));
+                int result = chooser.showOpenDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        File selectedFile = chooser.getSelectedFile();
+                        String path = selectedFile.getAbsolutePath();
+                        
+                        ChatController.this.selectedFile = selectedFile;
+                        
+                        // Update image label in GUI
+                        ImageIcon icon = new ImageIcon(new ImageIcon(path).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH));
+                        BufferedImage img = ImageIO.read(ChatController.this.selectedFile);
+                        ((RoundImageLabel) imageLabel).setImage(img);
+                        
+                        Boolean success = chatClientDAO.updateUserImagePath(loggedInUserEmail, path);
+                        String results = success ? "saved ":"didn't save";
+                        
+                        
+                        
+                        System.out.println("image path " + results + " "+ loggedInUserEmail + selectedFile);
+                    } catch (IOException ex) {
+                        Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
-//        int result = chooser.showOpenDialog(null);
-//        if (result == JFileChooser.APPROVE_OPTION) {
-//            File selectedFile = chooser.getSelectedFile();
-//            String path = selectedFile.getAbsolutePath();
-//            
-//            this.selectedFile = selectedFile;
-//
-//            // Update image label in GUI
-//            ImageIcon icon = new ImageIcon(new ImageIcon(path).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH));
-//            BufferedImage img = ImageIO.read(selectedFile);
-//            ((RoundImageLabel) imageLabel).setImage(img);
-//            
-//            Boolean success = chatClientDAO.updateUserImagePath(loggedInUserEmail, path);
-//            String results = success ? "saved ":"didn't save";
-//            
-//
-//            
-//            System.out.println("image path " + results + " "+ loggedInUserEmail + selectedFile);
-//                
-//        }
+                }
+            }
+        });
     }
     
     

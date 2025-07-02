@@ -27,6 +27,7 @@ public class Logout extends javax.swing.JFrame {
         profilePicLabel = new javax.swing.JLabel();
         loggedInUserLabel = new javax.swing.JLabel();
         logoutButton = new javax.swing.JButton();
+        changeProfilePic = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -40,34 +41,45 @@ public class Logout extends javax.swing.JFrame {
             }
         });
 
+        changeProfilePic.setText("Change Photo");
+        changeProfilePic.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                changeProfilePicActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(120, 120, 120)
-                .addComponent(profilePicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 130, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(loggedInUserLabel)
+                .addGap(140, 140, 140))
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(loggedInUserLabel)
-                        .addGap(140, 140, 140))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(120, 120, 120)
+                        .addComponent(profilePicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(82, 82, 82)
                         .addComponent(logoutButton)
-                        .addGap(154, 154, 154))))
+                        .addGap(69, 69, 69)
+                        .addComponent(changeProfilePic)))
+                .addGap(0, 54, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(40, 40, 40)
-                .addComponent(profilePicLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+                .addComponent(profilePicLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(loggedInUserLabel)
-                .addGap(33, 33, 33)
-                .addComponent(logoutButton)
-                .addGap(28, 28, 28))
+                .addGap(43, 43, 43)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(logoutButton)
+                    .addComponent(changeProfilePic))
+                .addGap(24, 24, 24))
         );
 
         pack();
@@ -76,6 +88,10 @@ public class Logout extends javax.swing.JFrame {
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
 
     }//GEN-LAST:event_logoutButtonActionPerformed
+
+    private void changeProfilePicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeProfilePicActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_changeProfilePicActionPerformed
 
 
     public static void main(String args[]) {
@@ -88,6 +104,7 @@ public class Logout extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton changeProfilePic;
     private javax.swing.JLabel loggedInUserLabel;
     private javax.swing.JButton logoutButton;
     private javax.swing.JLabel profilePicLabel;
@@ -151,7 +168,10 @@ public class Logout extends javax.swing.JFrame {
     public void logoutButtonListener(ActionListener listener) {
         logoutButton.addActionListener(listener);
     }
-
+    
+    public void changeProfileButtonListener(ActionListener listener) {
+        changeProfilePic.addActionListener(listener);
+    }
 
 
 }

@@ -110,7 +110,11 @@ public class SigninController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-           
+          String email = signin.getEmailField().getText().trim();
+          if(email.isEmpty()){
+              JOptionPane.showMessageDialog(signin,"Please enter you email!");
+              return;
+          }
         }
        
    }

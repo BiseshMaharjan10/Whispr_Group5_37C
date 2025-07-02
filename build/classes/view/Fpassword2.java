@@ -1,18 +1,13 @@
 package view;
 
-//import Controller.Fpassword2Controller;
-import Controller.Fpasswordcontroller;
+import Controller.Fpassword2controller;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-
-/**
- *
- * @author bibek
- */
 public class Fpassword2 extends javax.swing.JFrame {
     
     private boolean isPasswordVisible = false;
@@ -28,13 +23,8 @@ public class Fpassword2 extends javax.swing.JFrame {
     errorLabelPassword.setForeground(Color.RED);
     errorLabelPassword.setText("");
     this.add(errorLabelPassword);
-    errorLabelPassword.setBounds(250, 230, 250, 20); // for position for error  
-        //for show password checkbox
-
-    setpassword.setText("Set Password");
-    setpassword.setForeground(Color.GRAY);
+    errorLabelPassword.setBounds(250, 230, 250, 20); // for position for error
     setpassword.setEchoChar((char) 0);  // show as plain text initially
-
     confirmpassword.setText("Confirm Password");
     confirmpassword.setForeground(Color.GRAY);
     confirmpassword.setEchoChar((char) 0);
@@ -203,15 +193,14 @@ public class Fpassword2 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetActionPerformed
-// TODO add your handling code here:
     }//GEN-LAST:event_resetActionPerformed
 
     private void confirmpasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmpasswordActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_confirmpasswordActionPerformed
 
     private void showpasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showpasswordActionPerformed
-        if (showpassword.isSelected()) {
+if (showpassword.isSelected()) {
             setpassword.setEchoChar((char) 0); // Show password as plain text
             confirmpassword.setEchoChar((char)0);
         } else {
@@ -220,58 +209,54 @@ public class Fpassword2 extends javax.swing.JFrame {
             }if (!String.valueOf(confirmpassword.getPassword()).equals("Confirm Password")) {
                 confirmpassword.setEchoChar('*'); // Mask password
             }
-        }         // TODO add your handling code here:
+        }        
     }//GEN-LAST:event_showpasswordActionPerformed
 
     private void setpasswordFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_setpasswordFocusGained
-  if (String.valueOf(setpassword.getPassword()).equals("Set Password")) {
-        setpassword.setText("");
-        setpassword.setForeground(Color.BLACK);
-        setpassword.setEchoChar('*'); 
-  }        // TODO add your handling code here:
+        if (String.valueOf(setpassword.getPassword()).equals("Set Password")) {
+                setpassword.setText("");
+                setpassword.setForeground(Color.BLACK);
+                setpassword.setEchoChar('*'); 
+        }
     }//GEN-LAST:event_setpasswordFocusGained
 
     private void confirmpasswordFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_confirmpasswordFocusGained
-  if (String.valueOf(confirmpassword.getPassword()).equals("Confirm Password")) {
-        confirmpassword.setText("");
-        confirmpassword.setForeground(Color.BLACK);
-        confirmpassword.setEchoChar('*'); }        // TODO add your handling code here:
+        if (String.valueOf(confirmpassword.getPassword()).equals("Confirm Password")) {
+                confirmpassword.setText("");
+                confirmpassword.setForeground(Color.BLACK);
+                confirmpassword.setEchoChar('*'); 
+        }      
+
     }//GEN-LAST:event_confirmpasswordFocusGained
 
     private void setpasswordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_setpasswordFocusLost
-    if (String.valueOf(setpassword.getPassword()).trim().equals("")) {
-        setpassword.setText("Set Password");
-        setpassword.setForeground(Color.GRAY);
-        setpassword.setEchoChar((char) 0);
-    }        // TODO add your handling code here:
+        if (String.valueOf(setpassword.getPassword()).trim().equals("")) {
+                setpassword.setText("Set Password");
+                setpassword.setForeground(Color.GRAY);
+                setpassword.setEchoChar((char) 0);
+        }
     }//GEN-LAST:event_setpasswordFocusLost
 
     private void confirmpasswordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_confirmpasswordFocusLost
-    if (String.valueOf(confirmpassword.getPassword()).trim().equals("")) {
-        confirmpassword.setText("Confirm Password");
-        confirmpassword.setForeground(Color.GRAY);
-        confirmpassword.setEchoChar((char) 0);
-    }        // TODO add your handling code here:
+        if (String.valueOf(confirmpassword.getPassword()).trim().equals("")) {
+                confirmpassword.setText("Confirm Password");
+                confirmpassword.setForeground(Color.GRAY);
+                confirmpassword.setEchoChar((char) 0);
+        }
     }//GEN-LAST:event_confirmpasswordFocusLost
 
     private void setpasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setpasswordActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_setpasswordActionPerformed
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
         Signin signinwindow = new Signin();
 
-        // Show the other window
-        signinwindow.setVisible(true);
+                signinwindow.setVisible(true);
 
-        // Optionally, close the current window
-        this.dispose();    // TODO add your handling code here:
-        // TODO add your handling code here:
+                this.dispose(); 
     }//GEN-LAST:event_jLabel5MouseClicked
- 
-    /**
-     * @param args the command line arguments
-     */
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -300,15 +285,14 @@ public class Fpassword2 extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                Fpassword2 view = new Fpassword2();
-//                new Fpassword2Controller(view);
-//                new Fpassword2().setVisible(true);
-//            }
-//        });
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                Fpassword2 view = new Fpassword2();
+                new Fpassword2controller(view);
+                new Fpassword2().setVisible(true);
+            }
+        });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPasswordField confirmpassword;
     private javax.swing.JLabel jLabel1;
@@ -322,13 +306,15 @@ public class Fpassword2 extends javax.swing.JFrame {
     private javax.swing.JPasswordField setpassword;
     private javax.swing.JCheckBox showpassword;
     // End of variables declaration//GEN-END:variables
-    
-    public void addResetListener(ActionListener listener){
-      reset.addActionListener(listener);      
+
+    public void addResetListener(ActionListener listener) {
+        reset.addActionListener(listener);
     }
+
     public void addConfirmPasswordDocumentListener(DocumentListener listener) {
         confirmpassword.getDocument().addDocumentListener(listener);
     }
+
     public javax.swing.JPasswordField getSetPasswordField() {
         return setpassword;
     }
@@ -336,7 +322,7 @@ public class Fpassword2 extends javax.swing.JFrame {
     public javax.swing.JPasswordField getConfirmPasswordField() {
         return confirmpassword;
     }
-    
+
     public void setErrorLabelText(String text) {
         errorLabelPassword.setText(text);
     }

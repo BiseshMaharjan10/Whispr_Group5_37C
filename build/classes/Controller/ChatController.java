@@ -241,9 +241,10 @@ public class ChatController implements ActionListener {
             String bubbleColor = isOwnMessage ? "#DDFECD" : "#F0F0F0";
             String align = isOwnMessage ? "right" : "left";
             String timestamp = LocalTime.now().withSecond(0).withNano(0).toString();
+            String tick = isOwnMessage ? " <span style='color:#34B7F1;' class='tick'>&#10003;</span>" : ""; // single tick for sent messages
             JLabel msgLabel = new JLabel("<html><div style='padding: 8px; background: " + bubbleColor +
                 "; border-radius: 10px; max-width: 300px; text-align: " + align + ";'>" +
-                message + "<br><span style='font-size: 10px; color: gray;'>" + timestamp + "</span></div></html>");
+                message + "<br><span style='font-size: 10px; color: gray;'>" + timestamp + tick + "</span></div></html>");
 
             chatHistory.computeIfAbsent(sender, k -> new ArrayList<>()).add(msgLabel);
             JPanel wrapper = new JPanel(new FlowLayout(isOwnMessage ? FlowLayout.RIGHT : FlowLayout.LEFT));

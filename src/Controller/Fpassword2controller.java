@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Controller;
 
 import java.awt.Color;
@@ -17,7 +13,12 @@ import view.Signin;
  *
  * @author kanchanmaharjan
  */
-    public Fpassword2Controller(Fpassword2 view) {
+public class Fpassword2controller {
+ 
+ 
+    private Fpassword2 view;
+    
+    public Fpassword2controller(Fpassword2 view) {
         this.view = view;
 
         // Add listener to reset button
@@ -27,7 +28,7 @@ import view.Signin;
                 reset();
             }
         });
-  
+        
         this.view.addConfirmPasswordDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e) {
                 validatePasswordMatch();
@@ -61,8 +62,8 @@ import view.Signin;
    private void reset() {
     String password = String.valueOf(view.getSetPasswordField().getPassword()).trim();
     String confirmPassword = String.valueOf(view.getConfirmPasswordField().getPassword()).trim();
-// Optional: match check
-    
+
+    // Optional: match check
     if (!password.equals(confirmPassword)) {
         view.setErrorLabelText("Passwords do not match");
         view.getConfirmPasswordField().setForeground(Color.RED);

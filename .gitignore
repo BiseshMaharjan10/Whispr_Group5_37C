@@ -1,13 +1,15 @@
-
+# Build and distribution directories
+/build/
+/dist/
 /final_whispr_project/build/
 /final_whispr_project/dist/
-/whispr_project/nbproject/private/
 /whispr_project/build/
-/dist/
-# Compiled class file
+/whispr_project/nbproject/private/
+
+# Compiled class files
 *.class
 
-# Log file
+# Log files
 *.log
 
 # BlueJ files
@@ -16,7 +18,7 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package Files #
+# Package files
 *.jar
 *.war
 *.nar
@@ -25,8 +27,6 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# JVM crash logs
 hs_err_pid*
 replay_pid*
->>>>>>> 8a645873cc3faa08bff283b253c5764b2910d5cf
-/build/

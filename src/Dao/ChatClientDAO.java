@@ -3,6 +3,7 @@ package Dao;
 import Database.MySqlConnection;
 import Model.MessageModel;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,10 +117,56 @@ public class ChatClientDAO {
         } finally {
             db.closeConnection(conn);
         }
+    }  
+ 
+    public boolean saveMessage(MessageModel messageModel) {
+        Connection conn = db.openConnection();
+   
+
+        try{
+            String sql = "INSERT INTO messages (sender_email, receiver_email, content, timestamp) VALUES (?, ?, ?, ?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, messageModel.getSender());
+            ps.setString(2, messageModel.getReceiver());
+            ps.setString(3, messageModel.getMessage());
+            ps.setTimestamp(4, Timestamp.valueOf(messageModel.getTimeStamp()));
+            
+            ps.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     
     
-    
-    
-    
+    public List<MessageModel> getChatHistory(String user1, String user2) {
+        Connection conn = db.openConnection();
+        List<MessageModel> history = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM messages WHERE "
+                    + "((sender_email = ? AND receiver_email = ?) OR (sender_email = ? AND receiver_email = ?)) "
+                    + "ORDER BY timestamp";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, user1);
+            ps.setString(2, user2);
+            ps.setString(3, user2);
+            ps.setString(4, user1);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                history.add(new MessageModel(
+                        rs.getString("sender_email"),
+                        rs.getString("receiver_email"),
+                        rs.getString("content")
+                ));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return history;
+    }
 }

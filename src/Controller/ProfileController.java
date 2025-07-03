@@ -28,7 +28,7 @@ public class ProfileController{ //implements ActionListener {
         this.selectedUserName = model2.getCurrentUserName();
         this.userProfile = view;
         
-        System.out.println("currentUsername" + (controller.selectedUserName));
+        System.out.println("currentUsername " + (controller.selectedUserName));
 
 //        model.addChangeListener(new ChangeListener() {
 //            @Override

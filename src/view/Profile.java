@@ -6,10 +6,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import Controller.ProfileController;
-/**
- *
- * @author kanchanmaharjan
- */
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
+
 public class Profile extends javax.swing.JFrame {
     private String temp_name = "bisesh";
     /**
@@ -38,69 +43,79 @@ public class Profile extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jSeparator1 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jEditorPane1 = new javax.swing.JEditorPane();
+        jTextPane1 = new javax.swing.JTextPane();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         ProfileName = new javax.swing.JLabel();
-        ProfImag = new javax.swing.JLabel();
+        profilePicLabel = new javax.swing.JLabel();
 
-        jScrollPane1.setViewportView(jEditorPane1);
+        jScrollPane1.setViewportView(jTextPane1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel3.setLayout(new java.awt.BorderLayout());
 
-        ProfileName.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                ProfileNameAncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
-            }
-        });
+        jPanel1.setBackground(new java.awt.Color(252, 251, 244));
 
-        ProfImag.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/NOpfp.jpg"))); // NOI18N
+        ProfileName.setForeground(new java.awt.Color(51, 51, 51));
+        ProfileName.setText("ProfileName");
+        ProfileName.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        ProfileName.setAlignmentX(0.5F);
+        ProfileName.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(29, 61, 130), 2));
+        ProfileName.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        ProfileName.setName(""); // NOI18N
+
+        profilePicLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        profilePicLabel.setText("profilePicLabel");
+        profilePicLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(29, 61, 130), 2));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(113, 113, 113)
-                .addComponent(ProfImag)
-                .addContainerGap(187, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ProfileName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(40, 40, 40))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ProfileName, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(profilePicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(244, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(ProfImag, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ProfileName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 175, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(profilePicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ProfileName, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(116, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jPanel1.getAccessibleContext().setAccessibleParent(this);
+
+        jPanel3.add(jPanel4, java.awt.BorderLayout.CENTER);
+
+        getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void ProfileNameAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_ProfileNameAncestorAdded
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ProfileNameAncestorAdded
 
     
 
@@ -143,11 +158,14 @@ public class Profile extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel ProfImag;
     private javax.swing.JLabel ProfileName;
-    private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JLabel profilePicLabel;
     // End of variables declaration//GEN-END:variables
 
 
@@ -155,6 +173,58 @@ public class Profile extends javax.swing.JFrame {
     public void updateName(String selectedUsername) {
         ProfileName.setText( selectedUsername );
     }
+    
+    
+    public void updateProfilePic(String imagePath) {
+        if (imagePath != null && !imagePath.isEmpty()) {
+            File imageFile = new File(imagePath);
+            if (imageFile.exists()) {
+                try {
+                    BufferedImage originalImage = ImageIO.read(imageFile);
+
+                    int originalWidth = originalImage.getWidth();
+                    int originalHeight = originalImage.getHeight();
+
+                    // Max display area size (e.g. 150x150)
+                    int maxWidth = 150;
+                    int maxHeight = 150;
+
+                    // Calculate scaled size while keeping aspect ratio
+                    double widthRatio = (double) maxWidth / originalWidth;
+                    double heightRatio = (double) maxHeight / originalHeight;
+                    double scaleFactor = Math.min(widthRatio, heightRatio);
+
+                    int scaledWidth = (int) (originalWidth * scaleFactor);
+                    int scaledHeight = (int) (originalHeight * scaleFactor);
+
+                    // Scale the image
+                    Image scaledImage = originalImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+                    ImageIcon scaledIcon = new ImageIcon(scaledImage);
+
+                    // Resize the label and panel
+                    profilePicLabel.setIcon(scaledIcon);
+                    profilePicLabel.setPreferredSize(new Dimension(scaledWidth, scaledHeight));
+                    profilePicLabel.setSize(new Dimension(scaledWidth, scaledHeight));
+                    profilePicLabel.revalidate();
+
+                    // Optionally resize parent panel too
+                    if (profilePicLabel.getParent() != null) {
+                        profilePicLabel.getParent().setPreferredSize(new Dimension(scaledWidth, scaledHeight));
+                        profilePicLabel.getParent().revalidate();
+                    }
+
+                } catch (IOException e) {
+                    System.err.println("Error reading image: " + e.getMessage());
+                }
+            } else {
+                System.err.println("Image file not found: " + imagePath);
+            }
+        } else {
+            System.out.println("Image path is null or empty.");
+        }
+    }
+    
+    
     
     
 

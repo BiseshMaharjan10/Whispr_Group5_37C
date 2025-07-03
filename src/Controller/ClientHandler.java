@@ -13,7 +13,11 @@ public class ClientHandler implements Runnable {
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private String clientUsername;
-
+    
+    public ClientHandler(){
+        
+    }
+    
     public ClientHandler(Socket socket) {
         try {
             this.socket = socket;
@@ -96,12 +100,14 @@ public class ClientHandler implements Runnable {
         ArrayList<String> onlineUsernames = new ArrayList<>();
         for (ClientHandler handler : clientHandlers) {
             onlineUsernames.add(handler.clientUsername);
+            
         }
 
         for (ClientHandler handler : clientHandlers) {
             try {
                 MessageModel userListMsg = new MessageModel();
                 userListMsg.setSender("SERVER");
+                userListMsg.setReceiver(handler.clientUsername); 
                 userListMsg.setMessage("" + String.join(",", onlineUsernames));
                 handler.out.writeObject(userListMsg);
                 handler.out.flush();

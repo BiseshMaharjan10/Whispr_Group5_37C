@@ -48,6 +48,9 @@ public class ClientGui extends JFrame {
     private JPanel messagePanel;
     private JScrollPane messageScroll;
     private JTextField searchField;
+    
+    private JLabel onlineStatus;
+    
     private JPanel searchPanel;
     private JButton profileButton;
     private JLabel imageLabel;
@@ -86,6 +89,10 @@ public class ClientGui extends JFrame {
         messageInput = new JTextField();
         contactList = new JList<>();
         
+        JPanel profilePanel = new JPanel();
+        profilePanel.setLayout(new BoxLayout(profilePanel, BoxLayout.Y_AXIS));
+        profilePanel.setOpaque(true);
+        
         profileButton = new JButton("👤");
         profileButton.setFocusPainted(false);
         profileButton.setBorderPainted(false);
@@ -94,9 +101,24 @@ public class ClientGui extends JFrame {
         profileButton.setToolTipText("Upload Profile Picture ");
         profileButton.setVisible(false); 
         
+        onlineStatus = new JLabel(" 🟢 Online");
+        onlineStatus.setVisible(false);
+        
+        profileButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        onlineStatus.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Add some spacing between button and label if you want
+        onlineStatus.setBorder(BorderFactory.createEmptyBorder(1, 5, 0, 0)); // top, left, bottom, right
+        
+        profilePanel.add(profileButton);
+        profilePanel.add(onlineStatus);
+        
+        
+
+        
 
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.add(profileButton, BorderLayout.WEST);
+        topPanel.add(profilePanel, BorderLayout.WEST);
         topPanel.add(searchPanel, BorderLayout.CENTER);
         topPanel.add(searchButton, BorderLayout.EAST);
 
@@ -208,11 +230,22 @@ public class ClientGui extends JFrame {
         contactList.setListData(contacts.toArray(new String[0]));
     }
     
-
-    
     public void showProfileButton() {
         profileButton.setVisible(true);
     }
+    
+    public void showOnlineStatus() {
+        onlineStatus.setVisible(true);
+    }
+    
+    public void hideOnlineStatus(){
+        onlineStatus.setVisible(false);
+    }
+    
+    public void clearMessageInput() {
+        messageInput.setText("");
+    }
+    
 
     
     //getters
@@ -238,10 +271,6 @@ public class ClientGui extends JFrame {
 
     public String getMessageText() {
         return messageInput.getText().trim();
-    }
-
-    public void clearMessageInput() {
-        messageInput.setText("");
     }
 
     public String getSelectedContact() {
@@ -331,12 +360,11 @@ public class ClientGui extends JFrame {
             Border matte = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY);
             Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10); //top, left, bottom, right
             label.setBorder(BorderFactory.createCompoundBorder(matte, padding));
-            
+
             return label;
         }
     }
     
-
     public void setContactListRenderer(Map<String, String> userImageMap) {
         contactList.setCellRenderer(new ContactCellRenderer(userImageMap));
     }

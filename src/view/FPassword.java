@@ -5,10 +5,6 @@ import javax.swing.JOptionPane;
 import utils.EmailSender;
 import java.awt.event.ActionListener;
 
-/**
- *
- * @author bibek
- */
 public class FPassword extends javax.swing.JFrame {
 
     private javax.swing.JLabel emailerrorLabel;

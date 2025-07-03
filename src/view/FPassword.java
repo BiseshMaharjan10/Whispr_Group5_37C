@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
 import Controller.Fpasswordcontroller;
 import java.awt.Color;
@@ -15,18 +11,17 @@ import java.awt.event.ActionListener;
  */
 public class FPassword extends javax.swing.JFrame {
 
-    /**
-     * Creates new form signup
-     */
     private javax.swing.JLabel emailerrorLabel;
     
     
     public FPassword() {
         initComponents();
+        Fpasswordcontroller control = new Fpasswordcontroller(this);
  //for red error text for email
         emailerrorLabel = new javax.swing.JLabel();
  emailerrorLabel.setForeground(Color.RED);
  emailerrorLabel.setText(""); // Empty at first
+
 
         email.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
     public void insertUpdate(javax.swing.event.DocumentEvent e) {
@@ -218,29 +213,29 @@ if (email.getText().trim().equals("")) {
     }//GEN-LAST:event_emailFocusLost
 
     private void GET_OTPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GET_OTPActionPerformed
-    String email_address = email.getText().trim();
-    String purpose = "forgotpassword";
-    Boolean isverified = false;
-
-    Fpasswordcontroller controller = new Fpasswordcontroller();
-    String result = controller.register(email_address);
-    
-    if (result == null) {
-        String temp_result = EmailSender.Emailsend(email_address, purpose, isverified);
-        JOptionPane.showMessageDialog(this, temp_result);
-    
-    // Create an instance of the other JFrame window
-    OTPs otpWindow = new OTPs("forgetpassword");
-
-    // Show the other window
-    otpWindow.setVisible(true);
-
-    // Optionally, close the current window
-    this.dispose();}// TODO add your handling code here:
-    else{
-    JOptionPane.showMessageDialog(this, result);
-    
-    }
+//    String email_address = email.getText().trim();
+//    String purpose = "forgotpassword";
+//    Boolean isverified = false;
+//
+//    Fpasswordcontroller controller = new Fpasswordcontroller();
+//    String result = controller.register(email_address);
+//    
+//    if (result == null) {
+//        String temp_result = EmailSender.Emailsend(email_address, purpose, isverified);
+//        JOptionPane.showMessageDialog(this, temp_result);
+//    
+//    // Create an instance of the other JFrame window
+//    OTPs otpWindow = new OTPs("forgetpassword");
+//
+//    // Show the other window
+//    otpWindow.setVisible(true);
+//
+//    // Optionally, close the current window
+//    this.dispose();}// TODO add your handling code here:
+//    else{
+//    JOptionPane.showMessageDialog(this, result);
+//    
+//    }
     }//GEN-LAST:event_GET_OTPActionPerformed
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
@@ -307,6 +302,9 @@ if (email.getText().trim().equals("")) {
 //    public AddUserListener(ActionListener listener){
 //        GET_OTP.addActionListener(listener);
 //    }
+    
+    public void AddGetOtpListener(ActionListener listener){
+        GET_OTP.addActionListener(listener);
+    }
 }
-
 

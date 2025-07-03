@@ -1,11 +1,15 @@
 package Controller;
 
+import Dao.UserDAO;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import view.Fpassword2;
+import view.FPassword;
+import view.OTPs;
 
 public class fpassword2 extends JFrame {
     private JTextField emailField;
@@ -16,22 +20,32 @@ public class fpassword2 extends JFrame {
     private JPasswordField confirmPasswordField;
     private JButton resetPasswordButton;
 
-    public fpassword2(Fpassword2 userView) {
-        // Set up frame
-        setTitle("Forgot Password");
-        setSize(400, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(null);
+/**
+ *
+ * @author bibek
+ */
+public class Fpasswordcontroller {
+    private UserDAO userDAO = new UserDAO();
+    private FPassword pass;
 
         // Email field
         emailField = new JTextField("Enter your Email address");
         emailField.setBounds(100, 30, 200, 30);
         add(emailField);
 
-        // Send OTP Button
-        sendOTPButton = new JButton("Send OTP");
-        sendOTPButton.setBounds(100, 70, 200, 30);
-        add(sendOTPButton);
+    public Fpasswordcontroller(FPassword pass) {
+        pass.AddGetOtpListener(new OTPListener());
+    }
+
+    public Fpasswordcontroller() {
+    }
+
+//    public Fpasswordcontroller() {
+//    }
+//
+//    public Fpasswordcontroller() {
+//    }
+
 
         // OTP Field
         otpField = new JTextField();
@@ -97,4 +111,21 @@ public class fpassword2 extends JFrame {
     public static void main(String[] args) {
         new fpassword2();
     }
+   }
+
+    void open() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
+    class OTPListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            OTPs otp = new OTPs();
+            otp.setVisible(true);
+        }
+    
 }
+    
+    
+

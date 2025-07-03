@@ -34,13 +34,16 @@ public class Main {
                     // Connect Listeners
                     gui.addSendButtonListener(controller.getSendActionListener());
                     gui.addMessageInputListener(controller.getSendActionListener());
+                    
                     gui.addContactListSelectionListener(e -> {
                         String selected = gui.getSelectedContact();
                         if (selected != null) {
                             controller.showMessages(selected);
                             gui.getBottomPanel().setVisible(true);
-
+                            
                             gui.showProfileButton();
+                            
+                            ChatController temp_controller = new ChatController(selected);
                         }
                     });
                     gui.addSearchButtonListener(e -> gui.toggleSearchPanel(true));

@@ -1,6 +1,8 @@
 package Controller;
 
 import Dao.UserDAO;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,6 +11,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import view.ClientGui;
+import view.FPassword;
 import view.Signin;
 
 public class SigninController {
@@ -18,8 +21,16 @@ public class SigninController {
     
     public SigninController (Signin signin){
         this.signin = signin;
+        signin.addForgotListener(new ForgotListener());
 //        this.signin.getSigninButton().addActionListener(new LoginListener());
     }
+    public void open(){
+        this.signin.setVisible(true);
+    }
+    public void close(){
+        this.signin.setVisible(true);
+    }
+    
     public String loginUser(String email, String password) {
         // Validate email format
         boolean isValid = email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
@@ -99,8 +110,29 @@ public class SigninController {
         return null;
     }
     
-    void open() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+//   class ForgotListener implements ActionListener{
+//
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//          String email = signin.getEmailField().getText().trim();
+//          if(email.isEmpty()){
+//              JOptionPane.showMessageDialog(signin,"Please enter you email!");
+//              return;
+//          }
+//        }
+//       
+//   }
+    class ForgotListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+           FPassword signin = new FPassword();
+           Fpasswordcontroller fpass = new Fpasswordcontroller(signin);
+           signin.setVisible(true);
+           fpass.open();
+           close();
+        }
+
     }
 }
 

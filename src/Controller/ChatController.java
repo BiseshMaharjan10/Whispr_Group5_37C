@@ -59,11 +59,11 @@ public class ChatController implements ActionListener {
     private  JScrollPane messageScroll;
     private  JLabel imageLabel;
     
-    private  String currentUserName;
+    private  String loggedInUserName;
     private String selectedImagePath;
     private String loggedInUserEmail;
     private String selectedUserEmail;
-    public String selectedUserName;
+    public static String selectedUserName;
     
     private File selectedFile;
     private ImageIcon selectedUserIcon;
@@ -82,6 +82,8 @@ public class ChatController implements ActionListener {
     public ChatController(String selectedUserName) {
         
         this.selectedUserName = selectedUserName;
+        
+        System.out.println("someone is calling please  ");
     }
 
     public ChatController(ClientGui userView, String userEmail) throws IOException {
@@ -97,7 +99,7 @@ public class ChatController implements ActionListener {
         this.searchField = userView.getSearchField();
         this.bottomPanel = userView.getBottomPanel();
         this.imageLabel = userView.getImageLabel();
-        this.currentUserName = userView.getCurrentUsername();
+        this.loggedInUserName = userView.getCurrentUsername();
         
         
         MessageModel model = new MessageModel(selectedUserName);
@@ -111,8 +113,11 @@ public class ChatController implements ActionListener {
                     Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } 
+            
+            
         });  
         
+        System.out.println("currentUsername " + selectedUserName + " userview idea " + userView.getSelectedContact());
         
         userView.addProfileListener(new ActionListener() {
         @Override
@@ -123,7 +128,7 @@ public class ChatController implements ActionListener {
             profileView.updateName(selectedUserName);
             
         }
-});
+        });
         
         updateUserImage();
         initializeConnection();
@@ -135,7 +140,7 @@ public class ChatController implements ActionListener {
             socket = new Socket("127.0.0.1", 1234);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-            out.writeObject(currentUserName);
+            out.writeObject(loggedInUserName);
             out.flush();
     
             new Thread(() -> listenForMessages()).start();
@@ -171,7 +176,7 @@ public class ChatController implements ActionListener {
             
         } else if (contactList.getSelectedValue() != null) {
             
-            boolean isSelf = msg.getSender().equals(currentUserName);
+            boolean isSelf = msg.getSender().equals(loggedInUserName);
             displayMessage(msg.getSender(), msg.getMessage(), isSelf);        
         }
     }
@@ -182,7 +187,7 @@ public class ChatController implements ActionListener {
             if (contactList.getModel() == null || !(contactList.getModel() instanceof DefaultListModel)) {               
                 DefaultListModel<String> temp_model = new DefaultListModel<>();
                 for (String name : getAllUserFullNames()) {
-                    if (!name.equals(currentUserName)) {
+                    if (!name.equals(loggedInUserName)) {
                         temp_model.addElement(name);
                     }
                 }
@@ -194,7 +199,7 @@ public class ChatController implements ActionListener {
             // Now add new users from csv
             for (String user : csv.split(",")) {
                 user = user.trim();
-                if (!user.equals(currentUserName) && !temp_model.contains(user) && !user.equals("")) {
+                if (!user.equals(loggedInUserName) && !temp_model.contains(user) && !user.equals("")) {
                     temp_model.addElement(user); // Add only if not already in list
                 }
             }
@@ -224,7 +229,7 @@ public class ChatController implements ActionListener {
             String[] names = to.split(" ", 2);
             
             String Email = chatClientDAO.getEmail(names[0], names.length > 1 ? names[1] : "");
-            sendMessage(currentUserName, Email, text);
+            sendMessage(loggedInUserName, Email, text);
             
             this.selectedUserEmail = Email;
 

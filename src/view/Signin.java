@@ -7,6 +7,7 @@ import javax.swing.event.DocumentListener;
 import Controller.SigninController;
 import javax.swing.JOptionPane;
 import Dao.UserDAO;
+import java.awt.event.ActionListener;
 import utils.Main;
 
 /**
@@ -86,7 +87,7 @@ public class Signin extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         signinlink = new javax.swing.JLabel();
-        signinlink1 = new javax.swing.JLabel();
+        forgotpass = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
 
@@ -157,7 +158,7 @@ public class Signin extends javax.swing.JFrame {
 
         jLabel5.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(29, 61, 130));
-        jLabel5.setText("Because silent mode doesn't mean offline");
+        jLabel5.setText("Because silent mode doesn’t mean offline");
 
         jLabel6.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(29, 61, 130));
@@ -172,14 +173,7 @@ public class Signin extends javax.swing.JFrame {
             }
         });
 
-        signinlink1.setFont(new java.awt.Font("Helvetica Neue", 0, 12)); // NOI18N
-        signinlink1.setForeground(new java.awt.Color(29, 61, 130));
-        signinlink1.setText("<html><u>Forgot Password ?</u></html>");
-        signinlink1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                signinlink1MouseClicked(evt);
-            }
-        });
+        forgotpass.setText("Forgot Password?");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -209,7 +203,7 @@ public class Signin extends javax.swing.JFrame {
                                 .addGroup(jPanel2Layout.createSequentialGroup()
                                     .addComponent(showpassword)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(signinlink1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(forgotpass))
                                 .addComponent(setpassword, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(emailaddress, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
@@ -237,14 +231,14 @@ public class Signin extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(showpassword)
-                    .addComponent(signinlink1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(forgotpass))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(signin, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(signinlink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(112, Short.MAX_VALUE))
+                .addContainerGap(109, Short.MAX_VALUE))
         );
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
@@ -378,17 +372,6 @@ public class Signin extends javax.swing.JFrame {
         this.dispose();    // TODO add your handling code here:
     }//GEN-LAST:event_signinlinkMouseClicked
 
-    private void signinlink1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signinlink1MouseClicked
-           FPassword forgotpassword = new FPassword();
-
-    // Show the other window
-    forgotpassword.setVisible(true);
-
-    // Optionally, close the current window
-    this.dispose();    // TODO add your handling code here:ads
-     // TODO add your handling code here:
-    }//GEN-LAST:event_signinlink1MouseClicked
-
     /**
      * @param args the command line arguments
      */
@@ -426,6 +409,7 @@ public class Signin extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField emailaddress;
+    private javax.swing.JButton forgotpass;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -439,7 +423,6 @@ public class Signin extends javax.swing.JFrame {
     private javax.swing.JCheckBox showpassword;
     private javax.swing.JButton signin;
     private javax.swing.JLabel signinlink;
-    private javax.swing.JLabel signinlink1;
     // End of variables declaration//GEN-END:variables
 
     // Add public getters for controller access
@@ -451,5 +434,8 @@ public class Signin extends javax.swing.JFrame {
     }
     public javax.swing.JPasswordField getPasswordField() {
         return setpassword;
+    }
+    public void addForgotListener(ActionListener listener){
+        forgotpass.addActionListener(listener);
     }
 }

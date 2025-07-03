@@ -54,6 +54,7 @@ public class Main {
                         if (selected != null) {
                             controller.showMessages(selected);
                             gui.getBottomPanel().setVisible(true);
+//                            gui.getSearchField().setVisible(true);
                             List<String> OnlineUsers = msg.getOnlineUsers();
                             
                             if (selected != null && csv != null && Arrays.asList(csv.split(",")).contains(selected)) {
@@ -63,6 +64,7 @@ public class Main {
                                 System.out.println("he isn't online " + csv + " " + selected);
                             }
                             gui.showProfileButton();
+                            gui.showSearchButton();
                             ChatController temp_controller = new ChatController(selected);
                         }
                     });

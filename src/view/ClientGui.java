@@ -35,6 +35,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionListener;
 
@@ -79,8 +80,11 @@ public class ClientGui extends JFrame {
         
         this.currentUserName = currentUserName;
         
-        searchField = new JTextField(20);
+        searchField = new JTextField();
+        searchField.setPreferredSize(new Dimension(400, 40)); // width x height
+        searchField.setBorder(new LineBorder(Color.GRAY, 1));
         searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.setBackground(Color.white);
         searchPanel.setVisible(false);
         searchPanel.add(searchField);
 
@@ -100,6 +104,7 @@ public class ClientGui extends JFrame {
         profileButton.setFont(new Font("Arial", Font.PLAIN, 18));
         profileButton.setToolTipText("Upload Profile Picture ");
         profileButton.setVisible(false); 
+        searchButton.setVisible(false);
         
         onlineStatus = new JLabel(" 🟢 Online");
         onlineStatus.setVisible(false);
@@ -121,10 +126,11 @@ public class ClientGui extends JFrame {
         topPanel.add(profilePanel, BorderLayout.WEST);
         topPanel.add(searchPanel, BorderLayout.CENTER);
         topPanel.add(searchButton, BorderLayout.EAST);
+        topPanel.setBackground(Color.white);
 
         messagePanel = new JPanel();
         messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
-        messagePanel.setBackground(Color.WHITE);
+        messagePanel.setBackground(new Color(252, 251, 244));
 
         messageScroll = new JScrollPane(messagePanel);
         messageScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -136,17 +142,25 @@ public class ClientGui extends JFrame {
         bottomPanel.setVisible(false);
 
         messageInput.setFont(new Font("Arial", Font.PLAIN, 18));
+        messageInput.setForeground(Color.black);
         messageInput.setPreferredSize(new Dimension(0, 40));
+        messageInput.setBackground(Color.white);
 
-        sendButton = new JButton("Send");
-        sendButton.setFont(new Font("Arial", Font.PLAIN, 18));
-        sendButton.setPreferredSize(new Dimension(100, 40));
+        sendButton = new JButton("SEND");
+        sendButton.setFont(new Font("JejuGothic", Font.PLAIN, 22));
+        sendButton.setPreferredSize(new Dimension(100, 30));
+        sendButton.setBackground(new Color(25, 45, 88));
+        sendButton.setForeground(new Color(252, 251, 244)); 
+        sendButton.setOpaque(true);                          // Needed for custom background
+        sendButton.setBorderPainted(false);
+        
 
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.add(messageInput, BorderLayout.CENTER);
         inputPanel.add(sendButton, BorderLayout.EAST);
         
         bottomPanel.add(inputPanel, BorderLayout.CENTER);
+        bottomPanel.setBackground(Color.white);
 
         JPanel messageArea = new JPanel(new BorderLayout());
         messageArea.add(topPanel, BorderLayout.NORTH);
@@ -156,9 +170,11 @@ public class ClientGui extends JFrame {
         JScrollPane contactScroll = new JScrollPane(contactList);
         contactScroll.setPreferredSize(new Dimension(220, 0)); //width, height
         contactScroll.setBorder(BorderFactory.createTitledBorder("Your friends"));
+        contactScroll.setBackground(Color.white);
 
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.add(contactScroll, BorderLayout.CENTER);
+        leftPanel.setBackground(new Color(252, 251, 244));
 
         imageLabel = new RoundImageLabel(null);
         imageLabel.setPreferredSize(new Dimension(50, 50));
@@ -232,6 +248,10 @@ public class ClientGui extends JFrame {
     
     public void showProfileButton() {
         profileButton.setVisible(true);
+    }
+    
+    public void showSearchButton(){
+        searchButton.setVisible(true);
     }
     
     public void showOnlineStatus() {

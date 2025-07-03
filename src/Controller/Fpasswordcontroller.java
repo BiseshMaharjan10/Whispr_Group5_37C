@@ -7,7 +7,10 @@ import view.OTPs;
 import javax.swing.JOptionPane;
 import Controller.SignUPController;
 import Controller.Fpasswordcontroller;
+import Database.MySqlConnection;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import utils.EmailSender;
@@ -20,10 +23,12 @@ import view.FPassword;
  */
 public class Fpasswordcontroller {
     private UserDAO userDAO = new UserDAO();
+    private FPassword pass;
 
     private static String userEmail; // Instance variable to store emaail
 
-    public Fpasswordcontroller(FPassword signin) {
+    public Fpasswordcontroller(FPassword pass) {
+        pass.AddGetOtpListener(new OTPListener());
     }
 
     public Fpasswordcontroller() {
@@ -129,6 +134,15 @@ public class Fpasswordcontroller {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
+    class OTPListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            OTPs otp = new OTPs();
+            otp.setVisible(true);
+        }
+    
+}
     
     
 }

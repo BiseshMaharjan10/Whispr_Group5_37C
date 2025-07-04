@@ -1,11 +1,18 @@
 
 package view;
 
-import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
+<<<<<<< HEAD
 import Controller.ProfileController;
+=======
+>>>>>>> fpassword
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -21,18 +28,29 @@ public class Profile extends javax.swing.JFrame {
      * Creates new form Profile
      */
     public Profile() {
-        initComponents();
-        setVisible(true);
-        setTitle("User Profile");
-        setSize(300, 200);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
-        
-        
-        
-//        add(new JLabel("Profile Page", SwingConstants.CENTER), BorderLayout.CENTER);
-    }
+    initComponents();
+    profilePicLabel.setIcon(new ImageIcon(getClass().getResource("/view/NOpfp.jpg")));
+
+
+
+
+    // Background color of the whole window
+    getContentPane().setBackground(new java.awt.Color(153, 204, 255));
+
+    // Card style panel
+    yourPanel.setBackground(new java.awt.Color(255, 255, 255));
+    yourPanel.setOpaque(true);
+    yourPanel.setBorder(new javax.swing.border.EmptyBorder(20, 20, 20, 20));
+    yourPanel.setBounds(50, 50, 300, 350); // Adjust as needed
+
+    // Window setup
+    setVisible(true);
+    setTitle("User Profile");
+    setSize(400, 400);
+    setLocationRelativeTo(null);
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -44,83 +62,68 @@ public class Profile extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel3 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        logoutButton = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
+        yourPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
         profilePicLabel = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
         ProfileName = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel3.setLayout(new java.awt.BorderLayout());
 
-        logoutButton.setText("logoutButton");
-        logoutButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logoutButtonActionPerformed(evt);
-            }
-        });
+        jPanel4.setBackground(new java.awt.Color(153, 204, 255));
+        jPanel4.setLayout(null);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(logoutButton, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(0, 59, Short.MAX_VALUE)
-                .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        yourPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        jPanel3.add(jPanel2, java.awt.BorderLayout.PAGE_END);
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("User Profile");
 
+        profilePicLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/NOpfp.jpg"))); // NOI18N
         profilePicLabel.setText("profilePicLabel");
+        profilePicLabel.setPreferredSize(new java.awt.Dimension(100, 100));
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(profilePicLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+        ProfileName.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        ProfileName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ProfileName.setText("Suraj Maharjan");
+
+        javax.swing.GroupLayout yourPanelLayout = new javax.swing.GroupLayout(yourPanel);
+        yourPanel.setLayout(yourPanelLayout);
+        yourPanelLayout.setHorizontalGroup(
+            yourPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(yourPanelLayout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addGroup(yourPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ProfileName)
+                    .addComponent(jLabel1)
+                    .addGroup(yourPanelLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(profilePicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(profilePicLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+        yourPanelLayout.setVerticalGroup(
+            yourPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(yourPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(profilePicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ProfileName)
+                .addContainerGap(34, Short.MAX_VALUE))
         );
+
+        jPanel4.add(yourPanel);
+        yourPanel.setBounds(152, 102, 200, 210);
 
         jPanel3.add(jPanel4, java.awt.BorderLayout.CENTER);
-
-        ProfileName.setText("ProfileName");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(55, 55, 55)
-                .addComponent(ProfileName, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(54, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(82, 82, 82)
-                .addComponent(ProfileName, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(98, Short.MAX_VALUE))
-        );
-
-        jPanel3.add(jPanel1, java.awt.BorderLayout.LINE_START);
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_logoutButtonActionPerformed
 
     
 
@@ -164,12 +167,11 @@ public class Profile extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel ProfileName;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JButton logoutButton;
     private javax.swing.JLabel profilePicLabel;
+    private javax.swing.JPanel yourPanel;
     // End of variables declaration//GEN-END:variables
 
 

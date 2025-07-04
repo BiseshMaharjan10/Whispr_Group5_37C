@@ -34,3 +34,6 @@ nbdist/
 # JVM crash logs
 hs_err_pid*
 replay_pid*
+/build/
+/nbproject/private/
+>>>>>>> fpassword

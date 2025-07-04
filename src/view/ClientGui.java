@@ -9,8 +9,6 @@ import java.io.IOException;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-
-
 public class ClientGui extends JFrame {
 
     private JTextField messageInput;
@@ -22,8 +20,7 @@ public class ClientGui extends JFrame {
     private ChatController controller;
     private JTextField searchField;
     private JPanel searchPanel;
-    
-
+    private JButton profileButton; // 👤 Profile button
 
     public ClientGui(String currentUserName) {
         setTitle("Whispr");
@@ -32,8 +29,7 @@ public class ClientGui extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         getContentPane().setBackground(Color.decode("#FCFBF4"));
-        
-        
+
         // 🔍 Top Panel with Search
         searchField = new JTextField(20);
         searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -42,25 +38,33 @@ public class ClientGui extends JFrame {
 
         JButton searchButton = new JButton("🔍");
         searchButton.addActionListener(e -> {
-        boolean currentlyVisible = searchPanel.isVisible();
-        searchPanel.setVisible(!currentlyVisible);
-
-        // Optional: clear search field and reset messages when hiding
-        if (currentlyVisible) {
-            searchField.setText("");
-            controller.highlightMessages();
+            boolean currentlyVisible = searchPanel.isVisible();
+            searchPanel.setVisible(!currentlyVisible);
+            if (currentlyVisible) {
+                searchField.setText("");
+                controller.highlightMessages();
             }
         });
-        
+
+        // 👤 Profile Button
+        profileButton = new JButton("👤 Profile");
+        profileButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        profileButton.addActionListener(e -> {
+            Profile profilePage = new Profile();
+            profilePage.updateName(currentUserName); // Or hardcode like "Suraj Maharjan"
+            profilePage.updateProfilePic("src/view/NOpfp.jpg"); // Adjust to actual image path
+            profilePage.setVisible(true);
+        });
 
         messageInput = new JTextField();
         contactList = new JList<>();
-        
+
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        topPanel.add(profileButton);
         topPanel.add(searchPanel);
         topPanel.add(searchButton);
-        
-        //for bottom part
+
+        // 💬 Message area
         messagePanel = new JPanel();
         messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
         messagePanel.setBackground(Color.WHITE);
@@ -70,38 +74,23 @@ public class ClientGui extends JFrame {
         messageArea.add(topPanel, BorderLayout.NORTH);
         messageArea.add(messageScroll, BorderLayout.CENTER);
 
-        
-         //  Real-time search listener
+        // 🔎 Real-time search
         searchField.getDocument().addDocumentListener(new DocumentListener() {
-            public void insertUpdate(DocumentEvent e) {
-                controller.highlightMessages();
-            }
-
-            public void removeUpdate(DocumentEvent e) {
-                controller.highlightMessages();
-            }
-
-            public void changedUpdate(DocumentEvent e) {
-                controller.highlightMessages();
-            }
+            public void insertUpdate(DocumentEvent e) { controller.highlightMessages(); }
+            public void removeUpdate(DocumentEvent e) { controller.highlightMessages(); }
+            public void changedUpdate(DocumentEvent e) { controller.highlightMessages(); }
         });
 
-        
-        
-        
-
-        // Unified bottom panel with input, send button, and "Logged in as"
+        // ⌨️ Input bar and status
         bottompanel = new JPanel(new BorderLayout());
         bottompanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-//        bottompanel.setPreferredSize(new Dimension(0, 60));
 
         messageInput.setFont(new Font("Arial", Font.PLAIN, 18));
         messageInput.setPreferredSize(new Dimension(0, 40));
-        
+
         sendButton = new JButton("Send");
         sendButton.setFont(new Font("Arial", Font.PLAIN, 18));
         sendButton.setPreferredSize(new Dimension(100, 40));
-        
 
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.add(messageInput, BorderLayout.CENTER);
@@ -114,12 +103,12 @@ public class ClientGui extends JFrame {
         bottompanel.add(inputPanel, BorderLayout.CENTER);
         bottompanel.add(currentUserLabel, BorderLayout.SOUTH);
         bottompanel.setVisible(false);
+        bottompanel.setPreferredSize(new Dimension(0, 80));
+        bottompanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
 
-
-
-        // Contacts
+        // 🧑‍🤝‍🧑 Contacts
         ChatClientDAO dao = new ChatClientDAO();
-        controller = new ChatController(dao, contactList, messageInput, messagePanel, messageScroll,currentUserName, searchField, bottompanel);
+        controller = new ChatController(dao, contactList, messageInput, messagePanel, messageScroll, currentUserName, searchField, bottompanel);
 
         List<String> contactNames = controller.getAllUserFullNames();
         contactList.setListData(contactNames.toArray(new String[0]));
@@ -128,17 +117,19 @@ public class ClientGui extends JFrame {
 
         JScrollPane contactScroll = new JScrollPane(contactList);
         contactScroll.setPreferredSize(new Dimension(150, 0));
+
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, contactScroll, messageArea);
-        splitPane.setDividerLocation(150); // Width of left panel
-        splitPane.setDividerSize(1);       // Thin dividing line
-        splitPane.setEnabled(false);       // Make it non-draggable
+        splitPane.setDividerLocation(150);
+        splitPane.setDividerSize(1);
+        splitPane.setEnabled(false);
+
         add(splitPane, BorderLayout.CENTER);
-        // Disable arrow navigation
+        add(bottompanel, BorderLayout.SOUTH);
+
         InputMap im = contactList.getInputMap(JComponent.WHEN_FOCUSED);
         im.put(KeyStroke.getKeyStroke("DOWN"), "none");
         im.put(KeyStroke.getKeyStroke("UP"), "none");
 
-        // Action Listener setup
         sendButton.addActionListener(controller);
         messageInput.addActionListener(controller);
 
@@ -149,13 +140,6 @@ public class ClientGui extends JFrame {
                 bottompanel.setVisible(true);
             }
         });
-
-            bottompanel.setPreferredSize(new Dimension(0, 80)); // fixed height
-            bottompanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80)); // ensure it never grows taller
-            bottompanel.setPreferredSize(new Dimension(0, 80)); // fixed height
-            bottompanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80)); // ensure it never grows taller
-
-            add(bottompanel, BorderLayout.SOUTH);
     }
 
     class ContactCellRenderer extends DefaultListCellRenderer {
@@ -172,4 +156,3 @@ public class ClientGui extends JFrame {
         }
     }
 }
-// Contributor: Suraj Maharjan

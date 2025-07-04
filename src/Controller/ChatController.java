@@ -175,7 +175,7 @@ public class ChatController implements ActionListener {
             out.flush();
     
             new Thread(() -> listenForMessages()).start();
-            
+                
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Cannot connect to the server.", "Connection Error", JOptionPane.ERROR_MESSAGE);
@@ -364,6 +364,8 @@ public class ChatController implements ActionListener {
         messagePanel.repaint();
         messageScroll.getVerticalScrollBar().setValue(messageScroll.getVerticalScrollBar().getMaximum());
     }
+   
+    
 
     public void updateImage(String imagePath) {
         ImageIcon icon = new ImageIcon(new ImageIcon(imagePath).getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));

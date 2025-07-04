@@ -75,24 +75,24 @@ public class ClientHandler implements Runnable {
     }
     
     
-    public void sendPrivateMessage(MessageModel msg) {
-        
-        //fetch the first and last name from email
+    public boolean sendPrivateMessage(MessageModel msg) {
         ChatClientDAO temp_obj = new ChatClientDAO();
         String first_n_lastName = temp_obj.getFirstnLastName(msg.getReceiver());
-        
-        
+
         for (ClientHandler clientHandler : clientHandlers) {
             if (clientHandler.clientUsername.equals(first_n_lastName)) {
                 try {
                     clientHandler.out.writeObject(msg);
                     clientHandler.out.flush();
+                    return true;
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return false;
                 }
-                break;
             }
         }
+
+        return false; 
     }
     
     
@@ -138,13 +138,25 @@ public class ClientHandler implements Runnable {
                    ", message: " + msg.getMessage());
 
                     if (msg.getReceiver() != null && !msg.getReceiver().trim().isEmpty()) {
-                        String a = msg.getReceiver();
-                         System.out.println("user found in_database : \"" + a + "\"");
-                        sendPrivateMessage(msg);
-                        
+                        boolean delivered = sendPrivateMessage(msg);
+
+                        if (!delivered) {
+                            System.out.println("User not online or invalid email. Private message not sent.");
+
+                            // Optional: notify sender
+                            try {
+                                MessageModel errorMsg = new MessageModel();
+                                errorMsg.setSender("SERVER");
+                                errorMsg.setMessage("User not found or offline. Message not delivered.");
+                                out.writeObject(errorMsg);
+                                out.flush();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
                     } else {
-                        System.out.println("user not found sending message in group");
-                        broadcastMessage(msg); // Optional, for group message
+                        System.out.println("No receiver provided. Skipping message broadcast.");
                     }
                 }
 

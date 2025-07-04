@@ -1,9 +1,19 @@
 
 package view;
 
+import Controller.ChatController;
+import Controller.ClientHandler;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import Dao.UserDAO;
+import Model.MessageModel;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 import utils.Main;
 
 
@@ -285,6 +295,7 @@ public class Signin extends javax.swing.JFrame {
         String email = emailaddress.getText().trim();
         String password = String.valueOf(setpassword.getPassword());
         UserDAO userDAO = new UserDAO();
+        String fullname = userDAO.Checknames(email);
         // Validate email format
         boolean isValid = email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
         if (!isValid) {
@@ -294,8 +305,79 @@ public class Signin extends javax.swing.JFrame {
         // Check credentials in database
         boolean success = userDAO.Logincredentials(email, password);
         if(success){ 
-            Main.main(new String[0]);
-            this.dispose();
+            
+            SwingUtilities.invokeLater(() -> {
+                try {
+
+                    ClientHandler handler = new ClientHandler();
+                    // Create GUI
+                    ClientGui gui = new ClientGui(fullname);
+
+                    // Create Controller and wire its
+                    ChatController controller = new ChatController(gui, email);
+
+                    //model 
+                    MessageModel msg = new MessageModel();
+
+                    // Set contact list (assuming you want to preload users here)
+                    controller.updateContactList("");
+//                    gui.setContactListData(contactNames); // use a setter method inside ClientGui
+
+                    Map<String, String> imageMap = controller.getUserImageMap();
+                    gui.setContactListRenderer(imageMap); // new method you'll define in ClientGui
+
+                    // Connect Listeners
+                    gui.addSendButtonListener(controller.getSendActionListener());
+                    gui.addMessageInputListener(controller.getSendActionListener());
+
+                    gui.addContactListSelectionListener(e -> {
+                        String csv = utils.GlobalState.onlineUsersCsv;
+                        String selected = gui.getSelectedContact();
+
+                        if (selected != null) {
+                            controller.showMessages(selected);
+                            controller.loadChatHistory(selected);
+                            gui.getBottomPanel().setVisible(true);
+                            List<String> OnlineUsers = msg.getOnlineUsers();
+
+                            if (selected != null && csv != null && Arrays.asList(csv.split(",")).contains(selected)) {
+                                gui.showOnlineStatus();
+                            } else {
+                                gui.hideOnlineStatus();
+                                System.out.println("he isn't online " + csv + " " + selected);
+                            }
+                            gui.showProfileButton();
+                            ChatController temp_controller = new ChatController(selected, gui, "nexbitt@gmail.com");
+                        }
+                    });
+                    gui.addSearchButtonListener(e -> gui.toggleSearchPanel(true));
+                    gui.addSearchFieldListener(new javax.swing.event.DocumentListener() {
+                        @Override
+                        public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                            controller.highlightMessages();
+                        }
+
+                        @Override
+                        public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                            controller.highlightMessages();
+                        }
+
+                        @Override
+                        public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                            controller.highlightMessages();
+                        }
+                    });
+
+                    // Show GUI
+                    gui.setVisible(true);
+                    this.dispose();
+                } catch (IOException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            
+            
+            
         } else {
             JOptionPane.showMessageDialog(this, "Credentials didn't match");
         }
@@ -386,14 +468,22 @@ public class Signin extends javax.swing.JFrame {
     private javax.swing.JLabel signinlink1;
     // End of variables declaration//GEN-END:variables
 
+    
+    //action listeners
+    public void addSignInButtonListener(java.awt.event.ActionListener listener) {
+        signin.addActionListener(listener);
+    }
+    
     // Add public getters for controller access
     public javax.swing.JButton getSigninButton() {
         return signin;
     }
-    public javax.swing.JTextField getEmailField() {
-        return emailaddress;
+    public String getEmailField() {
+        return emailaddress.getText().trim();
     }
-    public javax.swing.JPasswordField getPasswordField() {
-        return setpassword;
+    public String getPasswordField() {
+        return setpassword.getText().trim();
     }
+    
+    
 }
